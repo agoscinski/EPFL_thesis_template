@@ -1,0 +1,826 @@
+\chapter{Measures of information capacity}
+
+%\def\GFRE{\operatorname{GFRE}}
+%\def\GFRD{\operatorname{GFRD}}
+%\def\LFRE{\operatorname{LFRE}}
+%
+%\def\CF{\mathcal{F}}
+%\def\CD{\mathcal{D}}
+%\def\CF{\mathcal{F}}
+%\def\CH{\mathcal{H}}
+%\def\BR{\mathbb{R}}
+%\def\bX{\mathbb{X}}
+%\def\bx{\mathbb{x}}
+%\def\bXt{\mathbb{X}^T}
+
+\def\Fone{$\mathcal{F}$}
+\def\Ftwo{$\mathcal{G}$}
+\def\Ftrue{$\Theta$}
+% ---
+
+In the last chapter we learned about the process of chosing a set of basis
+functions and the target function to obatain a numerical description, a process
+referred as \emph{featurization}.  As we discussed common characterstics of
+widely-applied radial basis in Sec.~\ref{sec:radial_basis_set}, the design of
+these characterstics is driven by physical and chemical intuition and is then
+tested on a variety of datasets to quantify the effectiveness of the design
+choice\cite{musil2021efficient}.  This makes the quantification dependent on a
+target property and thereby limiting the kind of insights that can be obtained..
+%creating effectiveness of the basis
+In this chapter information measures are presented that the extend the ways how we evaluate the quality of features.
+It is shown how they can be used to give different forms of insights helping with design decision in model construction and how to efficiently compute them. 
+
+%The development of computational methods that can efficiently produce quantative result that provide insights about the approximation error of representations for a given dataset has been therefore one focus of my thesis and is covered in this chapter.
+%In this chapter we introduce different forms of $T$ that can give different characterization of the mutual relationship between different featurisations covering the work of Ref.~\cite{goscinski2021role}.
+\section{Reconstruction error}
+An approach independent of a target property is to compare the reconstruction error of the basis expansion to the
+original functional form on which the features are expanded
+Given a representation $f$ of the atomic structure $A$ and a basis expansion as in
+Eq.~\ref{eq:basis_expansion} with an orthornormal basis, the approximation error
+of a basis $\{b_k\}_{k=1}^M$ to $f$ can be expressed
+\begin{subequations}
+\begin{align}
+  \label{eq:information_capacity}
+  \ell(\{c_kb_k\}^M_{k=1}, f) = \int_V\mathrm{d}\mathbf{q}\, \|\sum_{k=1}^M c_kb_k(\mathbf{q}) - f(\mathbf{q})\|^2.\\
+  \min_{\{c_kb_k\}^M_{k=1}} \ell(\{c_kb_k\}^M_{k=1}, f)
+\end{align}
+\end{subequations}
+Assuming orthonormality of $b_k$ and normalization of $f$ then the error can be expressed as
+%This positived definite distance function can be reexpresesd inverted similarity measure
+\begin{equation}
+  \label{eq:similarity}
+  \ell(\{c_kb_k\}^M_{k=1}, f) = 2\big(1 -\sum_k^M c_k\int_V\mathrm{d}\mathbf{q}\, b_k(\mathbf{q})f(\mathbf{q})\big).
+\end{equation}
+A weighted sum of dot products between the basis functions and the target functions with expansion coefficients as weights.
+For example, a Gaussian as basis function centered at $r_k$ the similarity the integral results in
+\begin{equation}
+  \int_V\mathrm{d}\mathbf{q}\, b_k(\mathbf{q})f(\mathbf{q}) = g(|r_k-r_{ij}|). % double check
+  \label{eq:gaussian_similarity}
+\end{equation}
+The dot product is higher when the Gaussian is close to the target function.
+In comparison if we can chose basis functions that can never evaluate to 1 ...TODO
+%The derivation also expresses the duality between a definite distance metric and similarity measure\cite{TODO(maybe)}.
+%If we chose only one basis function, we can see that the distance is zero when $b_k$ is $f$
+%One basis function, we can see that the distance is zero when $b_k$ is $f$
+%For a simple functional form of $f$ as the order 1 expressions in Eq.~\ref{eq:order1_analytical_solution} the integral can be solved for radial basis functions.
+%\begin{subequations}
+%\begin{align}
+%  \ell(\{c_nb_n\}^M_{n=1}, g) 
+%  %&= \int_{[0,r_c]}\mathrm{d}r\, \|\sum_{n=1}^M c_nR_n(r) - \frac{g(r-r_{ji})}{r_{ji}}\| \\
+%  %&= \sum_{n,n^\prime=1}^M \int_\mathbb{R}\mathrm{d}r\, c_nc_{n^\prime}R_n(r)R_{n^\prime}(r) - 2c_nR_n(r)\frac{g(r-r_{ji})}{r_{ji}}\| \\
+%                              &= 2\big(1 -\frac{1}{r_{ji}}\sum_{n=1}^M\int_{[0,r_c]}\mathrm{d}r\, c_nR_n(r)g(r-r_{ji}) \big)
+%\end{align}
+%\end{subequations}
+%For shifted Gaussians the solution
+%\begin{subequations}
+%\begin{align}
+%  %&R_n(r) = r^n\exp(\frac{r^2}{2\sigma}),\textrm{ Gaussian type orbitals TODO shifted Gaussians} \\ 
+%  %https://www.wolframalpha.com/input?i2d=true&i=Integrate%5Bexp%5C%2840%29-Divide%5B%5C%2840%29r-q%5C%2841%29%2C%5C%2840%292*Power%5Bsigma%2C2%5D%5C%2841%29%5D%5C%2841%29*r*exp%5C%2840%29-Divide%5BPower%5Br%2C2%5D%2C%5C%2840%292*Power%5Bsigma%2C2%5D%5C%2841%29%5D%5C%2841%29%2C%7Br%2C0%2CSubscript%5Br%2Cc%5D%7D%5D
+%  &R_n(r) = \exp(\frac{r^2}{2\sigma}),\textrm{ shifted Gaussians} \\ 
+%  &\int_{[0,r_c]}\mathrm{d}r\, c_nR_n(r)g(r-r_{ji}) = \exp(\frac{r_{ji}}{2\sigma^2})c_1+ c_2 %TODO needs to be correctly done
+%\end{align}
+%\end{subequations}
+%We can see that the error increases as soon as the center of the neighbor densities moves away from the center of the shifted Gaussians.%TODO verify
+%\papercomment{compare with some crappy basis function that is easy to evaluate, don't want to spend a lot of time on the analytical expression as they dont bring much into the narrative.}
+%[Optional%] We can apply the solution of the shifted Gaussian basis and compare it with \papercomment{some crappy basis function just for educational purpose.... We can see that the convergence for the shifted Gaussian is much better for a set of dimers than this absourd function ...}
+%\begin{subequations}
+%\begin{align}
+%  \ell(\{c_nb_n\}^M_{n=1}, f) &= b_n \frac1{\int_{C(\mathbb{R})}\mathrm{d}f \int_{\mathbb{R}^{\nu}}\mathrm{d}\mathbf{r} \|f(\mathbf{r})\|}\int_{C(\mathbb{R})}\mathrm{d}f \int_{[0,r_c]}\mathrm{d}r\, \|\sum_{n=1}^M c_nR_n(r) - \frac{g(r-r_{ji})}{r_{ji}}\|
+%  %&= \sum_{n,n^\prime=1}^M \int_\mathbb{R}\mathrm{d}r\, c_nc_{n^\prime}R_n(r)R_{n^\prime}(r) - 2c_nR_n(r)\frac{g(r-r_{ji})}{r_{ji}}\| \\
+%\end{align}
+%\end{subequations}
+
+Such purely analytical treatment only works for simple functional forms.
+More complex forms can be evaluated by a numerical integration \ref{eq:information_capacity} as the basis functions are defined on a limited interval restricted by the cutoff $r_c$.
+As example we can compare the effect of a radial scaling term in the basis function applied as global factor $1/r$ and on the spreading $\sigma$ into the Gaussian basis functions.
+\begin{subequations}
+\begin{align}
+  R^{1/r}_n(r) &= \frac{1}{r}\exp(-0.5\big(\frac{r-r_n}{\sigma}\big)^2)\textrm{ (global factor)},\\
+  R^{r\sigma}_n(r) &= \exp(-0.5\big(\frac{r-r_n}{r\sigma}\big)^2)\textrm{ (smearing)},\\
+  R^{1/r,r\sigma}_n(r) &= \frac{1}{r}\exp(-0.5\big(\frac{r-r_n}{r\sigma}\big)^2)\textrm{ (both)},\\
+  r_n &= r_c\frac{n}{n_\textrm{max}},\textrm{ for }n_\textrm{max}>1.
+\end{align}
+\end{subequations}
+We compare the convergence behavior of these bases on a Lennard-Jones (LJ) potential as domain-specific target function with parameters $\epsilon_\textrm{LJ}=1.0$, $\sigma_\textrm{LJ}=1.1$ on the interval $[1.05, 3.0]$.
+\begin{equation}
+  f_\textrm{LJ}(r) = \epsilon_\textrm{LJ}\big(\sigma_\textrm{LJ}^{-12}-\sigma_\textrm{LJ}^{-6}\big).
+\end{equation}
+From the plots in Fig.~\ref{fig:radial-scaling} we can clearly see that the radial scaling term on the smearing reduces the reconstruction error significantly more than the global factor.
+This observation goes along the lines with the competetiveness of the GTO basis functions that includes a radial scaling term in the smearing shown in Ref.~\ref{goscinski2021optimal,bigi2022smooth}.
+In fact the global radial factor first increases the error up to $n_\textrm{max}=4$ till it has a reducening effect.
+%An effect that is due to the fast decrease of the LJ function at the beginning that is better reconstructed with the $1/r$ terms for larger $n_\textrm{max}$.
+%We further see that an orthogonal basis can be 
+%The basis coefficient can be made orthogonormal by the Löwden normalization\cite{PIELA2014e99} so obtain the basis coefficient by solving Eq.~\ref{eq:information_capacity} using least squares. 
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{fig/convergence_results-grid500.pdf}
+    \caption{Comparison of the effect of radial scaling terms on the basis reconstruction for the LJ potential with the parameters $\epsilon_\textrm{LJ}=1.0$, $\sigma_\textrm{LJ}=1.1$ on the interval [1.05, 3.0]. A radial scaling in form of a global factor and in the smearing of the Gaussian $\sigma$ are compared.}
+    \label{fig:radial-scaling}
+    % TODO maybe plot basis and LJ potential
+\end{figure}
+Due to the duality expressed in Eq.~\ref{TODO} the reconstruction error is a reformulation of the mean-squared linear regression error of the energy determined by the defined LJ potential assuming uniform sampling.
+Numerous cases of interest however do not have a clear functional form as the LJ potential (e.g. neural network representations) such that this approach becomes unapplicable.
+%Furthermore Often the intervals of interest are not easy expressable.
+Furthermore, in the case of the LJ potential we purposefully did not include the range close to $0$ as the target function explodes and a reconstruction error would be dominated by that range providing not much insight.
+For higher-body orders the control of the intervals of interest becomes more complicated to embedd in the analysis.
+In the next section we show an approach to tackle these problems.
+
+%with the embedding of radial dependent on the $\sigma$ term for a LJ potential.
+%verify the effect of the redial scaling on LJ potential.
+%For th
+%\papercomment{We can also compare GTO and shifted Gaussian for LJ potential of dimers and should see that GTOs work better. Here we use numerical integration}
+%\papercomment{We can also compare GTO and and shifted Gaussian for LJ potential of dimers and should see that GTOs work better. Here we use numerical integration}
+
+\section{Formulation as optimization problem}
+%Furthermore, even if a functional form exists for high order functions (see Eq.~\ref{eq:integration_over_subgroup_higher_order}) such that a numerical integration becomes costly for higher-orders due to the polynomial cost of the integration wrt. the dimension of the integration space.
+%But even for order $2$ a numerical integration is costly when conducted over a large dataset.
+To address the problems discussed in the last section we reformulate the integration problem into an optimization problem that can be solved more efficiently.
+%with a scaling wrt. the number of basis functions
+%\begin{equation}
+%  \mathbf{c}\mathbf{B} = \mathbf{f},
+%  n, n x infty = infty (infty theoretical speaking)
+%  min_c \|\mathbf{f} - \mathbf{c}\mathbf{B}\| = loss
+%\end{equation}
+\begin{equation}
+  \label{eq:reconstruction_error_basis}
+  %\ell(\{c_nb_n\}^M_{n=1}, \{c^\prime_kb^\prime_k\}^M_{n=1}) = \| T(\{c_nb_n(r)\}_{n=1}^N) - c_kb_k^\prime(r)\|^2
+  \ell(\{c_nb_n\}^M_{n=1}, \{c^\prime_kb^\prime_k\}^M_{n=1}) = \int_D\mathrm{d}\mathbf{q}
+  \|\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2,\quad \mathbf{c},\mathbf{b}\in\mathbb{R}^{n_\textrm{max}}, \mathbf{T}\in\mathbb{R}^{n_\textrm{max}\times n^\prime_\textrm{max}}
+\end{equation}
+Assuming an orthonormal basis we obtain
+\begin{equation}
+  \label{eq:reconstruction_error_basis_coefficients}
+  %\ell(\{c_nb_n\}^M_{n=1}, \{c^\prime_kb^\prime_k\}^M_{n=1}) = \| T(\{c_nb_n(r)\}_{n=1}^N) - c_kb_k^\prime(r)\|^2
+  \ell(\{c_nb_n\}^M_{n=1}, \{c^\prime_kb^\prime_k\}^M_{n=1}) = \int_D\mathrm{d}\mathbf{q}
+  \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2
+\end{equation}
+Assuming orthogonormality can be a restrictive assumption.
+We can see the dependency on the orthonormalization matrix $\mathbf{S}^{-\frac12}$ on the target features
+\begin{subequations}
+\begin{align}
+  \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{S}^{-\frac12}\mathbf{c}^\prime_\mathbf{q}\|^2 
+  \leq \|\mathbf{S}^{-\frac12}\|^2 \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2.
+  %  &= \min_\mathbf{T} \|\mathbf{S}^{\frac12}\mathbf{S}^{-\frac12}\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\
+  %  &= \min_\mathbf{T} \|\mathbf{S}^{-\frac12}\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\
+  %  &= \min_{\mathbf{T}} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 
+%   = \min_\mathbf{T} \|\mathbf{U}^T\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\ %global unitary transformation is norm preserving
+%   = \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \tilde{\mathbf{c}}^\prime_\mathbf{q}\|^2 \\
+%  %\ell(\{c_nb_n\}^M_{n=1}, \{c^\prime_kb^\prime_k\}^M_{n=1}) = \| T(\{c_nb_n(r)\}_{n=1}^N) - c_kb_k^\prime(r)\|^2
+%\|\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2
+%= \|\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{U}\mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2,
+%= \|\mathbf{U}^T\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2,
+%\tilde{c}_k\tilde{b}_k = (\sum_{i} U_{ki}c_{i})(\sum_{i} U_{ki}b_{i}(\mathbf{q})) = (\sum_{ij} U_{ki}U_{kj}c_{i}b_{j}(\mathbf{q}))
+\end{align}
+\end{subequations}
+This expresses just the general dependency of the error on linear transformations of the target function when no full reconstruction is possible.
+Assume a reconstruction of $\{(1, 0)_1, (0, 1)_2\}$ by coefficients $\{(1, 0)_1, (1, 0)_2\}$.
+By introducing a linear transformation to the targeted coefficients, the error can be made arbitrary large.
+This is crucial since it limits the insights we can get about the feature relationship, since a full rank linear transformation of the features does not reduce regression performance, but vice-versa the reconstruction error.
+For analysis that still can be related the meaning of Eq.~\ref{eq:reconstruction_error_basis} we therefore have to use an orthonormal basis for the target features.
+In this case a full rank orthonormality matrix can be absorbed by the linear transformation so we have equivalance to the orthonormal coefficients
+\begin{subequations}
+\begin{align}
+  \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2.
+    = \min_\mathbf{T} \|\mathbf{T}\mathbf{S}^{-\frac12}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2,
+  %  &= \min_\mathbf{T} \|\mathbf{S}^{\frac12}\mathbf{S}^{-\frac12}\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\
+  %  &= \min_\mathbf{T} \|\mathbf{S}^{-\frac12}\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\
+  %  &= \min_{\mathbf{T}} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 
+%   = \min_\mathbf{T} \|\mathbf{U}^T\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\ %global unitary transformation is norm preserving
+%   = \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \tilde{\mathbf{c}}^\prime_\mathbf{q}\|^2 \\
+%  %\ell(\{c_nb_n\}^M_{n=1}, \{c^\prime_kb^\prime_k\}^M_{n=1}) = \| T(\{c_nb_n(r)\}_{n=1}^N) - c_kb_k^\prime(r)\|^2
+%\|\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2
+%= \|\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{U}\mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2,
+%= \|\mathbf{U}^T\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2,
+%\tilde{c}_k\tilde{b}_k = (\sum_{i} U_{ki}c_{i})(\sum_{i} U_{ki}b_{i}(\mathbf{q})) = (\sum_{ij} U_{ki}U_{kj}c_{i}b_{j}(\mathbf{q}))
+\end{align}
+\end{subequations}
+so we only constrain the targeted feature space to be orthonormal if we want to retrieve Eq.~\ref{eq:reconstruction_error_basis}.
+On the other hand reconstruction of a nonorthonormal basis can still be justified by the fact that until the limit of convergence is not reached even a full rank linear transformations affects the regularization and thus also effects the regression performance.
+%Furthemore, even in the limit of convergence when comparing NN features, we can argue that the optimizers find similar local minimas with a similar $\|S\|$ factor %TODO for that argument I would need to dig into literature and change also the equation (find an equality relationship)
+
+%Instead of optimizing for the target function we optimize on a generic expansion. 
+%Similarly to the fact that we do not know in cases of interest the target function, we do not know if the basis expansion is orthonormal.
+%However, as orthonormalization is just a full rank linear transformation, we can assume it can be absorbed by $\mathbf{T}$.
+%\begin{subequations}
+%\begin{align}
+%  \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{S}^{-\frac12}\mathbf{c}^\prime_\mathbf{q}\|^2 
+%  \leq \|\mathbf{S}^{-\frac12}\|^2 \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 
+%  %  &= \min_\mathbf{T} \|\mathbf{S}^{\frac12}\mathbf{S}^{-\frac12}\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\
+%  %  &= \min_\mathbf{T} \|\mathbf{S}^{-\frac12}\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\
+%  %  &= \min_{\mathbf{T}} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 
+%%   = \min_\mathbf{T} \|\mathbf{U}^T\mathbf{T}\mathbf{c}_\mathbf{q} - \mathbf{c}^\prime_\mathbf{q}\|^2 \\ %global unitary transformation is norm preserving
+%%   = \min_\mathbf{T} \|\mathbf{T}\mathbf{c}_\mathbf{q} - \tilde{\mathbf{c}}^\prime_\mathbf{q}\|^2 \\
+%%  %\ell(\{c_nb_n\}^M_{n=1}, \{c^\prime_kb^\prime_k\}^M_{n=1}) = \| T(\{c_nb_n(r)\}_{n=1}^N) - c_kb_k^\prime(r)\|^2
+%%\|\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2
+%%= \|\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{U}\mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2,
+%%= \|\mathbf{U}^T\mathbf{T}(\mathbf{c}_\mathbf{q}\odot\mathbf{b}(\mathbf{q})) - \mathbf{c}^\prime_\mathbf{q}\odot\mathbf{b}^\prime(\mathbf{q})\|^2,
+%%\tilde{c}_k\tilde{b}_k = (\sum_{i} U_{ki}c_{i})(\sum_{i} U_{ki}b_{i}(\mathbf{q})) = (\sum_{ij} U_{ki}U_{kj}c_{i}b_{j}(\mathbf{q}))
+%\end{align}
+%\end{subequations}
+% loss is the same for orthogonormal coefficients 
+%\mathbf{c}_\mathbf{q}
+%TODO problem if \mathbf{b}^\prime(\mathbf{q}) not orthogonal
+
+%For a normalized basis functions such a transformation implies an upper bound on the dataset for any linear relationship that can be build with the targeted feature space
+%\begin{equation}
+%  \label{eq:transformation}
+%  \sum_{n=1}^M \|\sum_k T(c_kb_k) - y \|^2 \leq ...
+%\end{equation}
+%We therefore can make a more general statement about any target functions wrt. to a transformation relating the targeted feature space to $y$ for a dataset. 
+%therefore focus on the development of error measurements as in Eq.~\ref{eq:information_capacity} that provide quantative results for the information capacity of feature spaces and that are efficient to compute.
+%a numerical integration in the high-order space is also not feasible
+%the density for Sec.~\ref{eq:radial_angular_density} 
+%\begin{equation}
+%  \ell(\{c_kb_k\}^M_{k=1}, f) = \int_V\mathrm{d}\mathbf{q}\, \|\sum_{k=1}^M c_kb_k(\mathbf{q}) - f(\mathbf{q})\|.
+%\end{equation}
+%We can now evaluate the expression for existing datasets, but we can also assume a distribution of $r_{ji}$ 
+
+%Another approach that can also provide more insights into the interdependency between represenations is to express the convergence rate
+% orthonormalized basis we can compare the function approximation error of the
+%original basis by
+%for the presented basis.
+%We can see the results in Figure \papercomment{TODO} that the quality of the GTO
+%\papercomment{
+%Compare here DVR, GTO, Bartok on some example function
+%}
+%surpasses all the mentioned basis functions. 
+%That is unsurprising since the GTO is modeled towards the central atomic density
+%approach.
+%The function approximation error however does not implicate that a similar trend
+%will be observed for property prediction error. \\
+%\papercomment{Use this to build up motivation for unusupervised metrics as GFRE, since
+%we need to run this on a grid and this does not work in high dimensional space.}
+%
+%% ---
+%
+%More formally speaking, a set of basis functions with the best convergence behavior
+%wrt. to some error measure.
+%\begin{equation}
+%\ell(\{c_n\}_n, \{b_n\}_n, f)
+%\end{equation}
+%In the QSAR case we would target the L2-norm prediction error of the property.
+%\begin{equation}
+%\ell(\{c_n\}_n, \{b_n\}_n, f) = \int\mathrm{d}\mathbf{r}\, \|\tilde{g}(\sum_n c_nb_n(\mathbf{r})) - g(f(\mathbf{r}))\|
+%\end{equation}
+%\papercomment{a bit to abstract at the moment}
+%
+%\papercomment{
+%\begin{itemize}
+%  \item quality of basis function depends on function to represent
+%\end{itemize}
+%}
+
+%In order to compare two separate sets of features, one can employ regression errors to quantify the mutual relationships of different forms of featurizations. %, as demonstrated in \cite{Goscinski2021}.
+%We determine this error, or the feature reconstruction measure (FRM), by reconstructing one set of features from the other with a constrained transformation, where different constraints express different types of relationships between the two sets of features.
+%
+%Say we have a dataset that is represented in full detail by a representation \Ftrue, and we want to assess the amount of information lost by using an alternate representation \Fone. We can check the detail contained in \Fone~by computing FRM(\Fone, \Ftrue), where $\text{FRM} = 0$ corresponds to a perfect reconstruction with no loss, and $\text{FRM} \approx 1$ denotes a complete information loss wrt. \Ftrue. 
+%However, there rarely exists a ground-truth representation \Ftrue\, and we are more commonly comparing two likely-imperfect representations \Fone\ and \Ftwo. In this case, we compute FRM(\Fone, \Ftwo) and FRM(\Ftwo, \Fone). The feature set that results in the higher reconstructive measure is considered higher in information capacity (e.g.~if FRM(\Fone, \Ftwo) $>$ FRM(\Ftwo, \Fone), then \Fone\ is the more information-rich feature set). The advantage of the FRM is that it can give quantitative results about the shared information content between two sets of features, even without the existence of a ground truth.
+%
+%In Figure \ref{fig:frm} we show a schematic of the different FRMs. 
+%The simplest FRM is the global feature reconstruction error (GFRE), expressed as the linearly decodable information, as given by performing ridge regression between the two sets of features.
+%We note that in the case of choosing the property as ground truth, the GFRE is equivalent to a regression task on the standardized property.
+%The global feature reconstruction distortion (GFRD) constrains the transformation to be orthogonal to demonstrate the deformation incurred by transforming between the two feature spaces.
+%
+%Extending the analysis to non-linear dependencies, the local feature reconstruction error (LFRE) applies ridge regression for each point locally on the $k$-nearest neighbours.
+%These methods are of particular use in assessing the hyperparameters of ML descriptors\cite{goscinski2021role} and have been employed to compare the efficiency of different basis sets in encoding geometrical information\cite{musil2021physics, goscinski2021optimal}.
+
+In the following sections we show error measures based on the loss in Eq.~\ref{eq:reconstruction_error_basis_coefficients} that constraint the transformation $\mathbf{T}$ to provide different insights to the feature-relationship.
+In Figure~\ref{fig:frm} a schematic of the different types of transformations $T$ that are covered in the upcoming sections.
+These methods are of particular use in assessing the hyperparameters of ML descriptors\cite{goscinski2021role} and have been employed to compare the efficiency of different basis sets in encoding geometrical information\cite{musil2021physics, goscinski2021optimal}.
+
+\begin{figure*}
+\includegraphics[width=\linewidth]{fig/frm.pdf}
+% Titles and legends: Each figure or table should have a concise title of no more than 15 words. A legend for each figure and table should also be provided that briefly describes the key points and explains any symbols and abbreviations used. The legend should be sufficiently detailed so that the figure or table can stand alone from the main text.
+\caption{\textbf{The different forms of feature reconstructions}
+to assess two feature spaces (blue and pink) describing the same dataset. Here, we are reconstructing the curved manifold (blue) using the planar manifold (pink), as it is often the case to approximate a complex manifold with a simpler alternative. The area framed by the dotted line is an example of a local neighbourhood of one sample (the pink dot) that enables the reconstruction of nonlinearities. (Top) The linear transformation is used in the global feature reconstruction error (GFRE). (Middle) The orthogonal transformation is used in the global feature reconstruction distortion (GFRD). (Bottom) A local linear transformation of a neighbourhood is used in local feature reconstruction error (LFRE). On the right, the reconstructions of the manifold are drawn in pink together with the curved manifold in blue. The measures correspond to the root-mean-square difference between the reconstructed and curved manifold.
+}\label{fig:frm}
+\end{figure*}
+
+
+\section{Linear decodable information}
+The FRMs differ in two aspects: the locality of the reconstruction (global or local) and the constraints of the regression. In each FRM, the two feature sets are partitioned into training and testing sets. We standardise the features of \Fone~and \Ftwo~ individually, then we regress the features of \Fone~onto \Ftwo~ to compute the errors. In the global measures, we use the entire dataset for the reconstruction, whereas in the local measure, we perform a regression for each sample on the set of the $k$-nearest points within \Fone. The number $k$ is given by the user with the parameter \texttt{n\_local\_points}. The \emph{reconstruction error} is by default computed using a 2-fold cross-validation (CV) and ridge regression as estimator. 
+
+As most interesting applications use large feature vectors, we implemented a custom 2-fold ridge to improve computational efficiency.
+In \texttt{slearn}, an implementation of the leave-one-out CV with a similar purpose of speeding up the CV exists.
+\papercomment{Put here some results on the comparison contained in the examples of skmatter}
+%For the reconstruction \emph{distortion} we use orthogonal regression as implemented in \texttt{OrthogonalRegression} in the \texttt{\skmatshort.linear\_model} module.
+
+As a simple, easily-interpretable measure of the relative expressive power of $\CF$ and $\CF^\prime$, we introduce the global feature space reconstruction error $\GFRE^\CD(\CF,\CF^\prime)$, defined as the mean-square error that one incurs when using the feature matrix $\bX_\CF$ to linearly regress $\bX_{\CF^\prime}$. 
+In this work we compute the $\GFRE$ by a 2-fold split of the dataset, i.e. compute the regression weights $\bP{\CF}{\CF^\prime}$ over a train set $\CDtr$ composed of half the entries in $\CD$,
+\begin{equation}
+\begin{split}
+\bP{\CF}{\CF^\prime}= &
+\operatorname{argmin} \bP{}{}\in\BR^{\nf_{\CF}\times\nf_{\CF^\prime}}
+\norm{\bX^{\CDtr}_{\CF^\prime} - \bX^{\CDtr}_{\CF} \bP{}{}  }\\
+=&\left({\bX_{\CF}^{\CDtr}}^T \bX_{\CF}^{\CDtr}\right)^{-1}
+(\bX_{\CF}^{\CDtr})^T\bX_{\CF^\prime}^{\CDtr}
+\end{split}\label{eq:proj-ff1}
+\end{equation}
+and then compute the error over the remaining test set $\CDte$
+\begin{equation}
+\GFRE^\CD(\CF,\CF^\prime) = \sqrt{{\norm{\bX^{\CDte}_{\CF^\prime} - \bX^{\CDte}_{\CF} \bP{\CF}{\CF^\prime}  }^2}/\ns_\test},
+\label{eq:GFRE}
+\end{equation}
+averaging, if needed, over multiple random splits.  The $\GFRE$ is a positive quantity, which is equal to zero when there is no error in the reconstruction, and that is usually bound by one\footnote{This is due to the fact that feature matrices are standardized, and so $\norm{\bX^{\CDte}_{\CF^\prime}}/\ns_\test $ is of the order of one}.
+
+Notice that by expressing the basis and target functions on a radial grid basis we retrieve the numerical integration loss in Eq.~\ref{TODO}.
+The minimization problem is moved from an optimization of $\mathbf{c}$ to an optimization of $\mathbf{W}$.
+%to solving for $M\times n_\textrm{grid}$.% matrix retrieving the expansion coefficients.
+While the former requires to solve the loss for each datapoint the later only needs one the whole dataset.
+As solving the minimization problem has worst scaling behavior in the computation of the loss, the later approach is typically more efficient to compute.
+%an$c_k$ changes for datapoint and $M\times n_\textrm{grid}$ is constant over samples.
+%In the limit of number basis function for $f$, thus we obtain a similar loss as the numerical integration in Eq.~\ref{TODO} where target function is evaluated on some grid to compute the integral.
+
+For numbers of features larger than $\ns_\train$, the covariance matrix is not full rank, and one needs to compute a pseudoinverse. Without loss of generality, one can regularize the regression to stabilize the calculation. In this paper, we computed the pseudoinverse by means of a singular value decomposition, and we determined the optimal regularization in terms of the truncation of the singular value spectrum, using 2-fold cross-validation over the training set to determine the optimal truncation threshold. Often, it is also useful to observe the behavior of the $\GFRE$ in the absence of any regularization: overfitting is in itself a signal of the instability of the mapping between feature spaces.
+In general, $\GFRE^\CD(\CF,\CF^\prime)$ is not symmetric. If $\GFRE^\CD(\CF,\CF^\prime)\approx\GFRE^\CD(\CF^\prime,\CF)\approx 0$, $\CF$ and $\CF^\prime$ contain similar types of information; if $\GFRE^\CD(\CF,\CF^\prime)\approx 0$, while $\GFRE^\CD(\CF^\prime,\CF)>0$, one can say that $\CF$ is more descriptive than $\CF^\prime$: this is the case, for instance, one would observe if $\CF^\prime$ consists of a sparse version of $\CF$, with some important and linearly-independent features removed; finally, if  $\GFRE^\CD(\CF,\CF^\prime)\approx\GFRE^\CD(\CF^\prime,\CF)>0$, the two feature spaces contain different, and complementary, kinds of information and it may be beneficial to combine them to achieve a more thorough description of the problem.
+
+\subsection{Effficient cross-validation ridge for high-dimensional feature space}
+
+In linear regression, the complexity of computing the weight matrix is
+theoretically bounded by the inversion of the covariance matrix.  This is
+more costly when conducting regularized regression, wherein we need to
+optimise the regularization parameter in a cross-validation (CV) scheme,
+thereby recomputing the inverse for each parameter.  scikit-learn offers an
+efficient leave-one-out CV (LOO CV) for its ridge regression which avoids
+these repeated computations \cite{loocv}. Because we needed an efficient ridge that works
+in predicting  for the reconstruction measures in  metric
+we implemented in \texttt{skmatter} an efficient 2-fold CV ridge regression that uses a singular value decomposition
+(SVD) to reuse it for all regularization parameters $\lambda$. Assuming
+we have the standard regression problem optimizing the weight matrix in
+ 
+\begin{align}
+  \|\mathbf{X}\mathbf{W} - \mathbf{Y}\|
+\end{align}
+ 
+Here $\mathbf{Y}$ can be seen also a matrix as it is in the case of
+multi target learning. Then in 2-fold cross validation we would predict first
+the targets of fold 2 using fold 1 to estimate the weight matrix and vice
+versa. Using SVD the scheme estimation on fold 1 looks like this.
+                                                                                      
+\begin{align}
+    &\mathbf{X}_1 = \mathbf{U}_1\mathbf{S}_1\mathbf{V}_1^T,
+          \qquad\qquad\qquad\quad
+          \textrm{feature matrix }\mathbf{X}\textrm{ for fold 1} \\
+    &\mathbf{W}_1(\lambda) = \mathbf{V}_1
+           \tilde{\mathbf{S}}_1(\lambda)^{-1} \mathbf{U}_1^T \mathbf{Y}_1,
+           \qquad
+           \textrm{weight matrix fitted on fold 1}\\
+    &\tilde{\mathbf{Y}}_2 = \mathbf{X}_2 \mathbf{W}_1,
+           \qquad\qquad\qquad\qquad
+           \textrm{ prediction of }\mathbf{Y}\textrm{ for fold 2}
+\end{align}
+
+The efficient 2-fold scheme in `Ridge2FoldCV` reuses the matrices
+                                                                                      
+\begin{align}
+    &\mathbf{A}_1 = \mathbf{X}_2 \mathbf{V}_1, \quad
+     \mathbf{B}_1 = \mathbf{U}_1^T \mathbf{Y}_1.
+\end{align}
+                                                                                      
+for each fold to not recompute the SVD. The computational complexity
+after the initial SVD is thereby reduced to that of matrix multiplications.
+
+We can see that Leave-one-out CV is estimating the error wrong for low
+alpha values. That seems to be a numerical instability of the method. If we
+would have limit our alphas to 1E-5, then LOO CV would have reach similar
+accuracies as the 2-fold method.
+
+We note that this is not an fully encompasing comparison
+covering sufficient enough the parameter space. We just want to note that in
+cases with high feature size and low effective rank the ridge solvers in
+skmatter can be numerical more stable and act on a comparable speed.
+                                                                              
+
+\subsubsection{Cutoff and Tikhonov regularization}
+When using a hard threshold as regularization (using parameter ``cutoff``),
+the singular values below $\lambda$ are cut off, the size of the
+matrices $\mathbf{A}_1$ and $\mathbf{B}_1$ can then be reduced,
+resulting in further computation time savings.  This performance advantage of
+\emph{cutoff} over the \emph{Tikhonov} is visible if we to predict multiple targets
+and use a regularization range that cuts off a lot of singular values. For
+that we increase the feature size and use as regression task the prediction
+of a shuffled version of $\mathbf{X}$.
+
+
+We can see that a regularization value of 1e-8 cuts off a lot of singular
+values. This is crucial for the computational speed up of the
+\emph{cutoff regularization method}
+
+\subsection{Example: Wasserstein distance}
+As an example of the transformation induced by a non-Euclidean metric we consider the effect of using a Wasserstein distance to compare $\nu=1$ density correlation features. 
+The Wasserstein distance (also known as the Earth Mover Distance, EMD) is defined as the minimum  ``work'' that is needed to transform one probability distribution into another -- with the work defined as the amount of probability density multiplied by the extent of the displacement~\cite{vall74siam,cohe-guib97report,cutu07proc}.
+The EMD has been used to define a ``regularized entropy match'' kernel to combine local features into a comparison between structures~\cite{de+16pccp}, to obtain permutation-invariant kernels based on Coulomb matrices\cite{ccaylak2020wasserstein}, and  has been shown to be equivalent to the Euclidean distance between vectors of sorted distances~\cite{will+19jcp}.
+Here we use the Wasserstein distance to compare two-body ($\nu=1$) features, that can be expressed on a real-space basis and take the form of one-dimensional probability distributions. 
+% MC  this looks like an entirely general definition >> More formally, for an atomic environment with cutoff $r_c$, we can define the $\nu$-body 
+
+The formal definition of the Wasserstein distance of order 2 between two probability distributions $p(r)$ and $p'(r)$ defined on a domain $M$ reads
+\begin{equation}
+W(p,p')^2 = \hspace{-1em}\inf_{\gamma\in\Gamma (p,p')} \int_{M\times M}\hspace{-0.5em}d(r,r')^2\,\mathrm{d}\gamma(r,r'),
+%W_2(p_{\mathcal{X}_i},p_{\mathcal{X}_j})^2 = \hspace{-1em}\inf_{\gamma\in\Gamma (p_{\mathcal{X}_i},p_{\mathcal{X}_j})} \int_{M\times M}\hspace{-0.5em}d(r,r')^2\,\mathrm{d}\gamma(r,r'),
+%
+%W_2(p_{\mathcal{X}^{(\nu)}_i},p_{\mathcal{X}^{(\nu)}_j})^2 = \hspace{-1em}\inf_{\gamma\in\Gamma (p_{\mathcal{X}_i^{(\nu)}},p_{\mathcal{X}_j^{(\nu)}})} \int_{M^{\nu}\times M^{\nu}}\hspace{-2.5em}d(r,r')^2\,\mathrm{d}\gamma(r,r'), Adding many body order makes it too cluttered
+%\mathcal{X}_i = \int_{M^{\nu}} \gamma(x,x')\,\mathrm{d}x I would not write this out because \mathcal{X} is not a probability distribution without any transformation, this way we keep the definition of \Gamma open
+\end{equation}
+where $\Gamma(p,p')$ is the set of all joint distributions with marginals $p$ and $p'$.
+For 1-dimensional distributions, $W(p,p')$ can be expressed as the 2-norm of the difference between the associated inverse cumulative distribution function (ICDF) $P^{-1}$ of two environments,
+$W(p,p')^2=\int_0^1  \left|P^{-1}(s) -{P'}^{-1}(s)\right|^2\D{s}$, with $P(r)=\int_0^r p(r)\D{r}$ 
+
+In order to express the symmetrized 2-body correlation function as a probability density, we first write it on a real-space basis $\rep<r|$, and evaluate it on 200 Gaussian quadrature points, that we also use to evaluate the CDF and its inverse. 
+We then proceed to normalize it, so that it can be interpreted as a probability density.
+We estimate the integral of the distribution (that effectively counts the number of atoms within the cutoff distance) 
+\begin{equation}
+Z_i = \int_0^{r_c}\rep< r||A;\frho_i^1>\,\mathrm{d}r,
+\end{equation}
+and the maximum value of the integral over the entire dataset $Z_\CD$.
+A simple scaling of the correlation function 
+\begin{equation}
+p_i^{\text{s}}(r) = \frac1{Z_i} \rep< r||A;\frho_i^1>\label{eq:wass-pis}
+\end{equation}
+distorts the comparison between environments with different numbers of atoms.
+To see how, we use the \emph{displaced methane} dataset, in which three atoms in a $\textrm{CH4}$ molecule are held fixed in the ideal tetrahedral geometry, at a distance of 1\AA{} from the carbon centre. The fourth atom, aligned along the $z$ axis, is displaced along it, so that each configuration is parameterised by a single coordinate $\zh$.
+Figure~\ref{fig:wasserstein-distances}(a) shows the distance computed between pairs of configurations with different $\zh$,  demonstrating the problem with the renormalized probability~\eqref{eq:wass-pis}: $p^{\text{s}}$ loses information on the total number of atoms within the cutoff, and so once the tagged atom moves beyond $r_\text{c}$ the remaining \ce{CH3} environment becomes indistinguishable from an ideal \ce{CH4} geometry. 
+
+One can obtain a more physical behavior when atoms enter and leave the cutoff by introducing a $\delta$-like ``sink'' at the cutoff distance, defining
+\begin{equation}
+p^{\delta}_i(r) = \frac{1}{Z_\CD}\left[\rep< r||\mathcal{A};\frho_i^1> + (Z_\CD-Z_i)\delta(r-r_c)\right].
+\end{equation}
+Fig.~\ref{fig:wasserstein-distances}b shows that with this choice the Wasserstein metric between $p_i^\delta(r)$ reflects the distance between the moving atoms. With this normalization, in fact, the Wasserstein metric corresponds to a smooth version of the Euclidean metric computed between vectors of sorted interatomic distances~\cite{will+19jcp}, shown in Fig.~\ref{fig:wasserstein-distances}c. 
+The distortions that can be seen in the comparison between Fig.~\ref{fig:wasserstein-distances}b,c are a consequence of the Gaussian smearing, the smooth cutoff function, and the $\SOthree$ integration that modulates the contribution to $\rep< r||\mathcal{A};\frho_i^1>$ coming from atoms at different distances.
+
+Having defined a meaningful normalization and a probabilistic interpretation of the radial density correlation features, we can investigate how the feature space induced by a Wasserstein metric relates to that induced by an Euclidean distance. 
+Figure~\ref{fig:wasserstein-grid} shows the error in the reconstruction of $\zh$ for the \emph{displaced methane} dataset when restricting the training set to 0.05\AA{} and 1.0\AA{} spaced grids.
+Using a Euclidean distance with a sharp $\sigmag$ leads to a highly non-linear mapping between the displacement coordinate and feature space, and a linear model cannot interpolate accurately between the points of a sparse grid. 
+A Wasserstein metric, on the other hand, measures the minimal distortion needed to transform one structure into another, and so provides a much more natural interpolation along $\zh$, which is robust even with a sharp density and large spacing between training samples. 
+It is worth stressing that the sorted distance metric -- which effectively corresponds to the $\delta$ density limit of the Wasserstein metric -- performs rather poorly, and cannot even reproduce the training points.
+This is because the mapping between feature space and $\zh$ is not exactly linear, changing slope when $\zh$ crosses 1\AA{} (because the sorting of the vector changes)  and 4\AA{} (because one atom exits the cutoff). The sorted-distances feature space does not have sufficient flexibility to regress this piecewise linear map, as opposed to its smooth Wasserstein counterpart.
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{fig/distance_comparison-delta_wasserstein-carbon-inkscaped.pdf}
+\caption{Comparison of GFRE and GFRD for the \emph{carbon} dataset, using sharp ($\sigmag=0.1$\AA{}) and smooth ($\sigmag=0.5$\AA{}) radial SOAP features, as well as Euclidean (E) and Wasserstein (W) metrics.}
+\label{fig:wasserstein-carbon}
+\end{figure}
+
+Having rationalized the behavior of the Wasserstein metric for a toy model, we can test how it compares to the conventional Euclidean metric on a more realistic data set. We consider in particular the AIRSS \emph{carbon} data set, and compare different levels of density smearing as well as Euclidean and Wasserstein metrics. 
+Figure~\ref{fig:wasserstein-carbon} paints a rather nuanced picture of the relationship between the linear and the Wasserstein-induced feature spaces. 
+The GFRE is non-zero in both directions, meaning that (in a linear sense) Wassertein and Euclidean features provide complementary types of information. 
+Smearing of the density has a small effect on the Wasserstein metric, so that both $\GFRE(W(\sigmag=0.1\text{\AA}),W(\sigmag=0.5\text{\AA}))$ and $\GFRD(W(\sigmag=0.1\text{\AA}),W(\sigmag=0.5\text{\AA}))$ are small, whereas for Euclidean features -- as observed in Section~\ref{sub:hypers} -- changing $\sigmag$ induces small information loss, but a large distortion of feature space. 
+Overall, there is no sign of the pathological behavior seen in Fig.~\ref{fig:wasserstein-grid}, which is an indication that (at least for 2-body features) the \emph{carbon} dataset is sufficiently dense, and that the better interpolative behavior of the EMD does not lead to a more informative feature space. 
+
+\subsection{Example: Comparison of bispectrum and message-passing}
+\papercomment{Put in Jigyasa's work where the GFRE was used to compare MP with 3-body.}
+
+\section{Distortion in linear transformations}
+The feature space reconstruction error gives insights into whether a feature space can be inferred by knowledge of a second one. However, having both a small $\GFRE^\CD(\CF,\CF^\prime)$ and $\GFRE^\CD(\CF^\prime,\CF)$ does not imply two feature spaces are identical. Even though they contain similar amounts of information, one feature space could give more emphasis to some features compared to the other, which can eventually result in different performance when building a model.
+To assess the amount of distortion of $\CF^\prime$ relative to $\CF$, we introduce the global feature space reconstruction distortion $\GFRD^\CD(\CF,\CF^\prime)$.
+To evaluate it, we first compute the singular value decomposition of the projector Eq.~\eqref{eq:proj-ff1}, $\bP{\CF}{\CF^\prime}\approx\bU \bSIG \bV^T$, and then use it to reduce the two feature spaces to a common basis, in which the reconstruction error is zero, because the residual has been discarded
+\begin{equation}
+\bXt_{\CF} = \bX_{\CF}\bU \quad  \bXt_{\CF^\prime} = \bXt_{\CF} \bSIG.
+\end{equation}
+When the second feature space $\CF^\prime$ has a lower dimensionality than $\CF$, some combinations of the starting features are not used to compute $\tilde{\CF}^\prime$. 
+In this case, we pad $\bSIG$ with zeros, so that $\tilde{\CF}^\prime$ has the same dimensionality $\nf_{\CF}$ as the starting space. This choice ensures that the GFRD takes the same value it would have in the case $\CF^\prime$ had the same dimensionality as $\CF$, but lower rank. 
+In the opposite case, with $\nf_{\CF}<\nf_{\CF}^\prime$, padding $\bSIG$ and $\bU$ with zeros, or truncating $\bV$, yields the same $\GFRD$.
+
+We can then address the question of whether $\bXt_{\CF}$ and $\bXt_{\CF^\prime}$ are linked by a unitary transformation (in which case the $\GFRD$ should be zero), or there is a distortion involved.
+A possible answer involves solving the orthogonal Procrustes problem~\cite{scho66pm} -- i.e. finding the orthogonal transformation that ``aligns'' as well as possible $\bXt_{\CF}$ to $\bXt_{\CF^\prime}$:
+\begin{equation}
+\begin{split}
+\bQ{\CF}{\CF^\prime} =& \operatorname{argmin}\bQ{}{} \in \mathbb{U}^{\nf\times\nf}
+\norm{\bXt^{\CDtr}_{\CF^\prime} - \bXt^{\CDtr}_{\CF} \bQ{}{}  }\\
+=&\tilde{\bU}\tilde{\bV}^T,
+\end{split}\label{eq:proc-ff1}
+\end{equation}
+where $\tilde{\bU}\tilde{\bSIG}\tilde{\bV}^T = (\bXt_{\CF}^{\CDtr})^T \bXt^{\CDtr}_{\CF^\prime}$ .
+The amount of distortion can then be computed by assessing the residual on the test set,
+\begin{equation}
+\GFRD^\CD(\CF,\CF^\prime) = \sqrt{{\norm{{\bXt}^{\CDte}_{\CF^\prime} - {\bXt}^{\CDte}_{\CF} \bQ{\CF}{\CF^\prime}  }^2}/\ns_\test}. \label{eq:GFRD}
+\end{equation}
+If desired, the error can be averaged over multiple random splits of the reference data set $\CD$.
+
+%\subsection{Effect of zero dimensions} TODO
+%\papercomment{Here I can embed the example from skmatter}
+
+\subsection{Example: Radial scaling}
+
+One of the most important hyperparameters when defining an atom-centred representation is the cutoff distance, which restricts the contributions to the density to the atoms with $r_{ji}<r_{\text{c}}$.
+Fig.~\ref{fig:soap-sigma-radial-body}(c,d) shows that the GFRE captures the loss of information associated with an aggressive truncation of the environment, with very similar behavior between GTO and DVR bases. 
+The figure also reflects specific features of the different data sets: for instance, $\GFRE(r_\text{c}=4\,\text{\AA},r_\text{c}=6\,\text{\AA})$ is close to zero for the random methane data set, because there are no structures where atoms are farther than $4\,$\AA{} from the centre of the environment. $\GFRE>0$ also when mapping long-cutoff features to short-range features, although the reconstruction error is much smaller than in the opposite direction. 
+This indicates the need for an increase in $\nmax$ to fully describe the structure of an environment when using a large value of $r_\text{c}$, which is consistent with the greater amount of information encoded within a larger environment.
+The GFRD plot also underscores the strong impact of the choice of $r_\text{c}$ on the emphasis that is given to different parts of the atom-density correlations. 
+This effect explains the strong dependency of regression performance on $r_\text{c}$, and the success of multi-scale models that combine features built on different lengthscales~\cite{bart+17sa}. 
+A similar modulation of the contributions from different radial distances can be achieved by scaling the neighbour contribution to the atom-centred density by a decaying function, e.g. $1/(1+(r_{ji}/r_0)^s)$. This approach has proven to be very effective in fine-tuning the performance of regression models using density-based features~\cite{fabe+17jctc,will+18pccp,paru+18ncomm}.
+As shown in Fig.~\ref{fig:soap-sigma-radial-body}(e,f), this is an example of a transformation of the feature space that entails essentially no information loss -- resulting in a very small GFRE between different values of the scaling exponent $s$. However, it does result in substantial $\GFRD$, providing additional evidence of how the emphasis given by a set of features to different inter-atomic correlations can affect regression performance even if it does not remove altogether pieces of structural information.
+
+%The effect of the radial scaling on the features is compared by multiplying the density~\eqref{eq:density} with $r^q$ where $q$ is the radial scaling exponent.
+%With higher distance between the radial scaling exponents the distortion between features is more significant, while the information is mostly preserves as seen in Fig.~\ref{fig:soap-sigma-radial-body}c),d).
+
+\begin{figure*}
+    \includegraphics[width=0.9\linewidth]{fig/sigma_radial_scaling_cutoff_comparison-gfrd-gto_dvr-methane_carbon-inkscaped-v2.pdf}
+    \caption{Comparison of the GFRE (top) and GFRD (bottom) a),b) for different smearing  $\sigma_G$ ($r_\text{c}=4\,$\AA{}) c),d) for different cutoff values ($\sigmag=0.5\,$\AA), and e),f) for different radial scaling exponents ($r_\text{c}=4\,$\AA{}, $\sigmag=0.5\,$\AA). For all comparisons $(\nmax,\lmax) = (10,6)$ were used. The feature specified by the row is used to reconstruct the feature specified by the column.}
+    \label{fig:soap-sigma-radial-body}
+\end{figure*}
+
+\section{Nonlinearity as local linearity}
+The limitation to linear transformations allows us to efficiently compute the loss over a dataset, but also restricts us from describing nonlinear relationships.
+A branch of models are based on NNs and apply nonlinearities to an initial representation to obain their final one.
+As these models are also often opaque in their learned representation, it is essential to develop a measure that can also work for nonlinearities.
+%Even higher-body orders are type of nonlinear nonlinearities is interesting to analyze
+
+In principle for the transformation $T$ in Eq.~\ref{eq:fre_transformationTODO} a neural network could be used that model nonlinearities.
+Neural networks are however usually only efficient in the prediction of a few target properties and not large number of features where convergence might be unfeasible.
+In addition NNs have a lot model parameters that need to be chosen (e.g. activation function, number of layers) making the loss highly dependent on the exact architecture which makes it hard to make general statements.
+
+In this Section we discuss ways to model nonlinearities the linearities and its limitations.
+We propose for future directions to restrict the type of nonlinearities carefully which still allows to answer certain research questions.
+%and are therefore unsuitable for such an application,
+%result would change 
+%give interpretable quantative measure. Incorperating
+
+\subsection{Local linear embedding}
+%A downside of the global feature comparison schemes introduced above is that the linear nature of the regression means that they cannot detect if $\CF$ and $\CF^\prime$ contain analogous information, but differ by a non-linear transformation.
+%In the next Section we discuss how one can generalize the schemes to use kernel features, that can also be used to detect non-linear relationships between the original feature spaces.
+%\newcommand{\CDki}{\CD_{k-\text{neigh}}^{(i)}}
+An alternative approach is to compute a local version of the feature space reconstruction error, $\LFRE^\CD(\CF,\CF^\prime)$, loosely inspired by locally-linear embedding~\cite{rowe-saul00science}. 
+To compute the LFRE, a local regression is set up, computed in the $k$-neighbourhood $\CDki$ around sample $i$  -- the set of $k$ nearest neighbours of sample $i$, based on the Euclidean distance between the samples in $\CF$ -- to reproduce the $\CF^\prime$ features using $\CF$ as input features, centred around their mean values $\bar{\bx}_{\CF^\prime}$ and $\bar{\bx}_{\CF}$.
+
+
+A local embedding of $\bx_i$ is determined as
+\begin{equation}
+\tilde{\bx}^\prime_i = \bar{\bx}_{\CF^\prime} + (\bx_i - \bar{\bx}_{\CF})\bP{\CF}{\CF^\prime}^{(i)},\label{eq:xtilde_lle}
+\end{equation}
+where $\bP{\CF}{\CF'}^{(i)}$ contains the regression weights computed from $\CDki$.
+The local feature space reconstruction error is given by the residual discrepancy between the $\CF^\prime$ counterpart of the $i$-th point and its local embedding~\eqref{eq:xtilde_lle}:
+\begin{equation}
+\LFRE^\CD(\CF,\CF^\prime) = \sqrt{\sum_i \norm{\bx^\prime_i - \tilde{\bx}^\prime_i}^2/{\ns_\test}}.
+\label{eq:LFRE}
+\end{equation}
+Inspecting the error associated with the reconstruction of individual points can reveal regions of feature space for which the mapping between $\CF$  and $\CF^\prime$ is particularly problematic. 
+Similarly, one can compute a local version of $\GFRD$, that could be useful to detect strong local distortions that might indicate the presence of a singularity in the mapping between two feature spaces.
+
+\subsubsection{Example - Degeneracies in 3-body features}
+The LFRE also makes it possible to identify regions of phase space for which the construction of a mapping between feature spaces is difficult or impossible. 
+Consider the case of the degenerate manifold discussed in Ref.~\citenum{pozd+20prl}. The dataset includes two sets of \ce{CH4} environments, and those parameterised by $v=0$ cannot be distinguished from each other using 3-body ($\nu=2$) features.
+Fig.~\ref{fig:soap_degenerated_manifold_lfre} shows the LFRE for each point along the two manifolds. When trying to reconstruct 3-body features using as inputs 4-body features (that take different values for the two manifolds) the LFRE is essentially zero. When using the 3-body features as inputs, instead, one observes a very large error for points along the degenerate line, while points that are farther along the manifold can be reconstructed well. This example demonstrates the use of the LFRE to identify regions of feature space for which a simple, low-body-order representation is insufficient to fully characterize the structure of an environment, and can be used as a more stringent, explicit test of the presence of degeneracies than the comparison of pointwise distances discussed in Ref.~\citenum{pozd+20prl}. 
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.42]{fig/lfre-body_order_comparison-nb_local_neighbours=15-degenerated_manifold.png}
+\caption{Pointwise LFRE for the structures from the degenerate methane dataset as a function of the structural coordinates $(u,v)$ for $(\nmax,\lmax) = (6,4)$ and $k=15$ neighbours.}
+    \label{fig:soap_degenerated_manifold_lfre}
+\end{figure}
+
+\subsection{Jacobian}
+For an atomic environment the rows of a Jacobian matrix correspond to the spatial directions of the atoms in the environment.
+A row describes the change of the features with respect to a change in the corresponding spatial direction of the atom.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{fig/jacobian.pdf}
+    \caption{Sketch of the Jacobian matrix of ACDC features for atomic environment $A_1$. The dashed circle represents the cutoff of the environment.}
+    \label{fig:jacobian}
+\end{figure}
+If we treat the Jacobian reconstruction as a classical linear learning problem, then these rows represent the sample dimension.
+The number of atoms within an environment is in reasonable settings very small.
+Due to this very small number of samples, the generalization error cannot be well approximated using cross-validation.
+%Adding atoms into an environment changes features intrinsically.
+%In the latter case we can deduct the regularization parameter by cross-validation.
+%In the local case, however, due to the low number of samples this procedure becomes statistically unreliable.
+%In principle with enough numerical precision the Jacobian reconstruction errors is always zero as long as the precision of the reconstruction is below the numerical noise of the calculation of the features.
+%In this cas
+%Nevertheless, we can still extract certain information from the reconstruction error of the Jacobian about the information capacity of the features.
+%The matrix captures the change of the represention under inifinitesmall changes of neighbouring atoms in one of the spatial direction.
+We therefore need a different method to determine a regularization term that can be seen as an estimation of the noise in the features.
+Rank deficiencies in the Jacobian matrix correspond to linearly dependent directions with the same change in features.
+Each symmetry embedded in the features results in a deficiency in the Jacobian matrix.
+In our setting there are three deficiencies due to translational symmetries and three due to rotational.
+Additional deficiencies exist due to structure-specific symmetries (see Fig.~\ref{fig:jacobian-symmetry}), or due to directions that the features cannot represent.
+\begin{figure}
+    \centering\includegraphics[width=0.8\textwidth]{fig/jacobian_rank_deficiencies}
+    \caption{Sketch of nontrivial rank deficiencies in the Jacobian matrix in case of nontrivial symmetries or singular degeneracies. Adapted from Ref.~\cite{localinvertibility2021pozdnyakov}.}
+    \label{fig:jacobian-symmetry}
+\end{figure}
+In the latter case it is the intersection of degenerate manifolds, manifolds of pointwise different environments but with the same features, that create these singular points with deficiencies\cite{localinvertibility2021pozdnyakov}.
+%What distinguishes the information capacity of features are the deficiencies because of the latter case\cite{sergey}.
+To express a Jacobian reconstruction error, we worked on a method for finding a reasonable threshold cutting off singular values corresponding to such deficient directions.
+%For a directly-interpretable experimental results it is important to determine the rank accurately which has been one challene of the current work.
+
+\subsubsection{Machine precision for rank estimation}
+%Numerically the rank of a matrix is determined by counting the singular values above a certain threshold relative to the largest singular value of the matrix.
+Since we are in control of the whole computation of the features up to the singular values, errors are introduced even due to the machine precision of the number format or to mathematical numerical approximations in the features computation.
+%To estimate the final error due to machine precision of the number format in the computation of the singular values.
+One approach for the estimation of the error due to machine precision would require an error estimation of the computation starting from the featurization of the atom's positions up to the singular value decomposition of the Jacobian matrix.
+%While in principle this approach is possible to implement, 
+The error estimations of each mathematical operation have to be chained together to one final estimation.
+Analytical bounds are however too loose and require probabilistic considerations to be reasonable tight for our application\cite{huynh2011error}.
+%Furthermore the error analyivsis needs a propagation through the whole computation of the Jacobian which is not a feasible approach considering the amount of work to rewrite the software.
+Least-square solvers in SciPy and NumPy use a heuristic for the threshold dependent on the machine precision of number format (for float $\approx1.19\mathrm{e}{-7}$, for double $\approx2.22\textrm{e}{-16}$) and the maximal dimension of the matrix $\mathbf{J}\in\mathbb{R}^{m,n}$
+\begin{multline}
+  \tau_\textrm{numpy} = \eta\cdot\max(n,m),\textrm{ where }\eta\textrm{ is number format dependent unit roundoff.}
+\end{multline}
+For most cases of interest, the heuristic gives reasonable thresholds, see Fig.~\ref{fig:svals-unsupervised-separation}a).
+But in cases it produces disputable thresholds, where the singular values are close to the threshold, it is hard to justify that the term $\max(n,m)$ is the correct prefactor for features with arbitrary hyperparameters, as for example in the case of low number of basis functions in Fig.~\ref{fig:svals-unsupervised-separation}b).
+
+\subsubsection{Signal-noise separation for rank estimation}
+Another approach assumes that the singular values corresponding to signal and to noise are well-separable.
+This characteristic of well-separability can be expressed into different conditions depending on the context.
+In the case of independent component analysis (ICA) it is that the noise is statistically independent from the signal. 
+For rank estimation the approach of Ref.~\cite{JMLR:v9:braun08a} assumes that the singular values have different orders of magnitude.
+The rank $\hat{d}$ maximizes the likelihood of two Gaussians $\mathcal{N}(0, \sigma_\textrm{signal})$ and $\mathcal{N}(0, \sigma_\textrm{noise})$ describing the singular value probability density function.
+By optimizing their standard deviation $\sigma_\textrm{signal}$ and $\sigma_\textrm{noise}$ the estimated rank is
+\begin{equation}
+    \hat{d} = \textrm{argmin}_{1\leq d\leq n} (\frac{d}{n}\log(\sigma_\textrm{signal}^2) + \frac{n-d}{n} \log\sigma_\textrm{noise}^2 ).
+\end{equation}
+In cases of sufficient number of basis function, no radial scaling and reasonable smearing sigma as in Fig.~\ref{fig:svals-unsupervised-separation}a) a clear separation of the singular values can be achieved.
+%\ref{subfig:svals-unsupervised-separation-large}.
+Such constraints are not for all cases of interest fulfilled and subsequently this method starts to fail in such cases Fig.~\ref{fig:svals-unsupervised-separation}b) producing arbitrary rank estimations.
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{fig/symmetry_sval_line-ps-nmax8-lmax6.png}
+        \label{subfig:svals-unsupervised-separation-large}
+        \caption{}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{fig/symmetry_sval_line-ps-nmax2-lmax2.png}
+        \label{subfig:svals-unsupervised-separation-small}
+        \caption{}
+    \end{subfigure}
+    \caption{
+        Singular value spectrum of the Jacobian of the carbon environments for several methane molecules. Different number of basis functions have been used to demonstrate the separability of the singular value spectrum for rank estimation.
+        The singular spectra are plotted with a high transparent value so that opaque regions correspond to numerous spectra going through.
+        We can see a) for a reasonably number of basis functions that the signal and the noise are well-separable while b) for a too small number this is note the case. 
+    }
+    \label{fig:svals-unsupervised-separation}
+\end{figure}
+
+\subsubsection{Exploiting symmetries for rank estimation}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{fig/random_global_translation.pdf}
+    %\begin{subfigure}[b]{0.3\textwidth}
+    %    \includegraphics[width=0.8\textwidth]{figures/random_global_translation.png}
+    %    \label{fig:random-global-translation}
+    %\end{subfigure}
+    %\begin{subfigure}[b]{0.3\textwidth}
+    %    \includegraphics[width=0.8\textwidth]{figures/symmetry_sval_hist-ps-nmax8-lmax6.png}
+    %    \label{fig:sval-hist-ps-nmax8-lmax6}
+    %\end{subfigure}
+    %\begin{subfigure}[b]{0.3\textwidth}
+    %    \includegraphics[width=0.8\textwidth]{figures/symmetry_sval_line-ps-nmax8-lmax6.png}
+    %    \label{fig:sval-line-ps-nmax8-lmax6}
+    %\end{subfigure}
+    \caption{
+      The procedure for estimating the threshold for a Jacobian matrix $\mathbf{J}$. a) We sample directions corresponding to global translations which are invariant to features. b) By mapping these directions on the Jacobian matrix corresponding, we sample from a distribution of the numerical error over the features. c) Then we use the maximal numerical error over the features to estimate the threshold using Eq.~\ref{eq:threshold-random-matrix-theory}.}
+    \label{fig:threshold-estimation}
+\end{figure}
+
+From the last approach we can identify the core problem that the rank estimation becomes arbitrary in cases where no single clear gap exists.
+The question becomes how to deal with a certain amount of arbitrariness for these cases in a reasonable way while being mostly precise in cases where a single clear gap exist.
+To this end we exploit the null space spanned by the symmetries embedded in the features to retrieve the numerical error.
+Assuming that the numerical noise is isotropical in all directions $\sigma$ we can split our Jacobian matrix in information $\mathbf{X}$ and noise $\sigma \mathbf{Z}$, where $\mathbf{Z}$ are random entries from Gaussian distribution $[\mathbf{Z}]_{ij}\sim\mathcal{N}(0, 1)$
+\begin{equation}
+    \mathbf{J} = \mathbf{X} + \mathbf{Z}\sigma.
+\end{equation}
+By projecting with directions corresponding to symmetries $\hat{\mathbf{u}}$ with unit length onto $\mathbf{J}$ we obtain
+\begin{equation}
+    \hat{\mathbf{u}}\mathbf{J} = \hat{\mathbf{u}}\mathbf{X} + \hat{\mathbf{u}}\mathbf{Z}\sigma = \hat{\mathbf{u}}\mathbf{Z}\sigma,
+    \label{eq:sampling-numerical-noise}
+\end{equation}
+where the entries $[\hat{\mathbf{u}}\mathbf{Z}]_{ij}\sim\mathcal{N}(0,1)$ due to the unit length of $\hat{\mathbf{u}}$.
+By sampling from different directions $\hat{\mathbf{u}}$ we can sample from the entries in $\sigma\mathbf{Z}$, and thereby retrieve $\sigma$.
+Given the noise estimation we can use results from random matrix theory\cite{gavish2014optimal} to determine the optimal threshold value% in terms of the asymptotic mean squared error of the matrix reconstruction.
+\begin{multline}
+    \tau = \lambda(\beta)\sqrt{n}\sigma,\qquad \mathbf{J}\in\mathbb{R}^{m,n}, m\leq n, \beta = m/n,\\
+    \textrm{where }\lambda(\beta) = \sqrt{2(\beta+1)+\frac{8\beta}{(\beta+1)+\sqrt{\beta^2+14\beta+1}}},
+    \label{eq:threshold-random-matrix-theory}
+\end{multline}
+with respect to the asymptotic mean squared error between the truncated Jacobian matrix $\mathbf{J}_{\tau}$ and the actual information matrix $\mathbf{X}$.
+In this asymptotic setting the matrix dimension of $\mathbf{J}$ goes to infinity while the rank and ratio $\beta$ stays constant\cite{shabalin2013reconstruction}.
+%The threshold is optimal in terms of asymptotic mean squared error, increasing the size of the matrices by more.
+While the asymptotic threshold is not necessary optimal for the finite setting, it nevertheless gives decent results as discussed in Ref.~\cite{gavish2014optimal}.
+When we applied this threshold method on 3-body features we could see that the quality of the rank predictions depends highly on our noise estimation.
+We observed that the rank of the Jacobian matrix for 3-body features was overestimated for almost $\approx10\%$ of the carbon environments in the random methane dataset.
+The reason for this rank overestimation is that the noise is not isotropical distributed over the different features seen in Fig.~\ref{fig:threshold-estimation}b).
+% and secondly that the numerical noise estimation does follow a larger tail than $\mathcal{N}(0, \sigma^2)$.
+To prevent these underestimations, we use the maximal noise over all features for the threshold computation as described in Fig.~\ref{fig:threshold-estimation}.
+
+\subsection{Example: Message-passing and connectivity}
+A lot of development in the community has been targeted on message-passing models due to highly accurate predictions in the low data regime\cite{schutt2021equivariant,batzner20223}.
+Recent results have established that message-passing is essentially an efficient way of decomposing the space for higher resolution\cite{nigam2022unified}.
+It is however not clear what the effect of higher number of interactions in message-passing has on the capacity of environment features.
+Nonlinear effects due to the activation functions as well as due to the message-passing are usually entangled with each other in NN architectures and have not been fully understood yet.
+Considering domain decomposition parallelization as it is typically used in molecular dynamics software packages\cite{LAMMPS} message-passing prohibits an embarrassingly parallel problem over domains and even enforces a nontrivial communication between the CPUs/GPUs corresponding to the domains or an increase in the cutoff of the potential resulting in less room for parallelization.
+Especially, regarding recent results that achieve similar accurate predictions without message-passing\cite{musaelian2022learning} or with a minimal amount of message interactions\cite{batatia2022mace}, it is a valid question how much the more efficient decomposition of the geometric space due to message-passing contributes to the learning performance for learned short-range force fields.
+We have run preliminary experiments on a dataset with randomly displaced methane structures\cite{pozdnyakov2020dataset} using 2-body message-passing features\cite{schutt2018schnet} analysing the rank of the Jacobian matrix with respect to the number of interactions $m-1$
+\begin{equation}
+  \langle n00| \rho_i^{\otimes([1\leftarrow1])^{m}} \rangle\textrm{, 2-body message-passing features as in Ref.~\cite{nigam2022unified}}.
+    \label{eq:schnet-message-passing}
+\end{equation}
+We analysed the ranks of the Jacobians corresponding to carbon environments with the method presented in Section~\ref{sec:threshold-estimaton}.
+We consider environments with a cutoff of $6$\AA where all atoms are connected with each other, and $3$\AA where all hydrogen atoms are connected with the carbon atom, but not necessary with all other hydrogen atoms.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{fig/atomic_graph.pdf}
+    \caption{Illustration of the atomic graph for one methane structure with a cutoff of $3$\AA.}
+    \label{fig:atomic-graph}
+\end{figure}
+It can observed in Fig.~\ref{fig:threshold-estimation} that the rank does not increase after one interaction for any significant amount of the carbon environments.
+The maximum rank correlates well with the total number of edges in the graph with respect to the cutoff seen in Fig.~\ref{fig:threshold-estimation}.
+%This preliminary results suggests that message-passing has only negligible effect on the information capacity of the features after one interaction.
+A simple explanation for this observation is that each edge can by reached two moves from the carbon environment.
+The correlation of the number of edges with the rank can be explained by the fact that we only deal with a finite system of 5 atoms in total.
+The number of edges grows as $n$ over $2$ while the largest possible rank grows as $3n-6$ due to symmetries.
+Thus for the methane dataset with a maximal number of edges $10$ and a maximal rank of $9$ there exist always one edge that adds linearly dependent information.
+Therefore the Jacobian rank must be within $[n_\textrm{edges}-1, n_\textrm{edges}]$ for all points in this dataset.
+We expect that for larger or periodic structures the rank will increase also after one interaction, as in this case every passed message can reach the the carbon atom within two steps
+%atom is connected with each other over carbon environment, resulting in a maximum node distance of 2.
+%So any additional inofrmaiton
+%due to missing connections to pass higher-body order information through the messages, which cannot be retrieved by algebraic operations of existing ones.
+%In Figure~\ref{} one can see a simple reason that
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{fig/ranks_CH-train-max_est-checkpoint0.pdf}
+    \caption{Rank estimations for the Jacobians of 2-body message-passing features for the carbon environments: a) the ranks with respect to increasing number of interactions, b) the ranks with respect to the number edges in the atomic graph for a cutoff of $3$\AA. The ranks are scaled such that the maximum possible rank $5\cdot3-6=9$ is normalized to $1.0$.}
+    \label{fig:message-passing-results}
+\end{figure}
+
+
+\subsection{Local stiffness [optional]}
+Even in the case of no degeneracies we want to express how stable a mapping from one feature space to another is in general.
+We want to differ the error between a mapping which changes in each point dramatically and a mapping which is nearly constant over the whole dataset.
+One way to approach this problem is to use higher-order derivatives extending the range with each order.
+However, already computing second-order derivatives is a computationally demanding task, higher-orders are not even feasible.
+We therefore developed a similar approach as the Tikhonov regularization.
+%Due to this we therefore decided to consider the error propagation over the whole relevant spectrum of regularizers.
+%One problem when considering the whole spectrum of regularizers is that we break the identity relationship.
+%Jacobian matrices with a more uniform eigenspectrum can even result in smaller errors than the identity relationship.
+Instead of penalizing the norm of the weight matrix, we penalize the change of the weight matrix between two points.
+\begin{align}
+\ell(X_1, \ldots, X_n, Y_1, \ldots, Y_n) =& \sum_i
+\|X_iW_i-Y_i\|^2 \nonumber \\
+&+ \beta\sum_{i\neq j}\frac{1}{d(\mathbf{x}_i,\mathbf{x}_j)+1}\|W_i-W_j\|^2\label{eq:nonlinearm}
+%&\ell = \sum_i\big(\|X_iW_i-Y_i\|^2 + \beta\sum_{i\neqj}\frac{c_i}{d(\mathbf{x}_i,\mathbf{x}_j)+1}\|W_i-W_j\|^2\big)
+%&c_i\textrm{ is solved by }\sum_{j\neq i} \frac{c_i}{d(\mathbf{x}_i-\mathbf{x}_j)+1} = 1 \\
+\end{align}
+An unstable map with significant changes in the weight matrices between points will be penalized and thus be pushed to more stable mapping with a larger error in the optimization.
+%if environments in the vicinity exist.
+In contrast, an identity map can be kept constant over the whole dataset and is thereby not affected by the penalization term.
+This term is closely related to a stretching energy term in the optimization of elastic maps\cite{kass1988snakes}.
+One can see for the toy example in Figure~\ref{fig:nonlinearm}c) mapping $x$ to $1$ that by increasing $\beta$ the mapping starts to break at the degenerate point at $x=0$.
+In Figure~\ref{fig:nonlinearm}b) the $1$-features and $0.5\sin(x)$ are compared, both reconstructing the $x$-features by optimizing the loss function described in Eq.~\ref{eq:nonlinearm}.
+We can see that initially $1$ to $x$ produces a smaller errors, since its eigenvalue spectrum is more uniform than $0.5\sin(x)$, while the mapping $0.5\sin(x)$ to $x$ gives smaller error for large $\beta$ values, because the feature mapping $0.5\sin(x)$ to $x$ requires fewer changes of the weights over the dataset than $1$ to $x$ and is thus more stable.
+Increasing $\beta$ even more results in the mapping constant over the whole dataset which recovers the global mapping.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{fig/nonlinear-measure_toy-example.png}
+    \caption{The regression error for the toy dataset $\{x\in [-1,1]\}$ for different features over the spectrum of a) ridge regularization and b) stretch regularization as described in Eq.~\ref{eq:nonlinearm}. c) The error reconstructing the $1$-features from $x$-features for increasing $\beta$ (left) samplewise (right) and averaged over the whole dataset. It can be seen that the error starts to spread starting from the degeneracy at $x=0$.}
+    \label{fig:nonlinearm}
+\end{figure}
+
+While the loss in Eq.~\ref{eq:nonlinearm} is not jointly convex over all $W_i$, it is convex in $W_i$ separately keeping all $W_j$ for $i\neq j$ fixed\cite{LI2015127}.
+We can therefore solve it iteratively until convergence by optimizing in every iteration each weight matrix separately
+\begin{align}
+%&\frac{\partial \ell}{W_i} = 0 \\
+&W_i
+= \big(X_i^TX_i+\beta\sum_{j\neq i}\frac{1}{d(\mathbf{x}_i,\mathbf{x}_j)+1}I)^{-1} \big(X_i^TY_i +  \beta\sum_{j\neq i} \frac{1}{d(\mathbf{x}_i,\mathbf{x}_j)+1} W_j\big)
+\end{align}
+
+With the distance metric $d$, we can induce different degrees of elasticity on the penalty.
+For example by using a Gaussian kernel distances $d_\sigma$ we can control with $\sigma$, how local the penalty should be.
+%An advantage is that with the distance metric we a clear locality in Euclidean space, while the degeneracy approach has an radial scaling the area of effect.
+
+\subsection{Future directions - Restricting nonlinearities}
+
+%Restricting nonlinearities to hierarchical polynomial transformation:
+My interpretation is that $\ell_1$ is the effect of the nonlinearities plus incompleteness and that $\ell_\infty$ is the effect of only incompleteness.
+So $\ell_\infty - \ell_1$ should give us the effect due to nonlinearities.
+In my mind nonlinearities are just Taylor expansions.
+
+%This solves two problems:
+%1. higher body-orders are high-dimensional representation than can heavily truncated, but 
+
+Theoretically speaking there are nonlinearties that cannot be modelled by this approach, but we argue that these are negligible as potentials used in MD are always approximatable.
+%https://math.stackexchange.com/a/1719289
+
+\subsubsection{Future experiment: Effect of incompleteness}
+Information capacity separate the effect of nonlinearities and incompleteness
+\[\ell_{\nu^\prime} = \sum_{\nu^\prime} \overline{\rho^1}^{\nu^\prime} \rightarrow \overline{\rho^{2}}.\]
+Then compare $\ell_1$ with $\ell_\infty$ (sum over $\nu^\prime$ until convergence of error).
+Important: Normalize each body-order separately, and check that the regularizer is very small (like in the range of a jitter to argue that the constant regularization and therefore does not constraint the transformation).
+Repeat result for 3-body potential $f^3$ (like LJ for 3-body) that is well defined over the whole interval
+\[\ell_{\nu^\prime} = \sum_{\nu^\prime} \overline{\rho^1}^{\nu^\prime} \rightarrow f^3\]
+To see if there is any differency the results using the GFRE.
+
+\subsubsection{Future experiment: Charcterizing body-order information in CG-Nets}
+it is super unclear what body orders are actually learning in CG-Net.
+So after each iteration $p$ in the network $f^{(p)}$ we test regression of
+\[\overline{\rho^\nu} \rightarrow f^{(p)}\]
+to see how the body order changes.
+We compare CG-Nets that increase the body order by itself and CG nets that multiply by themselve.
+
+%\[\overline{p^1}+\overline{p^1}^2+\overline{p^1}^3->+\overline{p^3}\]
+%and regression accuracy
+%\[\overline{p^1}+\overline{p^1}^2+\overline{p^1}^3->+\overline{p^3}\]
+%\[\overline{p^1}+\overline{p^1}^2->+\overline{p^2}\]
+
+% bonds

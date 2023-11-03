@@ -2,6 +2,103 @@
 \chapter*{Introduction}
 \markboth{Introduction}{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
-A non-numbered chapter\dots
+The discovery of new materials is one of the core pillars of technology, as every technology relies on a material and, needless to say, would not exist without it\cite{tomellini2013commentary}.
+%A material can be more formally described by the configurations of atoms and the electron distribution.
+The search for new materials is bound by thermodynamic laws which tell what configurations are stable and can therefore be considered as potential material.
+%, i.e. can exist for a limited time frame under a certain set of thermodynamic boundary conditions.
+In the last decades it has been shown that \textit{ab initio} quantum chemistry methods provide approximate stability criteria which are in good agreement with experiments\cite{jansen2015conceptual} making them a viable tool for the screening of new materials\cite{ceder1998identification, andersson2006toward, yang2012search, gomez2016design}.
+Due to the vast number of possible atomic structures to be considered, the efficiency of these methods is crucial.
 
-\lipsum[1]
+%Due to the inherint cubic complexity of electronic structure theory calculations material-specific surrogate models using geometric information to approximate the potential energy landscape have been used to circumvent these expensive calculation.
+%
+%\begin{equation}
+%  H^{\mathbf{q}}(\mathbf{p}_e, \mathbf{r})E^{\mathbf{q}}=\psi_e(\mathbf{r})E^{\mathbf{q}} 
+%\end{equation}
+%\begin{equation}
+%  V(\mathbf{q}) \approx \psi_e(\mathbf{r})E^{\mathbf{q}} 
+%\end{equation}
+%\begin{equation}
+%  V(\mathbf{q}) = ... 
+%\end{equation}
+%Interatomics potentials have been carefully handcrafted for various material\cite{TODO}. 
+%The choice of the functions and tuning of the coefficients is a time consuming process. 
+%%Data-driven methods have helped to speed up this process and build more accurate models\cite{silicon_gapTODO}. 
+%%These model rely effective geometric descriptions to build efficient structure-property models.
+
+Data-driven methods have become an efficient extension reducing expensive quantum chemistry calculations to a bare minimum while reaching close-to-\textit{ab initio} accuracy over a wide configuration space\cite{bartok2018machine}, leading to the exploration of previously computationally intractable problems, such as the thermal conductivity of amorphous germanium telluride\cite{sosso2012thermal}.
+These methods are based on transforming geometrical, physical and chemical information into a vector representation, referred as descriptor, to then use it as features in a machine learning model.
+The development of expressive and computational inexpensive descriptors\cite{behler2011atom, bartok2013representing} has lead to applications in a wide range of areas\cite{mansouri2018machine, sosso2018understanding, basdogan2019machine}.
+Efficient descriptors are therefore essential for state of the art high-throughput material design application.
+
+%%% Descriptor
+%Since machine learning models are based on comparing features with the help of a similarity measurement, there is a strong connection between 
+%the similarity of two atomic configurations in form of their descriptor, and the Euclidean distance between their symmetrized many-body correlation function.
+%While the Euclidean distance can represent distances between close distributions accurately, more distant ones are not faithfully represented.
+%On the other hand descriptors relying on sorting geometric information\cite{rupp2012fast, gallet2013structural} are similarly connected to the Wasserstein distance\cite{rowland2019orthogonal}.
+%The effect of the distance among atomic environments on the descriptor and subsequently on the regression of physical properties has not been extensively analyzed yet and is part of the objective of this thesis.
+%Such an analysis requires the development of measures for the comparison of feature spaces and efficient adaptations of the Wasserstein distance to a wider range of descriptors.
+In the context of materials informatics, a descriptor is a collection of
+physical and chemical properties that are chosen with the goal to predict a
+material behavior.  Its purpose is to articulate an abstract idea of a material
+property into computable parameters\cite{curtarolo2013high} as for example the
+power conversion efficiency of a solar cell\cite{yu2012identification} or the
+robustness of topological insulator\cite{yang2012search}.  The descriptor can
+be then used to scan databases for new candidates of a material.  In these
+examples the descriptors are engineered with a rational behind the exact
+composition of the parameters.  Another use case of descriptors has been to
+find a "simple" relationship between computationally cheap material properties
+bundled together with the purpose to reduce the computation effort to estimate
+a property whose direct calculation is much more complicated.  These simple
+relationships are algorithmically determined by a regression or classification
+model.% as support vector machines \cite{...} or neural networks \cite{...}.
+The efficient computation of expressive descriptors is a challenging problem
+which has seen a wide range of proposals\cite{behler2011atom, rupp2012fast,
+bartok2013representing, huo2017unified}.  It has been shown that density-based
+state-of-the-art descriptors can be seen as different representations of the
+symmetrized many-body correlation function\cite{willatt2019atom}.
+%The recent progress can be also seen as and automaization of the hand tuning process of interatomic potentials. 
+%TODO paragraph polish
+The first chapter of the thesis introduces the symmetrized many-body correlation function deriving it from atomic densities approach.
+%the predominantly used approach of describing geometric description as basis expansion coefficients of a density function.
+
+The second chapter focuses on the development of quantitive measurements for the comparison of geometric descriptors in a data-driven way.
+The third chapter focuses on splining methods to compute the 
+The fourth chapter focuses the optimization the basis
+The last chapter introduces a candidate.
+%For chemical drug design applications, the QSPR protocol is already an
+%established protocol which runs the search of meaningful descriptors with the
+%help of feature selection methods and for and its use to connect it to a
+%property drug discovery.  Because for biological activities there is no
+%exactly derived relationship between the description and the biological
+%activity, a descriptor has to be first found with feature selection
+%techniques.  While in chemical drug design the progress of quantitative
+%structure-property relationship models combining feature selection methods
+%with regression and classification models have lead to the development of a
+%large set of molecular descriptors, descriptors for applications in the atomic
+%scale have seen rapid development in the last decade.  Molecular descriptor
+%are based on the molecular graph of structures.
+
+%Inspired by quantitative structure-activity relationship (QSAR) models in drug
+%design, one approach for the construction of descriptors has been the
+%application of a feature selection method on a large set of physical properties
+%reducing it to a small subset with high predictability with respect to the
+%target property\cite{ghiringhelli2017learning,ouyang2018sisso,mannodi2016machine}.
+%%While this approach has been shown to work on small datasets for the
+%%prediction of relative energies between two binary compounds of different
+%%binary compounds
+%A feature selection procedures can be circumvented when enough domain knowledge
+%is available to construct a descriptor\cite{li2017feature}.  While this
+%approach has been shown to work for certain cases and small data sets, its
+%application to a wider range of problems is limited, particularly in cases for
+%which detailed domain knowledge is lacking.
+%%While this approach has been shown to work on a small dataset of relative
+%%energies between two crystal systems of different binary compounds,
+%%applications on larger datasets with wider range of atomic configurations has
+%%not been shown yet.
+
+%%% Thesis content
+
+
+% Maybe a Preliminary chapter with this? It is not necessary for the narrative
+%\papercomment{Here I could write Born-Oppenheimer approximation and potentials}
+%\papercomment{Many-body potenials and that data-driven potentials is just the next step from force fields}

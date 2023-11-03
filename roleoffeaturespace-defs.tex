@@ -1,0 +1,77 @@
+%review
+%\newcommand{\revadd}[1]{{\color{blue} #1}}
+%\newcommand{\revaddfig}[1]{{\setlength{\fboxrule}{5pt}\fcolorbox{blue}{white}{#1}}}
+
+\newcommand{\revadd}[1]{#1}
+\newcommand{\revaddfig}[1]{#1}
+
+
+%hypers
+\newcommand{\sigmag}{\sigma_\text{G}}
+
+% general matrices
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bAhat}{\hat{\mathbf{A}}}
+\newcommand{\bAt}{\tilde{\mathbf{A}}}
+
+% sizes and dimensions
+\newcommand{\nf}{m}
+\newcommand{\ns}{n}
+
+% data matrices
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bXt}{{\tilde{\bX}}}
+\newcommand{\bXh}{{\hat{\bX}}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\newcommand{\bK}{\mathbf{K}}
+
+% projection
+\newcommand{\bP}[2]{\mathbf{P}_{{#1}{#2}}}
+\newcommand{\bQ}[2]{\mathbf{Q}_{{#1}{#2}}}
+
+% singular value/eigenvalue decomposition
+\newcommand{\bV}{\mathbf{V}}
+\newcommand{\bSIG}{\boldsymbol{\Sigma}}
+\newcommand{\bLAM}{\boldsymbol{\Lambda}}
+
+% sets and spaces
+\newcommand{\train}{\mathrm{train}}
+\newcommand{\test}{\mathrm{test}}
+\newcommand{\CD}{\mathcal{D}}
+\newcommand{\CDtr}{\mathcal{D}_\train}
+\newcommand{\CDte}{\mathcal{D}_\test}
+\newcommand{\CDki}{\CD_{k-\text{neigh}}^{(i)}}
+\newcommand{\CF}{\mathcal{F}}
+\newcommand{\CH}{\mathcal{H}}
+\newcommand{\BR}{\mathbb{R}}
+
+%newly introduced metrics
+\newcommand{\GFRE}{\operatorname{GFRE}}
+\newcommand{\GFRD}{\operatorname{GFRD}}
+\newcommand{\LFRE}{\operatorname{LFRE}}
+
+%\usepackage{physics}
+
+%\newcommand{\bh}{\mbf{h}}
+%\newcommand{\bu}{\mbf{u}}
+%\newcommand{\bk}{\mbf{k}}
+
+%\newcommand{\D}[2][]{\ensuremath{\mathop{}\!\mathrm{d}^{#1}{#2}\,}}
+%\newcommand{\I}{\ensuremath{\mathrm{i}}}
+
+\newcommand{\That}{\hat{t}}
+%\newcommand{\Rhat}{\hat{R}}
+\newcommand{\Othree}{ {O(3)} }
+%\newcommand{\SOthree}{ {SO(3)} }
+\newcommand{\zh}{z_{\ce{H}}}
+
+
+% changes default behavior of bra and ket to use the starred non-resizing versions
+%\makeatletter
+%\let\oldket\ket
+%\def\ket{\@ifstar{\oldket}{\oldket*}}
+%\let\oldbra\bra
+%\def\bra{\@ifstar{\oldbra}{\oldbra*}}
+%\let\oldev\ev
+%\def\ev{\@ifstar{\oldev}{\oldev*}}
+%\makeatother

@@ -28,11 +28,9 @@
 %\addbibresource{tail/bibliography.bib}
 % % OR Bibliography management for Bibtex 
 % Load natbib before babel
-\usepackage[round]{natbib}
-
-
-\usepackage[french,german,english]{babel}
-
+%\usepackage[round]{natbib}
+\usepackage[sort,numbers]{natbib}
+\usepackage[nottoc]{tocbibind}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% EDOC THESIS TEMPLATE: Variant 1.0 -> Latin modern, large text width&height
@@ -47,12 +45,17 @@
 \usepackage{fourier} % Utopia font-typesetting including mathematical formula compatible with newer TeX-Distributions (>2010)
 %\usepackage{utopia} % on older systems -> use this package instead of fourier in combination with mathdesign for better looking results
 %\usepackage[adobe-utopia]{mathdesign}
+% ORIGINAL PARAMETERS
 \setlength{\textwidth}{146.8mm} % = 210mm - 37mm - 26.2mm
 \setlength{\oddsidemargin}{11.6mm} % 37mm - 1in (from hoffset)
 \setlength{\evensidemargin}{0.8mm} % = 26.2mm - 1in (from hoffset)
 \setlength{\topmargin}{-2.2mm} % = 0mm -1in + 23.2mm 
 \setlength{\textheight}{221.9mm} % = 297mm -29.5mm -31.6mm - 14mm (12 to accomodate footline with pagenumber)
 \setlength{\headheight}{14mm}
+% CHANGED PARAMETERS
+%\setlength{\topmargin}{-30.2mm} % = 0mm -1in + 23.2mm
+%\setlength{\textheight}{251.9mm} % = 297mm -29.5mm -31.6mm - 14mm (12 to accomodate footline with pagenumber)
+%\setlength{\headheight}{34mm} % title height from text
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -67,7 +70,9 @@
 \usepackage{graphicx,xcolor}
 \graphicspath{{images/}}
 
-\usepackage{subfig}
+%\usepackage{subfig}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{lipsum}
 \usepackage{microtype}

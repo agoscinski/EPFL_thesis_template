@@ -1,38 +1,103 @@
 %\begingroup
 %\let\cleardoublepage\clearpage
 
-
 % English abstract
-\cleardoublepage
+%\cleardoublepage
 \chapter*{Abstract}
 \markboth{Abstract}{Abstract}
-\addcontentsline{toc}{chapter}{Abstract (English/Français/Deutsch)} % adds an entry to the table of contents
-% put your text here
-\lipsum[1-2]
+\addcontentsline{toc}{chapter}{Abstract (English)} % adds an entry to the table of contents
+In high-throughput material design, large databases of materials are searched
+for candidates with desirable characteristics. So far, searches based on
+experimental data have been limited in scope, due to the vast combinatorial
+space of materials, the heterogeneous quality of available data, and the
+difficulty in separating the intrinsic properties of a material from those that
+are contingent on the processing or the synthesis conditions. A viable
+alternative is to calculate material properties using computer simulations,
+that make it possible to exploit advances in parallel computing to construct
+databases with millions of entries, and to obtain results that are internally
+consistent. The quantitative accuracy of these predictions, however, is
+dependent on the quality of the reference electronic structure calculations,
+increasing the computational effort and reducing the breadth of the searches.
+Data-driven approaches have been applied to reduce the cost of accurate
+computational studies, by using only a small number of reference calculations
+for a representative subset of materials space, and using them to train
+surrogate models that predict inexpensively the outcome of such calculation on
+new materials. The way materials structures are processed into a numerical
+description as input of machine learning algorithms is crucial to obtain
+efficient and computationally inexpensive models.  Recent advancements in the
+design of information-efficient representations have embedded novel types of
+information, such as neighborhood environments or pair descriptions.  Despite
+the rapid development in offloading calculations to more dedicated hardware,
+these enhancements nevertheless substantially increase the cost of the
+representation that remains a crucial factor in simulations.  It is therefore
+vital to delve deeper into the design space of representations to understand
+the type of information they encapsulate.  Insights from such analyses aid in
+making more informed decisions regarding the trade-off between accuracy and
+performance.  While a substantial amount of work has been undertaken to compare
+representations concerning their structure-property relationship, a thorough
+exploration into understanding the inherent nature of the information capacity
+of these representations remains mostly uncharted.  This thesis introduces a
+set of measures that facilitate quantitative analysis concerning the
+relationship between features and datasets, thereby assisting in such
+decision-making processes and providing valuable insights to the academic
+community.  Additionally, a considerable amount of effort has been dedicated to
+optimize the basis set involved in all representations, typically driven by
+heuristic considerations on the behavior of the regression target.  This thesis
+showcases a scheme that utilizes splines to approximate the basis expansion
+coefficients, paving the way for expansive optimization methods to create more
+effective basis functions at no additional cost during simulation time.  This
+is pivotal in simulations targeting materials encompassing a high variety of
+chemical species or relying on qualitative collective variables.
+%Such schemes can not only be of benificial for machine learning potential but also in metadynamic simulation as.
+
+%yields interpretative representation
+%at no additional cost that
+%
+%optimization methods that s that
+%are accurate and efficient to compute
+%
+%and computationally efficient, particularly when constructing
+%representations that correspond to high-body order correlations at no
+%additional cost with respect to the primitive basis by approximating it with
+%splines.
 
 
+%Here we take a different, unsupervised viewpoint, aiming to determine the basis
+%that encodes in the most compact way possible the structural information that
+%is relevant for the dataset at hand.
+%For each training dataset and number of
+%basis functions, one can determine a unique basis that is optimal in this sense, and can be computed at no additional cost with respect
+%to the primitive basis by approximating it with splines. We demonstrate that this construction yields
+%representations that are accurate and computationally efficient, particularly when constructing repre-
+%sentations that correspond to high-body order correlations. We present examples that involve both
+%molecular and condensed-phase machine-learning models.
+%
+%Over the last year I have been actively working on both these fronts. On one hand, contributing
+%to the efficient implementation of state-of-the-art features for materials, based on correlation functions of the atom density. On the
+%other, I have been testing the use of the Wasserstein metric, rather than the Euclidean distance, to compare such correlation functions
+%- assessing the impact on the accuracy of the model, and investigating the physical meaning of the different metrics.
 
 
-% German abstract
-\begin{otherlanguage}{german}
-\cleardoublepage
-\chapter*{Zusammenfassung}
-\markboth{Zusammenfassung}{Zusammenfassung}
-% put your text here
-\lipsum[1-2]
-\end{otherlanguage}
-
-
-
-
-% French abstract
-\begin{otherlanguage}{french}
-\cleardoublepage
-\chapter*{Résumé}
-\markboth{Résumé}{Résumé}
-% put your text here
-\lipsum[1-2]
-\end{otherlanguage}
+%% German abstract
+%\begin{otherlanguage}{german}
+%\cleardoublepage
+%\chapter*{Zusammenfassung}
+%\markboth{Zusammenfassung}{Zusammenfassung}
+%% put your text here
+%TODO 
+%\end{otherlanguage}
+%
+%
+%
+%
+%% French abstract
+%\begin{otherlanguage}{french}
+%\cleardoublepage
+%\chapter*{Résumé}
+%\markboth{Résumé}{Résumé}
+%% put your text here
+%TODO 
+%\end{otherlanguage}
 
 
 %\endgroup			

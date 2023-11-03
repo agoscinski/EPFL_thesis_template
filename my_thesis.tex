@@ -7,15 +7,20 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \input{head/settings_epfl_template.tex}
 \input{head/settings_custom.tex}  % place your custom packages, etc... in this file!
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% HEAD: Book-Begin
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mhchem}
+\usepackage{xcolor, color, soul}
+\usepackage{physics} %  required by dirac-rep.tex
+\usepackage{xparse} %  required by dirac-rep.tex
+
 \begin{document}
+\input{dirac-rep.tex}
+
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt} %(needs to be before titlepage and frontmatter to keep the table of contents lists short)
 \frontmatter
@@ -23,7 +28,7 @@
 \include{head/dedication}
 \setcounter{page}{0}
 \include{head/acknowledgements}
-\include{head/preface}
+%\include{head/preface}
 \include{head/abstracts}
 
 \cleardoublepage
@@ -47,19 +52,28 @@
 %(needs to be after titlepage and frontmatter to keep the table of contents lists short)
 \setlength{\parskip}{1em}
 
+\newcommand{\hyponefone}{{}_{1}F_{1}}
+\newcommand{\papercomment}[1]{\texttt{#1}}
+
+
+\input{opt-defs.tex}
+\input{roleoffeaturespace-defs.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% MAIN: The chapters of the thesis
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \mainmatter
-\include{main/ch1_introduction}
+%\include{main/ch_introduction}
 \cleardoublepage
-\part{Body 1}
-\include{main/ch2_figures_tables}
-\cleardoublepage
-\part{Body 2}
-\include{main/ch3_math}
-\include{main/ch4_more_text}
+\include{main/ch_atomistic_representation}
+\include{main/ch_information_capacity}
+%\cleardoublepage
+%%\part{Efficient Implementations}
+\include{main/ch_splining}
+\include{main/ch_basis_optimization}
+\include{main/ch_mlip}
+%\include{main/ch_batio}
+%%\include{main/ch_data_oriented_format}
 
 % use to end the last part if the thesis is composed of parts
 \addtocontents{toc}{\vspace{\normalbaselineskip}}
@@ -69,12 +83,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% TAIL: Bibliography, Appendix, CV
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{tail/appendix}
+%\include{tail/appendix}
 \backmatter
 \include{tail/biblio}
 % Add your glossary here
 % Add your index here
 % Photographic credits (list of pictures&images that have been used with names of the person holding the copyright for them)
-\include{tail/cv}
+%\include{tail/cv}
 
 \end{document}
