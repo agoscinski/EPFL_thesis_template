@@ -34,6 +34,173 @@ In this chapter I discuss my contributions to the software ecosystem that facili
 This covers my contributions to the package \texttt{librascal} for the computation of the featurization of atomic structures and building a model, \texttt{scikit-matter} the ML method packages, implementation of an interface to \texttt{LAMMPS} that enabled study of ferroelectric phase transitions in barium titanate\cite{gigli2023modeling} as well as the transport properties of lithium ortho-thiophosphate\cite{gigli2023mechanism}.
 Furthermore, this includes contributions to \texttt{equisolve} and \texttt{metatensor} that allow a more modular approach to build MLIP.
 
+\section{Implementation of cubic splines for featurization}
+\label{sec:cubic_spline}
+%As part my work in the first year, I participated in the development of a library designed to allow efficient computation of atomic density based descriptors, named librascal.
+%The library is designed with most emphasize on efficiency with regard to code structure and computation methods of descriptors.
+%The code structure is focused on reducing runtime cost by allowing a contiguous iteration through atomic environments and by applying template based methods as curiously recurring template pattern (CRTP) to prevent runtime lookups of virtual functions with the tradeoff of higher compile time costs.
+One of my contributions to \texttt{librascal} has been the implementation of a cublic spline to interpolate the radial expansion coefficients in Eq.~\ref{eq:radial_expansion}.
+%iin the last year has been the development of efficient methods for the computation of the radial basis expansion for the SOAP descriptor.
+%In contrast to the approaches discussed in Section~\ref{sec:evaluation_of_radial_contribution}, for librascal Gaussian typed orbital (GTO) functions are used as radial basis functions 
+%\begin{subequations}
+%\begin{align}
+%R_n^{GTO}(r) = r^{n+2}\exp(-b_nr^2)N_n,\hspace{5em}\\
+%\text{with } b_n = 1/(2\sigma_n),\quad \sigma_n = r_c\,\textrm{max}(\sqrt{n},1)/n_{\text{max}},
+%% Remark: I added the factor r^2 to the basis function to be comparable with other publications
+%\end{align}
+%\end{subequations}
+%Performance test done with the descriptor library Dscribe show a speed up of $10.07\pm 0.56$ times of the GTO basis over the polynomial one\cite{himanen2020dscribe}.
+%In librascal the GTO improve the expansion on the radial part is to separate the radial and angular part in the original atomic density function as proposed by Marco...
+%that allowed further works
+%the computation analytically the integral for the radial expansion in Eq.~\ref{eq:radial_part_in_spherical_expansion}. 
+%However, due to the modified spherical Bessel function $i_l$ %in Eq.~\ref{eq:radial_part_in_spherical_expansion}
+%an analytical expansion of radial term requires the evaluation of the computationally expensive confluent hypergeometric function $\hyponefone$ 
+%\begin{multline}
+%    \label{eq:radial_integral}
+%    \int_0^{\infty} R_n^{GTO}(r) \exp[-a(r^2+r_{ij}^2)]i_l(2arr_{ij}) \,\mathrm{d}r
+%    %\langle rlm|\mathcal{X}_i\rangle_{\hat{R}\hat{t}}\,\mathrm{d}r
+%    = N_n \pi^{\frac32}\frac{\Gamma(\frac{n+l+3}{2})}{\Gamma(l+\frac32)} \\
+%    (a+b)^{-\frac{n+l+3}{2}} (ar_{ij})^l \exp[-ar_{ij}^2] \hyponefone\big(\frac{n+l+3}{2},l+\frac32,\frac{a^2r_{ij}^2}{a+b}\big) = f^{nl}(r_{ij}).
+%\end{multline}
+%The contribution of this function to the overall cost of the radial expansion can be seen in Fig.~\ref{fig:hyp1f1_contribution} ranging from 55\% to 75\%  of the total time.F
+For each coefficient $nl$, the one dimensional function $f^{nl}:[0,r_c]\rightarrow\mathbb{R}$ is splined.
+The function $f^{nl}$ maps the distance $r\in[0,r_c]$ to the neighbor contribution of the radial expansion coefficient as in Eq.~\ref{TODO}.
+For the construction of the cubic spline the targeted interval $[0,r_c]$ is for set of points $0 = r_1 < r_2 < \ldots < r_{K} < r_{K+1} = r_c$ further partitioned into a set of subintervals $[r_1, r_2], \ldots, [r_{K}, r_{K+1}]$.
+The radial expansion coefficients are evaluated for each of the distances $r_1 < r_2 < \ldots < r_{K+1}$ to set up a set of conditions
+%The end points of each subinterval are evaluated with the origin approximated by a cubic polynomial boundary conditions.
+%Let $\{r_k\}_{k=1}^{M+1}$ be the set of $M+1$ boundary points in the interval $[0,r_c]$, then cubic spline defines polynomials $p_k(r) = A_k + B_kr + C_kr^2 + D_kr^3$ on the interval $[0,1]$ with the boundary conditions
+\begin{subequations}
+%\label{eq:abscissas_boundary_conditions}
+\begin{align} 
+    p^{nl}_{k}(0) = f^{nl}(r_k)&\text{ and } p^{nl}_{k}(1) =  f^{nl}(r_{k+1})\text{ for } k=1,\ldots,K , \label{eq:function_boundary_conditions}\\
+    p^{nl}_{k}(0) = p^{nl}_{k-1}(1)&\text{ and } p^{nl}_{k}\prime(0)= p^{nl}_{k-1}\prime(1) \text{ for } k=2,\ldots,K  ,\label{eq:points_boundary_conditions}\\
+    p^{nl}_k(1) = p^{nl}_{k+1}(0)&\text{ and }  p^{nl}_k\prime(1) = p^{nl}_{k+1}\prime(0) \text{ for } k=1,\ldots,K-1 ,\label{eq:derivative_boundary_conditions}\\
+    p^{nl}_{1}\prime\prime(0) = 0&\text{ and } p^{nl}_{M}\prime\prime(1) = 0.\label{eq:natural_boundary_conditions}
+\end{align}
+\end{subequations}
+The boundary conditions ensure the smoothness at the boundary points.
+A tridiagonal linear system of these equations can be formed from the $4K$ conditions in Eqs.~\ref{eq:points_boundary_conditions},~\ref{eq:derivative_boundary_conditions},~\ref{eq:natural_boundary_conditions} and their evaluation in Eq.~\ref{eq:function_boundary_conditions} by rearranging them to\cite{bartels1995introduction}
+\begin{subequations}
+\begin{align}
+A_k = f(r_k),\quad C_k = 3(f^{nl}(r_{k+1})-f^{nl}(r_k)) - 2B_k-B_{k+1},\\
+D_k = 2(f^{nl}(r_{k})-f^{nl}(r_{k+1})) + B_k+B_{k+1},\hspace{5em}\\
+\begin{pmatrix}
+    2 & 1       &           &       &    \\
+    1 & 4       & 1         &           &    \\
+      & \ddots  & \ddots    & \ddots    &           \\
+      &         & 1         &     4     & 1   \\
+      &         &           &     1     & 2
+\end{pmatrix}
+\begin{pmatrix}
+B_1\\
+B_2\\
+\vdots\\
+B_{K-1}\\
+B_{K}
+\end{pmatrix}
+=
+\begin{pmatrix}
+3(f^{nl}(r_2)-f^{nl}(r_1))\\
+3(f^{nl}(r_3)-f^{nl}(r_1))\\
+\vdots\\
+3(f^{nl}(r_K)-f^{nl}(r_{K-2}))\\
+3(f^{nl}(r_K)-f^{nl}(r_{K-1}))
+\end{pmatrix}.
+\end{align}
+\end{subequations}
+A linear systems forming a tridiagonal matrix can be solved in linear time with time complexity $O(2K)$ by iterating two times through the matrix following a Gaussian elimination scheme.
+%\begin{equation}
+%    
+%\end{equation}
+%In the forward pass the lower off diagonal is eliminated to zero, in the backward path the upper path is eliminated to zero.
+Commonly, for interpolators the grid size is adaptively changed until it is below an error bound given by the user as input.
+The error can be estimated by sampling points in the intervals $[r_k,r_{k+1}]$ and comparing the results of $f^{nl}$ with $p^{nl}$.
+During implementation it has been shown that conditioning the error on a relative and absolute error has been most robust in terms of interpolation accuracy and convergence of the grid size.
+This means that the boundary points are extended until one of the two estimated errors lies under the given error.
+
+While algorithms for adaptive grids can be advantageous to control the grid size and thus the memory requirements, we have seen that a uniform grid does not reach memory intensive as it can be seen in Fig.~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
+Compared to an adaptive grid the uniform grid reduces the asymptotic complexity for determing the subinterval for evaluation from $O(\log K)$ to constant $O(1)$.
+In additiona as we are building the grid for each $nl$ channel, the construction and evaluation of the spline enables possiblity of parallelization over all coefficients in form of multithreading and/or single instruction multiple data (SIMD) instructions or graphic process unit (GPU) accelerations.
+
+A point $r$ can be evaluated by first determing the corresponding boundary point $r_k$ for which $r\in[r_k,r_{k+1}]$, and then mapping $[r_k,r_{k+1}]$ to the polynomial interval $[0,1]$ with $p_k((r-r_k)/(r_{k+1}-r_k))$.
+The design choice mainly affecting the efficiency of the cubic spline interpolator was the choice of the grid.
+For an arbitrary grid with $K+1$ points, the optimal complexity for searching the boundary point $r_k$ is $O(\log(M+1))$ with a binary search.
+On the other hand for uniform grids the search time can be reduced to $O(1)$ by
+\begin{equation}
+    k = \min(K,\lfloor (r-r_1)\Delta \rfloor+1), \quad \Delta = (K+1)/(r_{K+1}-r_1).
+\end{equation}
+%A non-uniform grid can keep the size of the grid to a minimum by only adding boundary points corresponding to the intervals with the highest error.
+%This minimizes the number of evaluations of the costly function $f^{nl}$.
+%With increasing number of evaluations of the function $f^{nl}$ the uniform grid will be always the better choice.
+%Even though for realistic datasets with a limited number of evaluations this overhead could be crucial, it has been shown during implementation that the space overhead of a uniform grid is insignificant in comparison to the higher time complexity of the non-uniform grid.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{fig/radial-basis.pdf}
+    \caption{Computational cost for the evaluation of the radial integral and its derivatives with different methods, for structures taken from the QM9 dataset. Note that the dataset has very little influence on this benchmark since the radial integral and its derivative are always evaluated once per neighbor. For the splining an accuracy of $10^{-8}$ was chosen}
+    \label{fig:radial-basis}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{fig/spline-accuracy-v2.pdf}
+    \caption{The effect of the spline accuracy on the prediction accuracy for chemical shieldings of hydrogen atoms as conducted in Ref.~\cite{paruzzo2018chemical} for a linear model using SOAP descriptors with $l_\textrm{max}=9$. In the work Ref.~\cite{paruzzo2018chemical} a RMSE below $10^{-1}$ has been considered as sufficient enough, while the effect of the spline accuracy effects the predictions multiple magnitudes below that.}
+    \label{fig:spline-accuray}
+\end{figure}
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{fig/fig_hyp1f1_contribution_in_radial_contribution.pdf}
+%    \caption{}
+%    \label{fig:hyp1f1_contribution}
+%\end{figure}
+%\begin{figure}
+%    \includegraphics[width=\textwidth]{fig/slide20_2.png}
+%    \caption{Effect of accuracy on prediction error}
+%    \label{fig:spline-accuracy-prediction-error}
+%\end{figure}\\
+%\begin{figure}
+%    \includegraphics[width=\textwidth]{fig/slide20_3.png}
+%    \caption{Speedups}
+%    \label{fig:spline-speedups}
+%\end{figure}
+
+\section{Interfacing with molecular dynamics packages}
+In molecular dynamics the separation of the computation of the potential energy into a separate module has been established approach\cite{LAMMPS,abraham2015gromacs,kuhne2020cp2k,kapil2019pi}.
+%To make such simulations possible I implemented an interface with \texttt{LAMMPS} for our in-lab developed machine learning package \texttt{librascal} to exploit the implemented domain decomposition in \texttt{LAMMPS}.
+%The correction of implementation was verified by comparing the trajectories with the MLIP package \texttt{QUIP}.
+%The correctness of the interwork with LAMMPS domain decomposition was verified by running a simulation for different MPI tasks and comparing the results.
+%This allowed obtain results...
+As computation of the potential energy only requires the atomic positions and species and as result returns the energy with its gradients, it is a logical point to separate.
+An advantage for such a separation is to avoid a reimplementation of established thermo- and barostats as well as time integrator.
+While the implementation of these are in principle simple, a robust implementation that covers important corner cases still requires a longer consideration which makes it a time consuming task.
+Another advantage is the fact that longly developed MD software support different parallelizations of the potential energy for interatomic potentials.
+The fact that interatomic short-range potentials separate the total energy into contributions of local environments, allows a decomposition of the cell into smaller domains.
+The computation of the potential energy for each of these domains can be distributed among multiple processors or machines and then be using message passing interface (MPI).
+In the study of barium titanite in Ref.~\cite{gigli2023modeling} this parallelization allowed us to study the effect of long-range dielectric correlations on the predictions of the Curie temperature.
+The domain decomposation requires particular considerations in the implementation of the gradients.
+The force computation for an interatomic potential can be computed as
+%The evaluation of gradients using the neighbor list approach is expressed
+\begin{equation}
+  \label{eq:forces_interatomic_potential}
+  \frac{\partial E_A}{\partial\mathbf{r}_k} = \sum_{i\in A} \frac{\partial E_i}{\mathbf{r}_k} = \sum_{i\in A}\sum_{j\in A_i} \frac{\partial E_i}{\mathbf{r}_{ji}} \frac{\mathbf{r}_{ji}}{\mathbf{r}_k}\textrm{, where }\frac{\mathbf{r}_{ji}}{\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else.} \end{cases}
+\end{equation}
+%Without domain decomposition neighbors outside of the cell are periodic images and partial forces do not need to be assigned as they can be ignored.
+%With domain decomposition neighbors outside of the cell can also be nonperiodic neighbors part of a different domain.
+%\papercomment{Here I could talk about the implementation detail how to add neighbor contributions}
+It can be seen that the forces at position $i$ depend on the partial forces wrt. to energy $i$ and all its neighbors $j\in A_i$.
+Depending on memory storage of partial forces this case needs to be handled with care.
+In particular considering the fact that MD software as \texttt{LAMMPS} offers the option to allow MPI communication between the domains with the \emph{newton\_pair} option.
+Keeping the option on prevents redundant computations of the forces but requires more MPI communication as the partial forces need to be communicated.
+In \texttt{librascal} if atom $j$ is a periodic neighbor, the acces on atom $j$ remapped to corresponding atom in the box.
+The MPI communication requires to differ between periodic neighbors and ghost atoms that are part of another domain.
+One can simplify this complexity storing the partial forces $\partial{E_i}/\partial{\mathbf{r}_{ij}}$ and $\partial{E_j}/\partial{\mathbf{r}_{ij}}$ for redundantly for atom $i$ and $j$.
+This is redundant due to Netwton's third law $\partial{E_j}/\partial{\mathbf{r}_{ij}} = - \partial{E_j}/\partial{\mathbf{r}_{ji}}$.
+While being redundant it does not change asympotic scaling of the memory requirements for the forces.
+%i, ij
+%j, ji
+%i, ji
+%j, ij
+%where i, ij = - i, ji
+
 \section{Implementation of gradients in kernel models}
 %As invariant 3-body descriptors are easy to evaluate from the spherical expansion coefficients without requiring additional dependencies to compute the Clebsch-Gordan coefficients as higher-body orders need and as their the memory consumption hits a sweet spot for the current generation of hardware, they have been a popular descriptor in applications.
 %As their accuracy in combination with linear models is often not sufficient enough to produce accurate enough molecular dynamics simulations, one common approach has been to incorperate kernel models instead.
@@ -85,7 +252,7 @@ Note that to compute one kernel entry for two structures with each $N_i$ atoms i
 The low-rank approximation contributes greatly in the reduction of the computation of these kernel entries as it projects the structural features on single $M$ environmental features resulting in a linear scaling of on kernel entry.
 Since the number of atoms in structures is a substantial quantity and the fact that structures typically contain redundant environments, the rank can be reduced quite significantly making this approach indispensable.
 
-One disadvantage with \texttt{librascal} was the entanglement of the featurization and the model building to the libraray.
+One disadvantage in the design of \texttt{librascal} in the entanglement of the featurization and the model building to the libraray.
 This was required as the construction of the kernel matrix requires understanding by the model building tool of the decomposition of the target property into local contributions Eq.~\ref{eq:structural_separation} as well as what its gradients are, domain-agnostic packages as \texttt{scikit-learn} are not suitable for a direct application in this case.
 The software package \texttt{metatensor} allows to attribute these structural characteristics to the object itself as metadata and offers \texttt{numpy}-like data manipulations that take advantage of the metadata.
 This allowed a disentanglement of the featurization that has reimplemented in a new package \texttt{rascaline} and model construction that has been moved to \texttt{equisolve}.
@@ -103,44 +270,6 @@ Part of my contribution was to participate in the development of \texttt{metaten
 %Custom optimizer
 
 %\papercomment{One could include the work on solvers here but it is note so important efficiency}
-
-\section{Interfacing with molecular dynamics packages}
-In molecular dynamics the separation of the computation of the potential energy into a separate module has been established approach\cite{LAMMPS,abraham2015gromacs,kuhne2020cp2k,kapil2019pi}.
-%To make such simulations possible I implemented an interface with \texttt{LAMMPS} for our in-lab developed machine learning package \texttt{librascal} to exploit the implemented domain decomposition in \texttt{LAMMPS}.
-%The correction of implementation was verified by comparing the trajectories with the MLIP package \texttt{QUIP}.
-%The correctness of the interwork with LAMMPS domain decomposition was verified by running a simulation for different MPI tasks and comparing the results.
-%This allowed obtain results...
-As computation of the potential energy only requires the atomic positions and species and as result returns the energy with its gradients, it is a logical point to separate.
-An advantage for such a separation is to avoid a reimplementation of established thermo- and barostats as well as time integrator.
-While the implementation of these are in principle simple, a robust implementation that covers important corner cases still requires a longer consideration which makes it a time consuming task.
-Another advantage is the fact that longly developed MD software support different parallelizations of the potential energy for interatomic potentials.
-The fact that interatomic short-range potentials separate the total energy into contributions of local environments, allows a decomposition of the cell into smaller domains.
-The computation of the potential energy for each of these domains can be distributed among multiple processors or machines and then be using message passing interface (MPI).
-In the study of barium titanite in Ref.~\cite{gigli2023modeling} this parallelization allowed us to study the effect of long-range dielectric correlations on the predictions of the Curie temperature.
-The domain decomposation requires particular considerations in the implementation of the gradients.
-The force computation for an interatomic potential can be computed as
-%The evaluation of gradients using the neighbor list approach is expressed
-\begin{equation}
-  \label{eq:forces_interatomic_potential}
-  \frac{\partial E_A}{\partial\mathbf{r}_k} = \sum_{i\in A} \frac{\partial E_i}{\mathbf{r}_k} = \sum_{i\in A}\sum_{j\in A_i} \frac{\partial E_i}{\mathbf{r}_{ji}} \frac{\mathbf{r}_{ji}}{\mathbf{r}_k}\textrm{, where }\frac{\mathbf{r}_{ji}}{\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else.} \end{cases}
-\end{equation}
-%Without domain decomposition neighbors outside of the cell are periodic images and partial forces do not need to be assigned as they can be ignored.
-%With domain decomposition neighbors outside of the cell can also be nonperiodic neighbors part of a different domain.
-%\papercomment{Here I could talk about the implementation detail how to add neighbor contributions}
-It can be seen that the forces at position $i$ depend on the partial forces wrt. to energy $i$ and all its neighbors $j\in A_i$.
-Depending on memory storage of partial forces this case needs to be handled with care.
-In particular considering the fact that MD software as \texttt{LAMMPS} offers the option to allow MPI communication between the domains with the \emph{newton\_pair} option.
-Keeping the option on prevents redundant computations of the forces but requires more MPI communication as the partial forces need to be communicated.
-In \texttt{librascal} if atom $j$ is a periodic neighbor, the acces on atom $j$ remapped to corresponding atom in the box.
-The MPI communication requires to differ between periodic neighbors and ghost atoms that are part of another domain.
-One can simplify this complexity storing the partial forces $\partial{E_i}/\partial{\mathbf{r}_{ij}}$ and $\partial{E_j}/\partial{\mathbf{r}_{ij}}$ for redundantly for atom $i$ and $j$.
-This is redundant due to Netwton's third law $\partial{E_j}/\partial{\mathbf{r}_{ij}} = - \partial{E_j}/\partial{\mathbf{r}_{ji}}$.
-While being redundant it does not change asympotic scaling of the memory requirements for the forces.
-%i, ij
-%j, ji
-%i, ji
-%j, ij
-%where i, ij = - i, ji
 
 \section{A metadynamic software framework with LAMMPS, PLUMED and i-PI}
 To study phase transitions of barium titanite in Ref.~\cite{gigli2023modeling} we needed to accelerate the sampling of the transition.
