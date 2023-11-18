@@ -1,185 +1,621 @@
 \chapter{Symmetry-preserving basis optimization}
-The splining techiniques presented in the last chapter open the door for optimizing the basis function without any additional cost at evaluation time (e.g. when running molecular dynamics).
-We present in this chapter several optimization methods for the basis preserving symmetries that can be used in combination with splining that can be summarized by 
-\begin{equation}
-  \sum_{n}^{n_\textrm{max}}U_{qn}^{\lambda}(\mathcal{D}) c_{n\lambda} = c_{q\lambda}.
-  %\sum_{an}\sum_m U_{xqan}^{\lambda} c_{anlm} = c_{xqlm}
-  %\sum_n U_{qn}^{l} c_{anlm} = c_{nqlm} 5
-  %\sum_n U_{qn}^{al}\langle anlm | \rho_i\rangle  = \langle aqlm | \rho_i\rangle
-\end{equation}
-The linear transformation $\mathbf{U}$ computed from dataset $\mathcal{D}$ recombines the radial expansion coefficients for a fixed basis $\{b_{n}^\lambda\}_{n=1}^M$ resulting in optimized coefficients $c_{q\lambda}$.
-The idea is that the initial basis is chosen to cover a large hypothesis space $\mathcal{H}$, the optimized basis is optimal wrt. to a dataset $\mathcal{D}\subset\mathcal{H}$.
-The optimized coefficients can be then truncated at $M^\prime$ with the hope that $M^\prime << M$.
-Such that the featurization is much lower dimensional space reducing the number of computational steps when predicting a property.
-Constraining $\mathbf{U}$ to be linear allows the use of the splining as the targeted function is not changed
-%basis function changes its dimensionality
-\begin{equation}
-  \sum_n U_{qn}^{\lambda} c_{n\lambda} R_{n\lambda}(r) = c_{q\lambda} R_{q\lambda}(r)
-\end{equation}
-Then the splining as described in Eq.~\ref{TODO} is constructed for the radial coefficients $c_{q\lambda}$ such that the transformation $\mathbf{U}$ can be bypassed during evaluation.
-\begin{figure}
-    \includegraphics[width=\textwidth]{fig/slide22_0.png}
-    \caption{A schematic showing the spline trick. TODO use poster spline trick as basis maybe add more description about the optimization.}
-    \label{fig:spline_trick}
-\end{figure}
-
-TODO do we need orthogonality?
-
-%\label{sec:evaluation_of_radial_contribution}
-%An efficient implementation for the evaluation of the radial basis function in the spherical expansion for the computation of SOAP was part of my work in the first year.
-%Therefore the recent developments of efficient schemes are here discussed in more detail.
-%Following the Eq.~\ref{eq:soap} for the SOAP descriptor by resolving the expansion on the angular contribution results in
+%The splining of the radial expansion the door for optimizing the basis function without any additional cost at evaluation time (e.g. when running molecular dynamics).
+%We present in this chapter several optimization methods for the basis preserving symmetries that can be used in combination with splining that can be summarized by 
 %\begin{equation}
-%\label{eq:radial_part_in_spherical_expansion}
-%%\langle rlm|\mathcal{X}_i\rangle =  4\pi\underbrace{\exp[-a(r^2+r_{ij}^2)]i_l(2ar_{ij})}_{\text{radial term}}Y_{l}^m(\alpha_{ij},\beta_{ij}),
-%\langle rlm|\mathcal{X}_i\rangle_{\hat{R}} \propto \sum_{j\in\mathcal{X}_i}\exp[-a(r^2+r_{ij}^2)]i_l(2arr_{ij})Y_l^m(\hat{\mathbf{r}}_{ij}),
+%  \sum_{n=1}^{n_\textrm{max}}U_{qn}^{l} c_{nl} = c_{ql}.
+%  %\sum_{an}\sum_m U_{xqan}^{l} c_{anlm} = c_{xqlm}
+%  %\sum_n U_{qn}^{l} c_{anlm} = c_{nqlm} 5
+%  %\sum_n U_{qn}^{al}\langle anlm | \rho_i\rangle  = \langle aqlm | \rho_i\rangle
 %\end{equation}
-%where $i_l$ is the modified spherical Bessel function of the first kind.
-%%and ($\theta{ij},\phi{ij}$ are the spherical coordinates of the unit vector $\hat{\mathbf{r}}$
-%For an effective radial basis function, higher-order polynomials have been used in the first version of SOAP\cite{bartok2013representing}
+%The linear transformation $\mathbf{U}$ computed on a dataset $\mathcal{D}$ recombines the radial expansion coefficients for a fixed basis $\{b_{n}^l\}_{n=1}^M$ resulting in optimized coefficients $c_{ql}$.
+%The idea is that the initial basis is chosen to cover a large hypothesis space $\mathcal{H}$, the optimized basis is optimal wrt. to a dataset $\mathcal{D}\subset\mathcal{H}$.
+%The optimized coefficients can be then truncated at $M^\prime$ with the hope that $M^\prime << M$.
+%Such that the featurization is much lower dimensional space reducing the number of computational steps when predicting a property.
+%Constraining $\mathbf{U}$ to be linear allows the use of the splining as the targeted function is not changed
+%%basis function changes its dimensionality
 %\begin{equation}
-%R_n^{poly}(r) = (r_{\text{cut}} - r)^{n+2}N_n,\quad N_n\text{ is a normalization parameter.}
+%  \sum_n U_{qn}^{l} c_{nl} R_{nl}(r) = c_{ql} R_{ql}(r)
 %\end{equation}
-%The disadvantage is that the expansion has no analytic solution and is therefore performed with a least square fitting. %\cite{https://github.com/libAtoms/QUIP/issues/100#issuecomment-376115320}
-%A proposed solution to this problem is to remove the dependency of the radial term on the spherical Bessel function by separating the angular and radial part in the atom density function\cite{caro2019optimizing}
-%\begin{equation}
-%g(\mathbf{r} - \mathbf{r}_j) \approx \tilde{g} = g_{r}(r)g_{\perp r}(\hat{\mathbf{r}},\mathbf{r}_j).
-%\end{equation}
-%The radial part can be then simplified to
-%\begin{equation}
-%\langle rlm|\mathcal{X}_i\rangle_{\hat{R},\tilde{g}} \propto \sum_{j\in\mathcal{X}_i} b(r_{ij})\exp[-a(r^2+r_{ij}^2)]Y_l^m(\hat{\mathbf{r}}_{ij}),
-%\end{equation}
-%% In the paper there is still a smooth cutoff function dependent on r, but this one is omitted here
-%where $b(r_{ij})$ is a factor dependent only on $r_{ij}$.
-%This allows an analytic expansion on higher-order polynomials.
-%%For my work I followed a different approach as described in detail in the subsequent Section~\ref{sec:cubic_spline}.
-
-\section{Closed-form solutions}
-%The target of the optimization are the radial expansion coefficients in Eq.~\ref{eq:radial_expansion}
-%\begin{equation}
-%  c_{nl} = c_{n\lambda} c_{\lambda\mu}.
-%\end{equation}
+%Then the splining as described in Eq.~\ref{TODO} is constructed for the radial coefficients $c_{ql}$ such that the transformation $\mathbf{U}$ can be bypassed during evaluation.
+%\begin{figure}
+%    \includegraphics[width=\textwidth]{fig/slide22_0.png}
+%    \caption{A schematic showing the spline trick. TODO use poster spline trick as basis maybe add more description about the optimization.}
+%    \label{fig:spline_trick}
+%\end{figure}
 %
-%\begin{equation}
-%  \int\mathrm{d}\mathbf{r} \rho(\mathbf{r})\rho(\mathbf{r}^\prime)\,
-%\end{equation}
-%
-%\begin{equation}
-%  \sum_n U_{qn}^{al}\langle anlm | \rho_i\rangle  = \langle aqlm | \rho_i\rangle
-%  %\langle anlm \lambda|\rho_i\rangle 
-%  %\langle lm|\rho_i\rangle = <a^\prime n^\prime l|\rho_i> <lm|\rho_i>
-%\end{equation}
-We dicuss here optimizations that have closed-form solution for the computation of $U$.
-Such solutions are typically faster to compute but also less accurate.
+%\section{Theory}
 
-Closed-solution are usually more efficient in computation time, but often only improve the basis by linear transformation or fixed subset of nonlinear transformation.
-\subsection{Unsupervised optimization}
-Principal component analysis has been proposed to compute the data-driven contractions of equivariant features that represent in the most informative way the variability of a dataset as part of the N-body iterative contraction of equivariant (NICE) frameworks.~\cite{niga+20jcp}
-We propose to apply this procedure on the first-order equivariants -- that correspond to the density coefficients -- as a mean to determine a data-driven radial basis. 
-Keeping different chemical species separate, this amounts to computing the rotationally invariant covariance matrix (see SI) 
+%We use the bra-ket notation originally introduced in Refs.~\citenum{will+18pccp,will+19jcp}, and discussed in detail in Ref.~\citenum{musi+21cr}. 
+%An atomic structure $A$ is represented in terms of its atom density
+%\begin{equation}
+%\rep<\ex||A; \rho> = \sum_i \delta_{\e\e_i} \rep<\bx||\br_i; g>, 
+%\end{equation}
+%where $\rep<\bx||\br_i; g>\equiv g(\bx-\br_i)$, is a Gaussian of width $\sigma_a$ centered on the position $\br_i$ of the $i$-th atom, and $\e_i$ is an index that indicate the chemical species of that atom. 
+%Translational symmetrization breaks this global atom density into a sum of atom-centred neighbour densities $\rep|A; {\left<\rho^{\otimes 2}\right>_{\mathbb{R}^3}}>=\sum_i \rep|A; \rho_i>$, 
+%\begin{equation}
+%\rep<\ex||A; \rho_i> = \sum_{j\in A} \delta_{\e\e_j} \rep<\bx||\br_{ji}; g> \fcut(r_{ji}), 
+%\end{equation}
+%where $\br_{ji}=\br_j-\br_i$, and we  introduce a smooth cutoff function $\fcut$ to restrict the range of the environment.
+%
+%It is convenient to express $\rep<\ex||A; \rho_i>$ on a basis of spherical harmonics $ Y^m_l(\hat{\bx})\equiv \rep<\bxhat||lm>$ and radial functions $R_{nl}(x) \equiv\rep<x||nl>$,
+%\begin{equation}
+%\rep<\enlm||A; \rho_i> =
+%\int \D{\bx} \rep<nl||x> \rep<lm||\hat{\bx}> \rep<\ex||A; \rho_i>.
+%\end{equation}
+%Regardless of the choice of $\rep<x||nl>$, one can evaluate the density coefficients as a sum over neighbors
+%\begin{multline}
+%\rep<\enlm||\rho_i> = 
+%\sum_j \delta_{\e\e_j} \rep<nlm||\br_{ji}; g> \\=
+%\sum_j \delta_{\e\e_j} 
+%\rep<nl||r_{ji}; g> \rep<lm||\brhat_{ji}>,
+%\label{eq:neighbor-sum}
+%\end{multline}
+%where $\rep<nl||r; g> $ is a radial integral
+%\begin{equation}
+%\!\!\!\rep<nl||r;g>= 4\pi e^{\!-\frac{r^2}{2\sigma_\e^2}}\!\! \int_0^\infty \!\!\!\D{x} x^2 \rep<nl||x> e^{\!-\frac{x^2}{2\sigma_\e^2}}\mathsf{i}_{l}\left(\frac{x r}{\sigma_\e^2}\right),
+%\label{eq:radial-integral}
+%\end{equation}
+%that can be computed analytically for some choices of basis, or approximated numerically and computed as a spline for each radial and angular channel pair\cite{musi+21jcp}.
+%The $\sigma_\e\rightarrow 0$ limit corresponds to a $\delta$-like density, which is used in alternative implementations of the density correlation features\cite{drau19prb,bachmayr2019arxiv,shap16mms}, and can be evaluated as easily on any discrete basis. 
+%We discuss in the SI some considerations on the practical evaluation of density coefficients. 
+
+%\subsection{Optimal density basis}
+TODO...
+\section{Unsupervised optimization}
+Principal component analysis has been proposed to compute the data-driven contractions of equivariant features that represent in the most informative way the variability of a dataset as part of the N-body iterative contraction of equivariant (NICE) frameworks~\cite{niga+20jcp}.
+
+We propose to apply this procedure on the density coefficients as a mean to determine a data-driven radial basis. 
+Keeping different chemical species separate, this amounts to computing the rotationally invariant covariance matrix
 %In Ref.~\citenum{niga+20jcp} it has been proposed to use principal component analysis to compute the data-driven contractions of equivariant features that best represent the variability of a dataset.
 %In combination with an iterative expression to compute density correlations of increasing order, this idea underlies the N-body iterative contraction of equivariant (NICE) frameworks. 
 %The procedure can be readily applied to the first-order equivariants -- that are equal to the density coefficients. Keeping different chemical species separate, this amounts to computing the rotationally invariant covariance matrix (see SI)
 \begin{equation}
-C^{al}_{nn^\prime}= \frac{1}{N} \sum_i \sum_m <an l m|\rho_i> <\rho_i|an^\prime lm>,
+  C^{\e l}_{nn'}= \frac{1}{N} \sum_i \sum_m c^i_{nlm}c^i_{n^\prime lm}
 \label{eq:cov}
 \end{equation}
-where the summation over $m$ ensures that the covariance is independent of the orientation of structures in the dataset.
-For each $(a, l)$ channel, one diagonalizes $\mathbf{C}^{al}=\mathbf{U}^{al} \mathbf{Lam}^{al} (\mathbf{U}^{al})^T$, and computes the optimal coefficients
+where the summation over $m$ results from the Haar integral over the rotation group and can be derived the same way as the order 2 ACDC function in Eq.~\ref{eq:solving_haar_integral}.
+For each $(\e, l)$ channel, one diagonalizes $\bC^{al}=\bU^{al} \bLam^{al} (\bU^{al})^T$, and computes the optimal coefficients
 \begin{equation}
-%<aq lm; opt||\rho_i> = \sum_n U^{al}_{qn} <an lm|\rho_i>. \label{eq:contract}
+  \sum_n U^{\e l}_{qn} c^i_{\e nlm} = c^i_{\e qlm} \label{eq:contract}.
 \end{equation}
-Note that we compute $\mathbf{C}^{al}$ without centering the density coefficients. For $l>0$, the mean ought to be zero by symmetry (although it might not be for a finite dataset), and even for the totally symmetric, $l=0$ terms, density correlation features are usually computed in a way that is more consistent with the use of non-centered features. 
+Note that we compute $\bC^{al}$ without centering the density coefficients. For $l>0$, the mean ought to be zero by symmetry (although it might not be for a finite dataset), and even for the totally symmetric, $l=0$ terms, density correlation features are usually computed in a way that is more consistent with the use of non-centered features. 
 
 The number of contracted numerical coefficients $\qmax$ can be chosen inspecting the eigenvalues $\Lambda^{al}_q$.
 At first, it might appear that in order to evaluate the contracted basis one has to compute the full set of $\nmax$ coefficients, and this is how the idea was applied in Ref.~\citenum{niga+20jcp}. 
-When combining Eq.~\eqref{eq:contract} with Eq.~\eqref{eq:neighbor-sum}, however, one sees that the contracted coefficients can be evaluated directly 
+When combining Eq.~\eqref{eq:contract} with Eq.~\eqref{eq:radial_expansion}, however, one sees that the contracted coefficients can be evaluated directly 
 \begin{equation}
-\!\!\rep<aqlm; \opt||\rho_i> \!=\! \sum_j \delta_{\e\e_j} \rep<aql; \opt||r_{ji}; g>\! \rep<lm||\brhat_{ji}>,
+  c^{i}_{\e qlm} = \sum_{j\in A_i} \delta_{\e\e_j} c^{ij}_{\e ql} c_{alm}^{ij}.
 \label{eq:neighbor-contract}
 \end{equation}
 using the contracted radial integrals
 \begin{equation}
-\rep<aq l; \opt||r; g> = \sum_n U^{al}_{qn} \rep<nl||r; g>, \label{eq:contract-integral}
+  c^{ij}_{\e ql} = \sum_n U^{\e l}_{qn} c^{ij}_{\e nl} \label{eq:contract-integral}
 \end{equation}
-, and then evaluated at exactly the same cost as for a spline approximation of the radial integrals of a primitive basis of size $\qmax$.
-Splining does not affect the equivariant behavior of the atom-density features, and introduces minute discrepancies relative to the analytical basis that do not affect the quality of the resulting models. 
+that can be computed over $r$, approximated with cubic splines in the range $[0, r_c]$, and then evaluated at exactly the same cost as for a spline approximation of the radial integrals of a primitive basis of size $\qmax$.
+The exact mathematical form and implementation details of the splines can be found in Section~\ref{sec:cubic_spline}.
+Splining does not affect the invariant behavior of the atom-density features, and introduces minute discrepancies relative to the analytical basis that do not affect the quality of the resulting models. 
+Thus, the procedure we propose entails the following steps:
+\begin{enumerate}
+\item Compute the density coefficients \eqref{eq:radial_expansion} for a representative dataset, using \emph{any} primitive basis, and a large $\nmax$
+\item Compute the covariance~\eqref{eq:cov} and diagonalize it, finding the contraction coefficients $U^{\e l}_{qn}$
+\item Evaluate the contracted radial integrals using Eq.~\eqref{eq:contract-integral}, over a dense radial grid
+\item Use a spline approximation to evaluate directly the radial integrals~\eqref{eq:neighbor-contract} for the first $\qmax$ optimal features, and use the coefficients in subsequent ML steps
+\end{enumerate}
 
-%\subsubsection{Mixed-species basis}
-Even though Eq.~\eqref{eq:cov} is defined separately for different species $a$, it is also possible to compute cross-correlations between different elemental channels, defining
+Even though this framework only needs the contracted radial expansion coefficients~\eqref{eq:radial_expansion}, one can also compute and inspect the ``optimal radial basis'' that corresponds to the optimized coefficients  
 \begin{equation}
- C^{l}_{an; \e'n'}= \frac{1}{N} \sum_i \sum_m \rep<an l m||\rho_i> \rep<\rho_i||\e' n' lm>,
+  %\rep<x||\e ql; \opt> \equiv \sum_n U^{\e l}_{qn} \rep<x||nl>. \label{eq:contract-basis}
+  R_{\e ql}(r) \equiv \sum_n U^{\e l}_{qn} c_{\e nl} R_{\e nl}(r). \label{eq:contract-basis}
+\end{equation}
+For a given dataset, these functions are optimal in the sense that when truncated to $\qmax<\nmax$, they describe the greatest fraction of the variance for the local atom-density coefficients, and unique in the sense that they are independent on the choice of the primitive basis, in the limit in which the latter is complete, as demonstrated in Sec.~\ref{sec:practice}.
+
+For a given dataset, these functions are optimal in the sense that when truncated to $\qmax<\nmax$, they describe the greatest fraction of the variance for the local atom-density coefficients, and unique in the sense that they are independent on the choice of the primitive basis, in the limit in which the latter is complete, as demonstrated in Sec.~\ref{sec:practice}.
+
+\subsection{Mixed-species basis}
+
+Even though Eq.~\eqref{eq:cov} is defined separately for different species $\e$, it is also possible to compute cross-correlations between different elemental channels, defining
+\begin{equation}
+  C^{l}_{nn'}= \frac{1}{N} \sum_i \sum_m c^i_{\e nlm}c^i_{\e^\prime n^\prime lm} 
+  % C^{l}_{\e n; \e'n'}= \frac{1}{N} \sum_i \sum_m \rep<\e n l m||\rho_i> \rep<\rho_i||\e' n' lm>,
 \label{eq:cov-multispecies}
 \end{equation}
 as done in the NICE framework\cite{niga+20jcp} following ideas proposed in Ref.~\citenum{will+19jcp}, resulting in coefficients that combine information on multiple species
 \begin{equation}
-\rep<q lm; \opt||\rho_i> = \sum_n U^{l}_{q;an} \rep<an lm||\rho_i>, \label{eq:contract-multispecies}
+  c^i_{qlm} = \sum_n U^{l}_{q;\e n} c^i_{\e nlm}, \label{eq:contract-multispecies}
+  %\rep<q lm; \opt||\rho_i> = \sum_n U^{l}_{q;\e n} \rep<\e n lm||\rho_i>, \label{eq:contract-multispecies}
 \end{equation}
 similar in spirit to the alchemical contraction discussed in Ref.~\citenum{will+18pccp}.
-It is worth noting that although the NICE code\cite{NICE-REPO} contains the infrastructure to compute these contractions \emph{as a post-processing of the primitive basis}, the implementation we propose in  \texttt{LIBRASCAL} computes the contracted coefficients directly. However, it only implements the less information-efficient separate $(a, n)$-PCA strategy.
+It is worth noting that although the NICE code\cite{NICE-REPO} contains the infrastructure to compute these contractions as a post-processing of the primitive basis, the implementation we propose in \texttt{librascal}\cite{LIBRASCAL} computes the contracted coefficients directly. However, it only implements the less information-efficient separate $(\e, n)$-PCA strategy.
 An implementation that evaluates directly the combined contraction would incur an overhead because every neighbor would contribute to every $q$ channel irrespective of their species:
-\begin{multline}
-%\rep<qlm; \opt||\rho_i>  = \sum_j \sum_{an} U^l_{q; an} \delta_{a\e_j}
-%\rep<nlm||\br_{ji}; g>  \\
-%= \sum_j \sum_{n} U^l_{q; \e_j n} \rep<nl||r_{ji}; g>\rep<lm||\brhat_{ji}> \\=
-%\sum_j \rep<\e_j q l; \opt||r_{ji}; g>\rep<lm||\brhat_{ji}>.
-\end{multline}
-Given however that the cost of evaluating the density coefficients is usually a small part of the calculation of density-correlation features\cite{caro19prb,musi+21jcp}, we expect that this approach should be in general preferable compared to the calculation of a large primitive basis, and to a two-step procedure in which element-wise optimal functions are further contracted into mixed-element coefficients.
+\begin{align}
+  c^i_{qlm}  &= \sum_{\e n} U^l_{q; \e n} c^{i}_{\e nlm} \\
+             &= \sum_{\e n} U^l_{q; \e n} \sum_{j\in A_i} \delta_{\e \e_j} c^{ij}_{nlm} \\
+             &= \sum_{j\in A_i} \sum_{n} U^l_{q; \e_j n} c^{ij}_{nlm}.
+\end{align}
+Given however that the cost of evaluating the density coefficients is usually a small part of the calculation of density-correlation features\cite{caro2019optimizing,musil2021efficient}, we expect that this approach should be in general preferable compared to the calculation of a large primitive basis, and to a two-step procedure in which element-wise optimal functions are further contracted into mixed-element coefficients.
 
-\subsubsection{Example: Collective variable optimization}
-We can see that we can retrive similar quality CV as in the BaTiO3 paper from a snapshot.
-Applying PCA is not a new thing, as it is a chicken-egg problem.
-
-\subsection{Supervised optimization}
+\subsection{Supervised basis set optimization}
 %\alexnote{I find this title confusing, since we never refer to supervised selection. For me something like "Beyond unsupervised decomposition" would make more sense, since this is what we introduced in the last paragraph.}
 For a given number of radial functions, and a target data set, the data-driven contracted basis~\eqref{eq:contract} provides the most efficient description of the atom-centred density in terms of the fraction of the retained variance.
 %The basis construction by the covariance matrix guarantees 
 The most effective variance-preserving compression however does not guarantee that the features are the most effective to predict a given target property.
 In fact, it has already been shown that SOAP features tend to emphasize correlations between atoms that are far from the atomic center, which can lead to a counter-intuitive degradation of the model accuracy with increasing cutoff radius\cite{bart+17sa,will+18pccp}. 
 This effect can be contrasted by introducing a radial scaling\cite{huan-vonl16jcp,will+18pccp} that de-emphasizes the magnitude of the atom density in the region far from the central atom. 
-By applying this scaling -- or other analogous tweaks\cite{caro19prb} -- to the atom density before it is expanded in the primitive basis, one ensures that the optimal basis is also built with a similar focus on the structural features that contribute more strongly to the target property.
+By applying this scaling -- or other analogous tweaks\cite{caro2019optimizing} -- to the atom density before it is expanded in the primitive basis, one ensures that the optimal basis is also built with a similar focus on the structural features that contribute more strongly to the target property.
 In other terms, the information-optimal basis set we introduce here can be combined with a heuristic or data-driven optimization of the underlying density representation, to reflect the scale and resolution of the target property.
+
 
 Another possibility is to extend the scheme to incorporate a supervised target $y_i$ in the selection of the optimal basis using principal covariates regression (PCovR) \cite{dejo-kier92cils,helf+20mlst}.
 PCovR is a simple linear scheme that can be tuned to provide a projection of features to a low-dimensional latent space that combines an optimal variance compression target with that of providing an accurate linear approximation of the desired target property. 
 Since $l>0$ contributions of the features have zero mean, the optimization problem can be combined with a supervised component only for $l=0$, and yields an optimal basis
 \begin{equation}
-<r||  aq 0; \opt; \gamma> = \sum_n U^{\e0;\gamma}_{qn} <r||n0>,
+  c_{q_\gamma00} = \sum_n U^{\e0}_{q_\gamma n} c_{n00}.
 \end{equation}
 which is a special case of Eq.~\eqref{eq:contract-basis} for $l=0$, 
-where $U^{\e0;\gamma}_{qn}$ is obtained as the orthogonalized PCovR projector, as discussed in Refs.~\citenum{dejo-kier92cils,helf+20mlst}, using a mixing parameter $\gamma$, that determines how strong the emphasis of the optimization should be on minimizing the residual variance or the error in regressing the target.
+where $U^{\e0}_{q_\gamma n}$ is obtained as the orthogonalized PCovR projector, as discussed in Refs.~\citenum{dejo-kier92cils,helf+20mlst}, using a mixing parameter $\gamma$, that determines how strong the emphasis of the optimization should be on minimizing the residual variance or the error in regressing the target.
 
-\begin{multline}
-<Q;\nlk||\frho[\gslm]_i^{(\nu+1)}>\propto 
-\sum_{m}   <n||\frho[\lm]_i^1>\times\\[-1mm]
-<Q||\frho[\sigma((-1)^{l+k+\lambda}); k (\mu-m)]_i^{\nu}>  \cg{\lm}{k (\mu-m)}{\glm},
-\end{multline}
-using Clebsch-Gordan coefficients $\cg{lm}{l'm'}{l''m''}$ in an expression analogous to the sum of angular momenta.
-The $\nu=1$ equivariants are nothing but the density coefficients
-\begin{equation}
-<n||\frho[\sigma;\lm]_i^1>  = \delta_{\sigma 1}<\nlm||\rho_i>^\star,
-\end{equation}
-and one can compute invariant descriptors by retaining only the $<Q|\frho[1; 00]_i^\nu>$ terms, using the other components only as computational intermediates.
 
-\section{Higher-order information}
-Most NN structures use the approach to find a radial basis that is simple to evaluate to then let the NN optimize the basis.
-Due to the flexible optimization space of NN, they can achive quite good accuracies which would not been able to achive with shallow methods\cite{schutt2018schnet}.
-%In several architectures the time Dirac delta function is used, since the expansion coefficient is given by the distance.
-\begin{figure}
-    \includegraphics[width=\textwidth]{fig/slide23_0.png}
-    \caption{Nonlinear the equivariant optimization by gradient descent}
-    \label{fig:nonlinear-basis-opt}
+%\begin{comment}
+%%MC we would need a full page to work through the whole thing. for instance the U is not just made by the eigenvalues of the modified covariance (otherwise it would be orthogonal!)
+%to yield a modified covariance matrix
+%\begin{equation}
+%\mathbf{C}_\gamma^{\e 0} &=\gamma \mathbf{C}^{\alpha0} + (1-\gamma)  
+%(\mathbf{C}^{\e 0})^{-1/2}
+%\mbf{Z}
+%(\mathbf{C}^{\e 0})^{-1/2}
+%\end{equation}
+%where 
+%\begin{equation}
+%Z_{nn'} = \frac{1}{N} \sum_i \rep<n 00||\rho_i>\rep<n' 00||\rho_i>^\star \hat{y}_i^2,
+%\end{equation}
+%and $\hat{y}_i^2$ is the prediction of the atom-centered component of the target property, and $\gamma$ determines how strong the emphasis of the optimization should be on maximising the explaining variance or minimizing the error in regressing the target.
+%The resulting $\mathbf{U}_\gamma^{\e 0}$ is not necessary symmetric, therefore we orthogonalize it.
+%\end{comment}
+
+\
+\subsection{Multispectrum}
+\label{sub:multispectrum}
+
+%In the vast majority of applications the density coefficients are not used directly in applications, but are combined to build higher order invariant or equivariant features\cite{bart+13prb,gris+18prl,will+19jcp,drau19prb}.
+%For example, the power spectrum (i.e. SOAP invariant features\cite{bart+13prb}) can be computed as
+%\begin{multline}
+%\rep<\ennl||\frho_i^2> \propto\\
+%\frac{1}{\sqrt{2l+1}} \sum_m\rep<\en_1 lm||\frho_i>\rep<\en_2 l m||\frho_i>^\star,
+%\end{multline}
+%where the density coefficients can be either those obtained from primitive basis functions truncated at increasing $\nmax$, or those from an optimal basis containing $\qmax$ terms.
+%For this work we use primarily the orthogonalized GTO basis introduced in Ref.~\citenum{musi+21jcp}, which compares favorably in terms of information content\cite{gosc+21mlst,musi+21cr} with a DVR basis (a family of orthogonal polynomials), as well as with the alternative GTO basis used in DScribe\cite{Himanen2020} and the shifted-Gaussian basis of QUIP\cite{bart+10prl}.
+%Furthermore, as accuracy and performance assessments have shown comparable prediction quality between QUIP and other established interatomic potentials\cite{behl+07jcp,shap16mms,bart+10prl}\cite{zuo+20jpcl}, the focus on the GTO basis does not limit the extensiveness of these results.}
+
+We discuss the general case of ``multispectra'' in the frame of the N-body iterative construction of equivariant (NICE) features\cite{niga+20jcp}, but analogous considerations apply to similar many-body descriptors such as the atomic cluster expansion (ACE)\cite{drau19prb,dusson2022atomic} or the moment tensor potential (MTP)\cite{shapeev2016moment}, and is likely to be relevant also for covariant neural networks\cite{ande+19nips,mill2020arxiv}. 
+%We consider the case of a single chemical species, to keep a notation that is by necessity quite cumbersome as simple as possible, but the generalization is trivial.
+The NICE iteration increases the body order of features that describe correlations between $\nu$ neighbors 
+%$\rep<Q||\frho[\sigma; \lambda \mu]_i^{\nu}>$ ($Q$ is a generic index that labels the features, $\lambda$, $\mu$, $\sigma$ are indices that describe their behavior with respect to rotations and inversion) 
+by combining lower order features as described in Eq.~\eqref{eq:recursive_higherorder}.
+%\begin{multline}
+%\rep<Q;\nlk||\frho[\gslm]_i^{(\nu+1)}>\propto 
+%\sum_{m}   \rep<n||\frho[\lm]_i^1>\times\\[-1mm]
+%\rep<Q||\frho[\sigma((-1)^{l+k+\lambda}); k (\mu-m)]_i^{\nu}>  \cg{\lm}{k (\mu-m)}{\glm},
+%\end{multline}
+%using Clebsch-Gordan coefficients $\cg{lm}{l'm'}{l''m''}$ in an expression analogous to the sum of angular momenta.
+%The $\nu=1$ equivariants are nothing but the density coefficients
+%\begin{equation}
+%\rep<n||\frho[\sigma;\lm]_i^1>  = \delta_{\sigma 1}\rep<\nlm||\rho_i>^\star,
+%\end{equation}
+%and one can compute invariant descriptors by retaining only the $\rep<Q||\frho[1; 00]_i^\nu>$ terms, using the other components only as computational intermediates.
+
+%\paragraph{Change of basis for the multi-spectrum}\,
+%First, we investigate the relation between the multispectrum computed in an arbitrary radial basis, and in the optimal basis obtained from the principal components of the density coefficients. 
+%\begin{multline}
+%  U(c_{k^{\nu}}c_{k^{\nu+1}}) &= \sum_{k^\nu k^1} c_{k^\nu k^1}\, c_{k^\nu}\, \sum_n U_{qn}^l c_{nlm}
+%%  \sum_{qn} U_{qn} c_{Q;nlk;\lambda\mu}) = \sum_{qn} U_{qn} c_{Q;nlk;\lambda\mu})
+%%  \sum_{\lambda \mu l m} C^{ll_1l_2}_{mm_1m_2} c_{k^\nu}\, \mathbf{U}c_{k^1},
+%%  \sum_n U_{qn}^l c_{k^{\nu+1}} &= \sum_{k^\nu k^1} c_{k^\nu k^1}\, c_{k^\nu}\, \sum_n U_{qn}^l c_{nlm}
+%\rep<Q;qlk; \text{opt}||\frho[\gslm]_i^{(\nu+1)}>
+%\propto \\
+%\sum_{m} 
+%\rep<qlm;\text{opt}||\frho_i>^\star 
+%\rep<Q||\frho[\sigma((-1)^{l+k+\lambda}); k (\mu-m)]_i^{\nu}> \\[-3mm]
+%\times \cg{\lm}{k (\mu-m)}{\glm}  \\[1mm]
+%=
+%\sum_{m} \cg{\lm}{k (\mu-m)}{\glm} \sum_n U^l_{qn} \rep<nlm||\frho_i>^\star  \\[-1mm] 
+%\times
+%\rep<Q||\frho[\sigma((-1)^{l+k+\lambda}); k (\mu-m)]_i^{\nu}>  \\[-1mm]
+%=\sum_n U^l_{qn}
+%\rep<Q;nlk||\frho[\gslm]_i^{(\nu+1)}>. \label{eq:multispectrum-transform}
+%\end{multline}
+%In other terms, the change of basis can be achieved by constructing the multispectrum using the density coefficients in the optimal radial basis, or by applying the transformation to each $(n_\nu,l_\nu)$ term in the multispectrum computed in the original basis. The transformation of the multi-spectrum is given by a block-diagonal matrix composed of the $\bU^{l}$. 
+%
+%\paragraph{Truncation of the multispectrum}\,
+%
+%Among the consequences of Eq.~\eqref{eq:multispectrum-transform} is the fact that -- if the optimal basis is not truncated, so that $\bU^{l}$ enacts an orthogonal transformation -- the change to the optimal basis preserves the magnitude of the multi-spectrum:
+%\begin{multline}
+%\sum_{q=1}^{\nmax}\left|\rep<Q;qlk; \text{opt}||\frho[\gslm]_i^{(\nu+1)}>\right|^2 =\sum_{n=1}^{\nmax} \left|\rep<Q;nlk||\frho[\gslm]_i^{(\nu+1)}>\right|^2.
+%\label{eq:multispectrum-norm}
+%\end{multline}
+%
+%More generally, truncating the basis to include $\qmax$ optimized basis functions reduces the norm of the multispectrum by  the same multiplicative factor at each iteration
+%\begin{multline}
+%\sum_{q=1}^{\qmax}\sum_{lkQ}\sum_{\sigma\lambda\mu}\left|\rep<Q;qlk; \text{opt}||\frho[\gslm]_i^{(\nu+1)}>\right|^2
+%\\
+%\!\!\!=\sum_{q=1}^{\qmax }
+%\sum_{lm} \left|\rep<q||\frho[\lm]_i^1>\right|^2 \! \times \!\sum_{Q\sigma kp} \left|\rep<Q||\frho[\sigma; k p]_i^{\nu}>\right|^2 \label{eq:multi-truncation}
+%\end{multline}
+%which can be derived exploiting the orthogonality of CG coefficients (see SI).
+%One sees how (if the compound index $Q$ was expanded to indicate the $q_\nu l_\nu k_\nu$ terms at each  order $\nu$) the norm of the multispectrum can be expanded into a product of terms coming from each order, and the errors introduced by truncation accumulate as a product.
+%As a side-note, the combination of Eqs.~\eqref{eq:multispectrum-norm} and~\eqref{eq:multi-truncation} implies that, for each environment, the norm of the $\nu$-spectrum should equal the norm of the corresponding $1$-spectrum raised to the power $\nu$ \emph{when summing over all the equivariant components}. This provides a stringent test to estimate the amount of information that is lost when contracting, subselecting, or truncating the angular momentum of the equivariant components during the iterative construction of high body-order features.
+%% \alexnote{not sure if the result ends up in the SI}
+%%This problem however does not translate as severely as in theory into practical applications. Experiments on QM9 show  that the truncated features can retain most of the magnitude even for higher-body features if chosen properly (see SI).
+%
+%\paragraph{Principal-component basis for multi-spectra}\,
+%
+%The derivation of \eqref{eq:multi-truncation} applies to each environment $A_i$ separately, and does not translate exactly into an expression for the retained variance (that involves an average over the training set). 
+%A similar issue arises when addressing the question of what is the best radial basis (again, in terms of variance retained for a given level of truncation) that one can use to apply the NICE iteration for a specific feature $Q$ and intermediate angular momentum state $k$. 
+%In building the covariance, we sum over $(\sigma,\lambda,\mu)$ -- i.e. we look for a single transformation that applies to all terms that derive from combinations of $\rep<Q||\frho[s; k p]_i^{\nu}>$ with the density coefficients
+%\begin{multline}
+%N C^l_{nn'}(\nu;Q;k) = \\
+%\sum_{i\sigma\lambda\mu}
+%\rep<Q;\nlk||\frho[\gslm]_i^{(\nu+1)}>\rep<\frho[\gslm]_i^{(\nu+1)}||Q;n'lk>
+%\\=
+%\sum_i 
+%\sum_m \rep<n||\frho[\lm]_i^1> \rep<\frho[\lm]_i^1||n'> \\[-3mm] \times
+%\sum_{\sigma p} \left|\rep<Q||\frho[\sigma; k p]_i^{\nu}>\right|^2.
+%\end{multline}
+%This expression corresponds to a covariance matrix of the density coefficients which is built by weighting the contribution from each environment by the magnitude of $\rep<Q||\frho[\sigma; k p]_i^{\nu}>$. 
+%Thus, the optimal combinations that are determined for $\nu=1$ are not necessarily equal to those needed in further iterations. 
+%Computing a different radial basis for each NICE iteration would be extremely cumbersome; in what follows, we provide evidence that the basis optimized for the density coefficients provides an effective compression even for the higher-order terms in the multispectrum.
+
+
+\begin{figure}[tbhp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{fig/optbasis/contracted_radial_basis_two_angular_plot-silicon.pdf}
+    \caption{Several examples of the optimized radial basis functions on the silicon dataset for $l=0$ and $l=4$ using DVR and GTO as primitive basis contracted from $\nmax=20$, with $\rcut=6$. }% \alexnote{The cutoff distance is $r_c=6$ with $\sigma=0.5$ this translates to an effective cutoff distance ($r_c + 3\sigma$) of $7.5$}}
+    \label{fig:oel-radial-basis}
 \end{figure}
 
-% guillaume/natashas work
-\section{Future directions}
-\subsection{Hierarchical optimization}
-\papercomment{Optimizing first the chemical part and then the radial part, because optimizing both seems not to work well}\\
-In the work of Natasha \& Guillaume the optimzation of radial and chemical due to the huge optimization space.
-It is well known that deep NN have an equivalent functional form with one layer, but the learning peformance is dramatically better in the former one.
-Both the radial and species channel increase the feature size by a multiplicative factor and thereby also the weigh matrix size.
-%using low number of  %TODO find citation.
-%Optimization in t case is tricky, since huge matrices multiplcation are not so closed-form optimizations
-\subsection{Radial dependent smoothness}
-\papercomment{make sigma dependent on r, because we see that it works well for GTOs}
+
+\section{Results on silicon and QM9}
+\label{sec:practice}
+%kermodeSiliconTesting2018
+To illustrate the construction and use of an optimal radial basis we present examples for two very different problems: the construction of a general-purpose potential for silicon, based on the training dataset from Ref.~\citenum{bartok2018machine}, and the prediction of atomization energies for the organic molecules from the QM9 dataset~\cite{rama+14sd}.
+These two examples are complementary: the silicon potential involves a single chemical species, uses forces for training and aims to predict the properties of arbitrary distorted configurations.
+The QM9 energy model involves multiple elements, but only minimum-energy structures, and, despite its limitations, has been widely used as a benchmark of new representations for molecular machine learning\cite{fabe+17jctc}.
+
+\begin{figure}[tbhp]
+    \centering
+        \includegraphics[width=0.7\linewidth]{fig/optbasis/qm9-selected-variance-density.pdf}
+    \caption{ Convergence of the residual variance for the expansion coefficients of the density as a function of the number radial basis functions $\qmax$, computed for the QM9 dataset and for environments centered on a C atom. The different series correspond to a GTO basis of increasing size (black), to an optimal basis computed for each neighbor density by separating (blue) or by mixing chemical and radial channels $(\e, n)$ (red). Full lines use the same basis irrespective of the species of the central atom, dashed lines correspond to a basis optimized specifically for C-centered environments.  }
+    \label{fig:qm9-density-variance}
+\end{figure}
+
+\subsection{Convergence of the density expansion}
+
+We begin by considering the convergence of the density expansion, by considering a large primitive basis and then increasing $\qmax$ monitoring the residual variance
+\begin{equation}
+  RV = 1-\frac{\sum_i\sum_{q=1}^{\qmax} \left|c^i_{qlm} \right|^2}{\sum_i\sum_{n=1}^{\nmax} \left|c^i_{nlm}\right|^2}
+  %RV = 1-\frac{\sum_i\sum_{q=1}^{\qmax} \left|\rep<qlm; \opt||\rho_i> \right| ^2}{\sum_i\sum_{n=1}^{\nmax} \left|\rep<nlm||\rho_i> \right|^2},
+\end{equation}
+that measures the amount of information lost relative to that contained in the large-$\nmax$ primitive basis description. 
+For the Si dataset, the residual variance decays rapidly with increasing number of optimal basis functions, as shown in Fig.~\ref{fig:oel-radial-basis}.
+The figure also shows the shape of the optimal radial functions, and demonstrate that the same radial functions can be obtained starting from either of the DVR or GTO bases implemented in \texttt{librascal}: the discrepancy increases for higher indices $q$, but can be reduced by increasing the size of the primitive basis, at no cost during the evaluation of the optimal splined basis. Furthermore, the optimal functions reflect some ``sensible'' expectations -- highly oscillating functions are associated with low covariance eigenvalues, the functions decay at the cutoff distance 
+% (even if the raw basis exhibits much larger spillover, see SI)
+%\alexnote{($r_c+3\sigma$) \sout{(even if the raw basis exhibits considerable spillover, see SI)} (ALEX: this is an effect of plotting $rR_n(r)$, if we plot $R_n(r)$, then this spillover is not present, if we plot $R_n$,then it does not agree with the plot for the optimized radial basis function.)}, % MC: the point is that it's much stronger when plotted in a compatible way
+, and higher angular momentum functions are peaked at larger distances, consistent with the greater variability in the angular distribution at large $r$.
+
+
+
+In the multi-species case, exemplified by the QM9 dataset, there are several possible choices for the contraction strategy. First, one can compute a different contraction depending on the species of the central atom (center-type specfic), or use the same basis functions independent of $\e_i$ (center-type independent). Second, one can contract separately the density contribution from each neighbour type along the radial index, or compute a covariance matrix that combines the $(a,n)$ indices. 
+Figure~\ref{fig:qm9-density-variance} shows the convergence of the explained variance for the four possible cases, compared to the baseline of a primitive GTO basis of increasing size - which shows by far the slowest convergence of the explained variance, requiring almost 100 radial channels ($\nmax=20$, for the 5 species present) to reduce the importance of features below $10^{-4}$.
+The same level can be achieved with $\qmax\sim\; 50$ when performing separate PCAs for each neighbor species, and $\qmax\sim 30$ when computing jointly the correlations between radial and elemental channels. 
+Performing a separate PCA depending on the species of the central atom accelerates slightly the convergence of the explained variance.
+
+\subsection{Convergence of density correlations features}
+
+We now turn to considering how the truncation of the density expansion basis affects the evaluation of higher-order features, focusing in particular on the invariant components.
+We begin analyzing the convergence of the power spectrum computed for the Si dataset. 
+We take the SOAP features computed with a large $\nmax=20$ as the ``full'' description of three-body correlations, and compute the global feature space reconstruction error\cite{goscinski2021role} (GFRE) that measures how accurately the full feature space can be reconstructed using SOAP features that are built from a truncated density expansion. Given that SOAP features are usually subselected using a low-rank matrix approximation (CUR) approach\cite{imba+18jcp} and farthest point sampling (FPS)\cite{elda+97ieee,ceri+13jctc}, we also investigate the interplay between the density expansion optimization, and this further feature reduction step.
+
+\begin{figure}[bp]
+    \centering
+        \includegraphics[width=\linewidth]{fig/optbasis/gfre_scores_paper-silicon-radial_basisGTO-inkscaped.pdf}
+    \caption{Feature space reconstruction errors for the power spectrum, resulting from the truncation of the radial basis and from the selection of a subset of the power spectrum entries using a deterministic CUR scheme and FPS. The ``full'' feature space is approximated with the power spectrum features, computed using a GTO basis with $(\nmax= 20, \lmax=6)$, and we compare the convergence obtained by using a smaller GTO basis against a truncated optimal basis of the same size.}
+    \label{fig:silicon-soap-gfre}
+\end{figure}
+
+\begin{figure}[tbp]
+    \centering
+        \includegraphics[width=0.7\linewidth]{fig/optbasis/qm9-multispectrum-variance.pdf}
+        \includegraphics[width=0.7\linewidth]{fig/optbasis/qm9-multispectrum-nu.pdf}
+    \caption{ Residual variance for the multispectra computed for the QM9 dataset. 
+    For each body order, the baseline variance is taken to be that associated with the NICE features built starting from a ``full'' vector of density coefficients ($\nmax=20,  \lmax=5$) -- summing over the contributions from all atoms in a representative sample of the QM9 dataset. 
+    We compare results for a small GTO basis (dashed lines) against those for an optimal basis (full lines) determined using a separate PCA procedure depending on the chemical nature of the central atom, and using a combined $(\e,n)$ covariance. 
+(top) Different colors correspond to order-$\nu$ multispectra. $\nu=1$ and $\nu=2$ terms are computed in full; for the $\nu>2$ terms the NICE contraction has been converged so that the discarded variance at each iteration is smaller than that due to the truncation of the density coefficients. (bottom) Comparison of the residual variance for fixed radial/chemical basis size and different orders of multispectrum. Dotted lines indicate the behavior one would expect if the retained variance followed exactly a multiplicative behavior.}
+    \label{fig:qm9-multispectrum-variance}
+\end{figure}
+
+Using an optimal density expansion basis systematically improves the GFRE compared to a GTO basis of the same size (Figure~\ref{fig:silicon-soap-gfre}).  
+This is true both for the full-sized SOAP vector, and for a subselection of the invariant power spectrum entries based on a deterministic CUR algorithm, as well as on FPS.
+This suggests that using an optimal radial basis as the building block of higher-order spectra yields feature vectors that can be easily compressed further, which is important to reduce the cost of evaluating SOAP based models.
+The cost of different parts of the feature evaluation (density expansion, invariant calculation, kernel evaluation, gradients ...)  depends subtly on the composition of the system and the various convergence parameters~\cite{musil2021efficient}. When evaluating a Gaussian process regression model, the calculation of the invariant features and of the kernel values is often dominant, and so the possibility of aggressively subselecting SOAP features with little performance loss is as important as the reduction in the number of radial basis size.
+
+%For a fixed number of selected SOAP features, the GFRE decreases monotonically with increasing values of $\qmax$. 
+
+The same efficient compression is observed for the QM9 dataset, when extending the construction to higher-order features and to a multi-component system. Despite the fact that, as discussed in Section~\ref{sub:multispectrum}, there is no formal guarantee that the optimal density coefficients are also optimal to build high-$\nu$ equivariants,
+we find in practice that the PCA basis leads to much faster convergence of the bispectrum and the trispectrum compared to the primitive basis (Fig.~\ref{fig:qm9-multispectrum-variance}, top panel). 
+The truncation of the density coefficients affects the multispectra in a way that is qualitatively similar to a multiplicative behavior 
+%what  predicted by Eq.~\eqref{eq:multi-truncation}
+: the impact of an incomplete description of the density gets amplified by taking successive orders of correlation (Fig.~\ref{fig:qm9-multispectrum-variance}, bottom panel). 
+Given that the raw number of multispectrum components grows exponentially as $\qmax^\nu$, the density basis truncation has a dramatic effect in reducing the size of the multispectrum vector.  This observation may be extremely important in the construction of systematic high-body order expansions such as NICE or ACE, and in particular in the extension of these approaches to multiple chemical species.
+The very efficient feature reduction that can be achieved by combining $(\e,n)$ channels at the density level shall make it much easier to avoid the exponential increase of complexity of high-body order models with growing chemical diversity. 
+
+\subsection{Regression models}
+%For fitting atomic properties it is even likely to be an inferior choice, since the most strong radial variance comes from distant atoms while the most strong contribution to the target property comes from atoms close to the center.
+%However, this tendency can be counterweighted with a radial scaling as it was done for the results in Fig.~\ref{fig:si-nmax_vs_feat-rs-rmse} showing improvements in the small $\nmax$ regime up to $\nmax=2$ for energies and $\nmax=4$ for forces.
+
+
+\begin{figure}[b]
+    \centering
+        \includegraphics[width=\linewidth]{fig/optbasis/si-nmax_vs_feat-rs-cur-combo.pdf}
+    \caption{Energy and force RMSE for a Gaussian approximation potential based on the power spectrum, fitted to the Si dataset, plotted as a function of the number of radial functions $\nmax$($\qmax$) and sparsification of the SOAP features, $\nsoap$ (using CUR selection).}
+    \label{fig:si-nmax_vs_feat-rs-rmse}
+\end{figure}
+
+The accuracy of a Gaussian approximation potential based on SOAP features, trained using both energy and forces
+% (details in the SI)
+, seen in Fig.~\ref{fig:si-nmax_vs_feat-rs-rmse} shows an improvement of the cross-validation error for the most aggressive truncation of the feature space (up to $\nmax\approx 6$ for forces, and $\nmax\approx 4$ for energy), but no improvements for large $\nmax$. 
+For the largest feature set the primitive GTO basis can be up to 10\% more accurate than the corresponding optimal-basis model.
+A comparison with Fig.~\ref{fig:silicon-soap-gfre}, that shows that the PCA basis is objectively more informative than the primitive basis, suggests that an effect similar to the degradation of performance with increasing environment cutoff radius might be at play here: for this dataset size, the GTO basis, which becomes smoother for large distances, is better suited to build a potential with limited amounts of training data.
+The fact that the GTO basis may be fortuitously better adapted to this specific regression problem is also suggested by the non-monotonic convergence of the error. Depending on the value of $n_\text{max}$, the GTO functions are distributed so as to span the $[0, r_c]$ range
+% (see SI)
+.
+Particularly for small $n_\text{max}$, the varying positions of maxima and nodes of the orthogonalized GTOs emphasize different portions of the atomic environment, and can produce such a non-monotonic trend, particularly in the limit of a relatively small train set size. 
+The PCA basis, on the other hand, is constructed to provide a progressively more complete description of the atom density for the specific training set, resulting in a more regular, mostly monotonic convergence.
+
+\begin{figure}[t]
+    \centering
+    %\includegraphics[width=1.0\linewidth]{fig/optbasis/gfre_radial_spectrum-silicon.pdf}
+    %\vspace{-0.5cm}
+    %\includegraphics[width=1.0\linewidth]{fig/optbasis/radial_spectrum-rs-rmse_e.pdf}
+    %\vspace{-0.5cm}
+    %\includegraphics[width=1.0\linewidth]{fig/optbasis/radial_spectrum-rs-rmse_f.pdf}
+    \includegraphics[width=0.7\linewidth]{fig/optbasis/silicon_radial_spectrum_results.pdf}
+    
+    %\caption{Energy and force RMSE for a pair potential fit to the Si dataset, as a function of the number of radial functions using a radial scaling. Different curves correspond to a primitive DVR and GTO basis, and to the optimal (PCA and PCovR) contracted bases. }
+    \caption{Energy (top) and force (center) 5-fold cross-validation RMSE and GFRE (bottom), computed on the silicon dataset for models based on the radial spectrum $\rep|\frho_i^1>$, as a function of the number of radial functions. Different curves correspond to a primitive DVR and GTO basis, and to the optimal (PCA and PCovR) contracted bases. The PCovR contraction is performed with $\gamma=0.1$. Full lines correspond to a linear model, and dashed lines to a polynomial kernel with exponent $\zeta=4$. The GFRE is computed relative to a $\nmax=20$ GTO basis.}
+    \label{fig:si-rs}
+\end{figure}
+
+%In fact, radial scaling alone can only partly bias the optimal basis towards the target property. This can be seen clearly by building a pair-potential model using the two-body invariants $\rep<n||\frho_i^1> = \rep<n 0 0 ||\frho_i>$ as features in a linear-regression model. 
+%The optimal PCA basis does not consistently perform better than the primitive GTO basis. In fact, for $\nmax=4$, the both the optimal basis and the GTO primitive bases are outperformed in predicting forces by the DVR basis -- despite being consistently less informative than GTO in terms of GFRE~\cite{gosc+21mlst)}.
+
+These effects can be investigated more easily by considering a 2-body model, that uses only the radial coefficients $c^i_n$ ($l=0$).
+The comparison between the GTO and the DVR basis (the former being vastly superior in terms of linearly decodable mutual information content, as seen from the GFRE in the bottom panel of Fig.~\ref{fig:si-rs}) is far from clear-cut, with GTOs giving the worst results for forces with $\nmax=4,6$. 
+The optimal PCA basis is usually comparable with - but not substantially better than - the best result between GTO and DVRs, for each size of the basis. 
+The relative performance of different basis sets is similar when using a linear model and a polynomial kernel, although the nonlinear model reaches an accuracy that is approximately 6 times better for energies and two times better for forces.  
+%An interesting possibility to extend the scheme we propose here is to incorporate a supervised component in the selection of the optimal basis.  Principal covariates regression (PCovR) \cite{dejo-kier92cils,helf+20mlst} is a simple linear scheme that can be tuned to provide a projection of features to a low-dimensional latent space that combines an optimal variance compression target with that of providing an accurate linear approximation of the desired target property. 
+We extend the optimal basis to a PCovR optimization ($\gamma = 0.1$) with the energies as supervised component to determine the contraction coefficients of the basis: as shown in Fig.~\ref{fig:si-rs} (top, center), this PCovR optimal basis yields much better accuracies in the small $\qmax$ range. 
+In fact, by taking the ``pure regression'', $\gamma\rightarrow 0$ limit of PCovR, one would obtain a basis that, for a linear model, yields an accuracy comparable to a fully-converged 2-body potential even with $\qmax=1$. 
+This is because the coefficients are built so that a linear regression performed for the $\qmax$-dimensional features would match as well as possible the predictions of a linear model based on the full primitive basis
+\begin{equation}
+%\!\!w^\opt_0 \rep<q\!=\!0; \opt; \gamma\rightarrow 0||\frho_i^1> \!\approx\!
+%\sum_n w_n \rep<n||\frho_i^1> =  \tilde{y}(A_i).
+  c_{0_\gamma} \underset{\gamma\rightarrow 0}{=} 
+  \sum_n w_n c^i_{n} \approx y_i.
+  %w^\textrm{opt}_0 c_{q_\ga}} \approx \tilde{y}(A_i).
+  %\rep<q\!=\!0; \opt; \gamma\rightarrow 0||\frho_i^1> \!\approx\!
+\end{equation}
+Thanks to the spline approximation of the optimal basis, $c_{0_\gamma}$ with $\gamma\rightarrow 0$ can be computed at the cost of a single radial function evaluation, much as it would be the case for a pair potential. 
+The use of a nonlinear model based on the same radial spectrum features provides the simplest test of transferability for the PCovR-optimized basis beyond ridge regression. 
+Even though for very small $\qmax$ there is a noticeable improvement (up to a factor of 2 for the force RMSE and $\qmax=2$) against primitive and PCA-optimized bases, the advantage is quickly lost for larger bases, where the variance reduction plays the leading role in driving the selection of radial basis even for small $\alpha$.
+As shown in Fig.~\ref{fig:si-rs} (bottom), the improved regression accuracy of PCovR-optimized basis functions comes at a necessary cost in terms of reconstruction error - even though with an intermediate value of the mixing parameter they achieve higher information content than either of the primitive bases, as measured by the GFRE.
+
+\begin{figure}[btp]
+    \centering
+    \includegraphics[width=0.7\linewidth]{fig/optbasis/qm9-multispectrum-accuracy.pdf}
+    \includegraphics[width=0.7\linewidth]{fig/optbasis/qm9-multispectrum-lc.pdf}
+\caption{Convergence of ML models of the atomization energy of molecules from the QM9 dataset. (top) Convergence as a function of the $(a,n)$ radial basis size, comparing a primitive GTO basis and an optimal PCA contraction, for different body orders of the features. For large $\qmax$ it is necessary to truncate aggressively the NICE iteration, which results in a plateau of the accuracy with large $\qmax$. 
+All curves are trained and tested on a set of 65'000 structures, up to the largest $\qmax$ which could fit into 1TB of memory. (bottom) Learning curves are obtained with linear models built on the PCA optimal features of increasing body order. All coloured curves are computed with $\qmax=50$, and the same truncation parameters as in the top panel. For comparison, we show a selection of bespoke models, with black lines: a large NICE model (full line) using 53390 features; the NICE model from Ref.~\citenum{niga+20jcp} (dashed line); a kernel model based on the power spectrum, using parameters analogous to those in Ref.~\citenum{will+18pccp} (dotted line). }
+\label{fig:qm9-lc}
+\end{figure}
+
+The advantages of using an optimized radial basis become much clearer for the QM9 dataset.  As shown in Fig.~\ref{fig:qm9-lc}, there is a dramatic improvement of performance at all body orders when using a PCA-contracted $(a,n)$ basis, with the improvement becoming more and more substantial for higher $\nu$. 
+For the bispectrum features with $\qmax=5$ (effectively only one channel per species), the use of a combined basis leads to a 5-fold reduction of the test error compared to the primitive GTO basis, and makes it possible to reach the symbolic threshold of 1 kcal/mol MAE.
+In other terms, an optimal PCA contraction achieves an accuracy comparable to a primitive GTO basis which is roughly 2 times larger. Given that the number of bispectrum ($\nu=3$) features scales as $\qmax^3$, this translates into an order of magnitude improvement in computational efficiency for the QM9 predictions.
+%{ (ALEX: we are not computing the test error properly to mention a comparison with other results, because we choose the test error for the best regularizer).}.  Sergey will re-run with proper CV, but we looked at alpha and there's evidence it doesn't make any difference
+For larger basis sets, and for $\nu>3$, it becomes necessary to truncate the construction of the multispectra, which within the current implementation of the NICE framework is achieved with further PCA contractions applied at each iteration.
+In order to be able to use a consistent PCA threshold up to the full primitive GTO basis (which contains $\nmax=20$ radial terms per chemical species) we need to use a rather aggressive truncation, which results in clear performance loss, as evidenced by the saturation of the model accuracy with increasing $\qmax$. 
+
+The interplay of the truncation of the density coefficients, the thresholding heuristic, and the use of the features in a linear or a nonlinear model, is evident in the lower panel of Fig.~\ref{fig:qm9-lc}.
+The plot compares the NICE models computed with $\qmax=50$ and an aggressive truncation of the body-order iteration, with the more balanced settings from Ref.~\citenum{niga+20jcp} ($\nmax=12$, $\lmax=7$, $\nu_\text{max}=5$, 1000 invariant features per body order),
+with a ``large NICE'' model which includes $53880$ features (up to $\nu=4$, built upon a relatively small spherical expansion  with $\lmax = 5$ and $\nmax=5$) and with a kernel ridge regression (KRR) model that uses the same parameters as in Ref.~\citenum{will+18pccp} (i.e. using only the power spectrum and a nonlinear kernel).
+The details of the NICE construction affect substantially the stability and the accuracy of the model in the high-$n_\text{train}$ limit, that vary by a factor of two.
+Furthermore, a nonlinear model based on low-body order features is the most accurate, and reaching a MAE of 0.12kcal/mol with $n_{\text{train}}=10^5$. Even though a thorough investigation of these aspects is beyond the scope of the present work, the understanding of the interplay between the truncation of the density basis and the information loss at higher body order that we discuss here shall support more systematic studies in the future. 
+
+%, which we will discuss briefly when showing the application of the optimal numerical radial basis to the evaluation of NICE features.
+
+\section{Future work}
+
+The realisation that most of the widely adopted representations for machine learning of atomistic properties can be seen as a discretization of interatomic correlations naturally points to the importance of determining the most expressive and concise basis to expand the atom density. 
+For a given dataset it is possible to  uniquely define a basis that is optimal in terms of its ability to linearly compress the information encoded in the variance of the density coefficients, which can be determined as a contraction of any complete primitive basis, and evaluated efficiently by approximating it with splines. 
+
+We have explored with numerical experiments the implications of this choice to evaluate higher-order correlations of the density, and to build linear and nonlinear regression models of the energy for both condensed-phase silicon and small organic molecules. 
+Our study indicates that the optimization of the density basis has a dramatic impact on the information content of higher-order features, but that
+%- particularly for comparatively small training sets - \alexnote{that is not the reason why it does not work so well for the silicon dataset!}
+achieving the ultimate accuracy also requires tuning the basis to reflect the sensitivity of the target property to changes in the atomic configurations.
+A more intuitive approach may be to perform this tuning at the level of the atomic density, e.g. modulating the amplitude and resolution of atomic contributions depending on the distance from the central atom.
+An ``unsupervised'' optimal basis would then provide the most concise, and systematically-convergent, discretization of this tuned atomic density. 
+%From this point of view, the construction of an ``unsupervised'' optimal basis makes it possible to perform this tuning at the level of the atomic density, which is usually more intuitive than a tuning of the basis\alexnote{(Alex: The logic here seems not connected: We need to tune basis to incorporate target property =>  we can make this tuning at a level of atom density which is more intuitive than tuning the basis. Do you mean a different kind of tuning in the second sentence? I feel you want to say that the unsupervised optimal basis solves the resolution issue (most efficient basis to represent the atomic density), such that the incorporation of target property information can happen at the atomic density, but its not so clear}
+
+
+Another possible strategy involves the use of supervised criteria in the construction of the basis, as we have demonstrated applying PCovR to the construction of an optimal $\nu=1$ basis.
+A systematic investigation of the effect of varying the parameters of PCovR, as well as the use of PCov-style feature selection\cite{cers+21mlst} in the construction of the multi-spectra, is a promising direction for further research.
+One of the challenges is that it is only meaningful to apply the linear reasoning that underlie PCovR to optimize features with the same equivariant properties as the targets, and so the $l>0$ channels of the density coefficients cannot be optimized with a straightforward application of this scheme.
+%Incorporating a supervised component for $l>0$ channels in the construction of the optimal basis is another possible direction in which the data-driven basis can be developed further.
+One approach to addressing this challenge has been to transition from a closed-form optimization to gradient descent one.
+The optimization of the decomposition matrix is achieved by propagating the gradients from the prediction loss associated with higher-order invariant features back to the radial expansion coefficients.
+While this approach has proven effective for optimizing the chemical decomposition~\cite{lopanitsyna2023modeling}, simultaneously optimizing the chemical and radial channels introduces numerical instabilities in the decomposition matrix optimization, which is an issue that remains to be addressed.
+
+The performance gains associated with the use of an optimal basis are much clearer in the presence of multiple chemical elements, in particular when using a combined basis in which radial channels associated with different species are considered together in the construction of the symmetry-adapted feature covariance matrix. 
+This combined basis can capture the same amount of information of a primitive basis that is 3 to 5 times larger, and is essential to the efficient construction of high-order density correlation features, given that we show analytically how the loss of information that is due to a truncated basis becomes worse with increasing $\nu$. It shall help accelerate the convergence of the schemes, such as NICE, ACE, MTP, that rely on very high body order terms. 
+We show that linear NICE models built on high-order combinations of the optimal basis yield much lower error than those constructed on a GTO basis of similar size, even though the truncation of the body order iteration, or introducing nonlinearities, can also affect, positively or negatively, convergence. 
+
+The determination of the optimal basis is much less demanding than the fitting of even the simplest models. After fitting, the evaluation of the contracted basis involves no overhead over a primitive basis of equal size, thanks to the use of a spline approximation.
+Given that it provides consistently higher information content, and that it results in models that have comparable (for silicon) or much better (for QM9) accuracy than standard choices of orthogonal bases, we recommend adopting this scheme in any machine-learning approach that requires representing an atomic density -- particularly for systems that involve many chemical species, or for frameworks that rely on the evaluation of high-order density correlations.
+
+%%\label{sec:evaluation_of_radial_contribution}
+%%An efficient implementation for the evaluation of the radial basis function in the spherical expansion for the computation of SOAP was part of my work in the first year.
+%%Therefore the recent developments of efficient schemes are here discussed in more detail.
+%%Following the Eq.~\ref{eq:soap} for the SOAP descriptor by resolving the expansion on the angular contribution results in
+%%\begin{equation}
+%%\label{eq:radial_part_in_spherical_expansion}
+%%%\langle rlm|\mathcal{X}_i\rangle =  4\pi\underbrace{\exp[-a(r^2+r_{ij}^2)]i_l(2ar_{ij})}_{\text{radial term}}Y_{l}^m(\alpha_{ij},\beta_{ij}),
+%%\langle rlm|\mathcal{X}_i\rangle_{\hat{R}} \propto \sum_{j\in\mathcal{X}_i}\exp[-a(r^2+r_{ij}^2)]i_l(2arr_{ij})Y_l^m(\hat{\mathbf{r}}_{ij}),
+%%\end{equation}
+%%where $i_l$ is the modified spherical Bessel function of the first kind.
+%%%and ($\theta{ij},\phi{ij}$ are the spherical coordinates of the unit vector $\hat{\mathbf{r}}$
+%%For an effective radial basis function, higher-order polynomials have been used in the first version of SOAP\cite{bartok2013representing}
+%%\begin{equation}
+%%R_n^{poly}(r) = (r_{\text{cut}} - r)^{n+2}N_n,\quad N_n\text{ is a normalization parameter.}
+%%\end{equation}
+%%The disadvantage is that the expansion has no analytic solution and is therefore performed with a least square fitting. %\cite{https://github.com/libAtoms/QUIP/issues/100#issuecomment-376115320}
+%%A proposed solution to this problem is to remove the dependency of the radial term on the spherical Bessel function by separating the angular and radial part in the atom density function\cite{caro2019optimizing}
+%%\begin{equation}
+%%g(\mathbf{r} - \mathbf{r}_j) \approx \tilde{g} = g_{r}(r)g_{\perp r}(\hat{\mathbf{r}},\mathbf{r}_j).
+%%\end{equation}
+%%The radial part can be then simplified to
+%%\begin{equation}
+%%\langle rlm|\mathcal{X}_i\rangle_{\hat{R},\tilde{g}} \propto \sum_{j\in\mathcal{X}_i} b(r_{ij})\exp[-a(r^2+r_{ij}^2)]Y_l^m(\hat{\mathbf{r}}_{ij}),
+%%\end{equation}
+%%% In the paper there is still a smooth cutoff function dependent on r, but this one is omitted here
+%%where $b(r_{ij})$ is a factor dependent only on $r_{ij}$.
+%%This allows an analytic expansion on higher-order polynomials.
+%%%For my work I followed a different approach as described in detail in the subsequent Section~\ref{sec:cubic_spline}.
+%
+%\section{Closed-form solutions}
+%%The target of the optimization are the radial expansion coefficients in Eq.~\ref{eq:radial_expansion}
+%%\begin{equation}
+%%  c_{nl} = c_{n\lambda} c_{\lambda\mu}.
+%%\end{equation}
+%%
+%%\begin{equation}
+%%  \int\mathrm{d}\mathbf{r} \rho(\mathbf{r})\rho(\mathbf{r}^\prime)\,
+%%\end{equation}
+%%
+%%\begin{equation}
+%%  \sum_n U_{qn}^{al}\langle anlm | \rho_i\rangle  = \langle aqlm | \rho_i\rangle
+%%  %\langle anlm \lambda|\rho_i\rangle 
+%%  %\langle lm|\rho_i\rangle = <a^\prime n^\prime l|\rho_i> <lm|\rho_i>
+%%\end{equation}
+%We dicuss here optimizations that have closed-form solution for the computation of $U$.
+%Such solutions are typically faster to compute but also less accurate.
+%
+%Closed-solution are usually more efficient in computation time, but often only improve the basis by linear transformation or fixed subset of nonlinear transformation.
+%\subsection{Unsupervised optimization}
+%Principal component analysis has been proposed to compute the data-driven contractions of equivariant features that represent in the most informative way the variability of a dataset as part of the N-body iterative contraction of equivariant (NICE) frameworks.~\cite{niga+20jcp}
+%We propose to apply this procedure on the first-order equivariants -- that correspond to the density coefficients -- as a mean to determine a data-driven radial basis. 
+%Keeping different chemical species separate, this amounts to computing the rotationally invariant covariance matrix (see SI) 
+%%In Ref.~\citenum{niga+20jcp} it has been proposed to use principal component analysis to compute the data-driven contractions of equivariant features that best represent the variability of a dataset.
+%%In combination with an iterative expression to compute density correlations of increasing order, this idea underlies the N-body iterative contraction of equivariant (NICE) frameworks. 
+%%The procedure can be readily applied to the first-order equivariants -- that are equal to the density coefficients. Keeping different chemical species separate, this amounts to computing the rotationally invariant covariance matrix (see SI)
+%\begin{equation}
+%C^{al}_{nn^\prime}= \frac{1}{N} \sum_i \sum_m <an l m|\rho_i> <\rho_i|an^\prime lm>,
+%\label{eq:cov}
+%\end{equation}
+%where the summation over $m$ ensures that the covariance is independent of the orientation of structures in the dataset.
+%For each $(a, l)$ channel, one diagonalizes $\mathbf{C}^{al}=\mathbf{U}^{al} \mathbf{Lam}^{al} (\mathbf{U}^{al})^T$, and computes the optimal coefficients
+%\begin{equation}
+%%<aq lm; opt||\rho_i> = \sum_n U^{al}_{qn} <an lm|\rho_i>. \label{eq:contract}
+%\end{equation}
+%Note that we compute $\mathbf{C}^{al}$ without centering the density coefficients. For $l>0$, the mean ought to be zero by symmetry (although it might not be for a finite dataset), and even for the totally symmetric, $l=0$ terms, density correlation features are usually computed in a way that is more consistent with the use of non-centered features. 
+%
+%The number of contracted numerical coefficients $\qmax$ can be chosen inspecting the eigenvalues $\Lambda^{al}_q$.
+%At first, it might appear that in order to evaluate the contracted basis one has to compute the full set of $\nmax$ coefficients, and this is how the idea was applied in Ref.~\citenum{niga+20jcp}. 
+%When combining Eq.~\eqref{eq:contract} with Eq.~\eqref{eq:neighbor-sum}, however, one sees that the contracted coefficients can be evaluated directly 
+%\begin{equation}
+%\!\!\rep<aqlm; \opt||\rho_i> \!=\! \sum_j \delta_{\e\e_j} \rep<aql; \opt||r_{ji}; g>\! \rep<lm||\brhat_{ji}>,
+%\label{eq:neighbor-contract}
+%\end{equation}
+%using the contracted radial integrals
+%\begin{equation}
+%\rep<aq l; \opt||r; g> = \sum_n U^{al}_{qn} \rep<nl||r; g>, \label{eq:contract-integral}
+%\end{equation}
+%, and then evaluated at exactly the same cost as for a spline approximation of the radial integrals of a primitive basis of size $\qmax$.
+%Splining does not affect the equivariant behavior of the atom-density features, and introduces minute discrepancies relative to the analytical basis that do not affect the quality of the resulting models. 
+%
+%%\subsubsection{Mixed-species basis}
+%Even though Eq.~\eqref{eq:cov} is defined separately for different species $a$, it is also possible to compute cross-correlations between different elemental channels, defining
+%\begin{equation}
+% C^{l}_{an; \e'n'}= \frac{1}{N} \sum_i \sum_m \rep<an l m||\rho_i> \rep<\rho_i||\e' n' lm>,
+%\label{eq:cov-multispecies}
+%\end{equation}
+%as done in the NICE framework\cite{niga+20jcp} following ideas proposed in Ref.~\citenum{will+19jcp}, resulting in coefficients that combine information on multiple species
+%\begin{equation}
+%\rep<q lm; \opt||\rho_i> = \sum_n U^{l}_{q;an} \rep<an lm||\rho_i>, \label{eq:contract-multispecies}
+%\end{equation}
+%similar in spirit to the alchemical contraction discussed in Ref.~\citenum{will+18pccp}.
+%It is worth noting that although the NICE code\cite{NICE-REPO} contains the infrastructure to compute these contractions \emph{as a post-processing of the primitive basis}, the implementation we propose in  \texttt{LIBRASCAL} computes the contracted coefficients directly. However, it only implements the less information-efficient separate $(a, n)$-PCA strategy.
+%An implementation that evaluates directly the combined contraction would incur an overhead because every neighbor would contribute to every $q$ channel irrespective of their species:
+%\begin{multline}
+%%\rep<qlm; \opt||\rho_i>  = \sum_j \sum_{an} U^l_{q; an} \delta_{a\e_j}
+%%\rep<nlm||\br_{ji}; g>  \\
+%%= \sum_j \sum_{n} U^l_{q; \e_j n} \rep<nl||r_{ji}; g>\rep<lm||\brhat_{ji}> \\=
+%%\sum_j \rep<\e_j q l; \opt||r_{ji}; g>\rep<lm||\brhat_{ji}>.
+%\end{multline}
+%Given however that the cost of evaluating the density coefficients is usually a small part of the calculation of density-correlation features\cite{caro19prb,musi+21jcp}, we expect that this approach should be in general preferable compared to the calculation of a large primitive basis, and to a two-step procedure in which element-wise optimal functions are further contracted into mixed-element coefficients.
+%
+%\subsubsection{Example: Collective variable optimization}
+%We can see that we can retrive similar quality CV as in the BaTiO3 paper from a snapshot.
+%Applying PCA is not a new thing, as it is a chicken-egg problem.
+%
+%\subsection{Supervised optimization}
+%%\alexnote{I find this title confusing, since we never refer to supervised selection. For me something like "Beyond unsupervised decomposition" would make more sense, since this is what we introduced in the last paragraph.}
+%For a given number of radial functions, and a target data set, the data-driven contracted basis~\eqref{eq:contract} provides the most efficient description of the atom-centred density in terms of the fraction of the retained variance.
+%%The basis construction by the covariance matrix guarantees 
+%The most effective variance-preserving compression however does not guarantee that the features are the most effective to predict a given target property.
+%In fact, it has already been shown that SOAP features tend to emphasize correlations between atoms that are far from the atomic center, which can lead to a counter-intuitive degradation of the model accuracy with increasing cutoff radius\cite{bart+17sa,will+18pccp}. 
+%This effect can be contrasted by introducing a radial scaling\cite{huan-vonl16jcp,will+18pccp} that de-emphasizes the magnitude of the atom density in the region far from the central atom. 
+%By applying this scaling -- or other analogous tweaks\cite{caro19prb} -- to the atom density before it is expanded in the primitive basis, one ensures that the optimal basis is also built with a similar focus on the structural features that contribute more strongly to the target property.
+%In other terms, the information-optimal basis set we introduce here can be combined with a heuristic or data-driven optimization of the underlying density representation, to reflect the scale and resolution of the target property.
+%
+%Another possibility is to extend the scheme to incorporate a supervised target $y_i$ in the selection of the optimal basis using principal covariates regression (PCovR) \cite{dejo-kier92cils,helf+20mlst}.
+%PCovR is a simple linear scheme that can be tuned to provide a projection of features to a low-dimensional latent space that combines an optimal variance compression target with that of providing an accurate linear approximation of the desired target property. 
+%Since $l>0$ contributions of the features have zero mean, the optimization problem can be combined with a supervised component only for $l=0$, and yields an optimal basis
+%\begin{equation}
+%<r||  aq 0; \opt; \gamma> = \sum_n U^{\e0;\gamma}_{qn} <r||n0>,
+%\end{equation}
+%which is a special case of Eq.~\eqref{eq:contract-basis} for $l=0$, 
+%where $U^{\e0;\gamma}_{qn}$ is obtained as the orthogonalized PCovR projector, as discussed in Refs.~\citenum{dejo-kier92cils,helf+20mlst}, using a mixing parameter $\gamma$, that determines how strong the emphasis of the optimization should be on minimizing the residual variance or the error in regressing the target.
+%
+%\begin{multline}
+%<Q;\nlk||\frho[\gslm]_i^{(\nu+1)}>\propto 
+%\sum_{m}   <n||\frho[\lm]_i^1>\times\\[-1mm]
+%<Q||\frho[\sigma((-1)^{l+k+\lambda}); k (\mu-m)]_i^{\nu}>  \cg{\lm}{k (\mu-m)}{\glm},
+%\end{multline}
+%using Clebsch-Gordan coefficients $\cg{lm}{l'm'}{l''m''}$ in an expression analogous to the sum of angular momenta.
+%The $\nu=1$ equivariants are nothing but the density coefficients
+%\begin{equation}
+%<n||\frho[\sigma;\lm]_i^1>  = \delta_{\sigma 1}<\nlm||\rho_i>^\star,
+%\end{equation}
+%and one can compute invariant descriptors by retaining only the $<Q|\frho[1; 00]_i^\nu>$ terms, using the other components only as computational intermediates.
+%
+%\section{Higher-order information}
+%Most NN structures use the approach to find a radial basis that is simple to evaluate to then let the NN optimize the basis.
+%Due to the flexible optimization space of NN, they can achive quite good accuracies which would not been able to achive with shallow methods\cite{schutt2018schnet}.
+%%In several architectures the time Dirac delta function is used, since the expansion coefficient is given by the distance.
+%\begin{figure}
+%    \includegraphics[width=\textwidth]{fig/slide23_0.png}
+%    \caption{Nonlinear the equivariant optimization by gradient descent}
+%    \label{fig:nonlinear-basis-opt}
+%\end{figure}
+%
+%% guillaume/natashas work
+%\section{Future directions}
+%\subsection{Hierarchical optimization}
+%\papercomment{Optimizing first the chemical part and then the radial part, because optimizing both seems not to work well}\\
+%In the work of Natasha \& Guillaume the optimzation of radial and chemical due to the huge optimization space.
+%It is well known that deep NN have an equivalent functional form with one layer, but the learning peformance is dramatically better in the former one.
+%Both the radial and species channel increase the feature size by a multiplicative factor and thereby also the weigh matrix size.
+%%using low number of  %TODO find citation.
+%%Optimization in t case is tricky, since huge matrices multiplcation are not so closed-form optimizations
+%\subsection{Radial dependent smoothness}
+%\papercomment{make sigma dependent on r, because we see that it works well for GTOs}
 % LE basis, radial smoothening

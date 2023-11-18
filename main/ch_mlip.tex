@@ -1,27 +1,35 @@
 \chapter{Implementation of machine learning interatomic potentials}
 %\section{Modular design of MLIP}
 
-Interatomic potential have been long time used to approximate the potential energy in classical MD simulation by a separation into separate body-order terms.
+Interatomic potential have been long time used to approximate the potential energy in classical molecular dynamics simulation by decomposing the energy into many-body contributions
+%In the picture of the Born-Oppenheimer approximation we can decouple the time propagation of the nuceil and electronic.the potential energy quantum mechanically
 \begin{subequations}
+\begin{gather}
 \begin{align}
-  H(\mathbf{p}, \mathbf{q}) &= \frac{\mathbf{p}^2}{2m} + V(\mathbf{q}),\\% + theromstat/barostat
-  V(\mathbf{q}) &= \sum_{i = 1}^N V_1(\mathbf{q}_i) + \sum_{i,j = 1}^N V_2(\mathbf{q}_i, \mathbf{q}_j) + \sum_{i,j,k = 1}^N V_3(\mathbf{q}_i, \mathbf{q}_j, \mathbf{q}_k) + \ldots
-  %\frac{\partial\mathbf{p}}{\partial t} = \frac{\partial V(\mathbf{q})}{\partial\mathbf{q}}, \\
-  %\frac{\partial\mathbf{q}}{\partial t} = \frac{\partial \mathbf{p}}{m},
-\end{align}
+  H(\mathbf{p}, \mathbf{q}) = \frac{\mathbf{p}^2}{2m} + V(\mathbf{q}),\quad
+  \frac{\partial\mathbf{p}}{\partial t} = \frac{\partial V(\mathbf{q})}{\partial\mathbf{q}},\quad\quad \frac{\partial\mathbf{q}}{\partial t} = \frac{\mathbf{p}}{m}\quad\textrm{(classical Hamiltonian mechanics)},
+\end{align}\\
+  V(\mathbf{q}) = \sum_{i = 1} V_1(\mathbf{q}_i) + \sum_{i,j = 1} V_2(\mathbf{q}_i, \mathbf{q}_j) + \sum_{i,j,k = 1} V_3(\mathbf{q}_i, \mathbf{q}_j, \mathbf{q}_k) + \ldots \quad\textrm{(interatomic potential)}.
+\end{gather}
 \end{subequations}
-Due to limitation of hardware the first succesful approaches to interatomic potentials have been carefully handcrafted models designed for a specific materials in a specific phases.\cite{stillinger1985computer, tersoff1988empirical}.
-With increased hardware power the use of data-driven models emerged allowing a more automatized model construction.
-These fall under the name machine learning interatomic potentials (MLIP)\cite{bartok2010gaussian,bartok2018machine}. %TODO rather cite Behler?
+Due to the limitation of computational power, the development of accurate interatomic potentials historically depended on the meticulous hand-tuning of parametric models called \emph{empirical interatomic potential}.
+They were constrained by the chemical and phase space they could predict accurately~\cite{stillinger1985computer, tersoff1988empirical}.
+However, with increased computational power, the shift towards data-driven models emerged allowing a more automatized construction fitting models on data from empirical potential~\cite{blank1995neural} or ab initio calculations~\cite{brown2003classical,lorenz2006descriptions,behl-parr07prl}.
+Remarkably, current models have reached the capability to extensively cover chemical~\cite{lopanitsyna2023modeling} and phase space~\cite{bartok2018machine} accurately.
 
-The current ecosystem of ML packages is extremely abundant, that one could question why there is a need for new ML packages for the domain of material science at all.
-But most of the developed packages are targeted for users that do not share the same requirements as in the domain of material science and therefore cannot be directly embedded for the development of MLIP.
-This is due to the fact that the symmetrization of features based on point clouds in 3D
+The abundance of machine learning (ML) packages available today~\cite{Haddad2023Artificial} prompts the question of the need for new ML packages for the development MLIP.
+Most existing packages, however, are not suited to the specific needs of MLIP, which include domain-specific featurization of 3D structures and gradient inference with respect to target properties.
+To ensure the code base remains manageable, strategic integration with existing software solutions is essential, wherever appropriate
+%To keep development and maintenance efforts of the code base manageable it is necessary to integrate with existing software solutions where adequate.
+This requires not only a solid understanding of relevant mathematical methods but also proficiency in current software tools.
+This combination of requirements poses a significant challenge in the development of enduring and robust MLIP packages.
+%To reduce the development and maintainance costs it is necessary to find points in ones method where already established software packages can be embedded in.
+%For that a mathematical and algorithmic understanding of the landscape of methods and proficient skills in software development are needed which makes it such challenging problem.
+ % tlerefore cannot be directly embedded for the development of MLIP.
+%symmetrization of features based on point clouds in 3D
 %symmetrized features in three-dimensional space 
- and the inference of gradients are not requirements that are shared with many other domains that deploy ML models.
-To reduce the development and maintainance costs it is necessary to find points in ones method where already established software packages can be embedded in.
+%  are not requirements that are shared with many other domains that deploy ML models.
 %This has be considered from multiple aspects does an interface happen without much loose in performance cost, is the maintainance cost of the interface lower than creating a implemantion.
-For that a mathematical and algorithmic understanding of the landscape of methods and proficient skills in software development are needed which makes it such challenging problem.
 %software development of MLIP remains challenging problem as most of the packages in the
 %which is not a requirement that is not much shared with other domains.
 %Secondly, the 
@@ -30,16 +38,17 @@ For that a mathematical and algorithmic understanding of the landscape of method
 %While featurization is domain-specific and needs custom implementations also the existing ML software ecosystem can often not to be reused for our domain as including gradients into the pictures completely changes the constraints on the required software.
 %The gradient computation shifts the bottleneck drastically and thus changes the existing algorithmic design.
 
-In this chapter I discuss my contributions to the software ecosystem that facilitates the development of MLIP.
-This covers my contributions to the package \texttt{librascal} for the computation of the featurization of atomic structures and building a model, \texttt{scikit-matter} the ML method packages, implementation of an interface to \texttt{LAMMPS} that enabled study of ferroelectric phase transitions in barium titanate\cite{gigli2023modeling} as well as the transport properties of lithium ortho-thiophosphate\cite{gigli2023mechanism}.
-Furthermore, this includes contributions to \texttt{equisolve} and \texttt{metatensor} that allow a more modular approach to build MLIP.
+In this chapter I discuss my contributions to the software ecosystem that facilitates the deployment of MLIP into MD software.
+These contributions include my work to the \texttt{librascal} package~\cite{LIBRASCAL}, instrumental for constructing MLIP based on the SOAP featurization of atomic structures, the \texttt{scikit-matter}~\cite{goscinski2023scikit} package a toolkit for various data-driven preprocessing methods that facilitate MLIP construction as feature and sample selection.
+Additionally, I implemented an interface to \texttt{LAMMPS}~\cite{LAMMPS} enabling the studies on ferroelectric phase transitions in barium titanate, as detailed in Ref.~\cite{gigli2023modeling} and on the transport properties of lithium ortho-thiophosphate, as described in Ref.~\cite{gigli2023mechanism}.
+Finally, we briefly discuss how the packages \texttt{equisolve}~\cite{equisolve} and \texttt{metatensor}~\cite{metatensor} enable a more modular approach to build MLIPs.
 
 \section{Implementation of cubic splines for featurization}
 \label{sec:cubic_spline}
 %As part my work in the first year, I participated in the development of a library designed to allow efficient computation of atomic density based descriptors, named librascal.
 %The library is designed with most emphasize on efficiency with regard to code structure and computation methods of descriptors.
 %The code structure is focused on reducing runtime cost by allowing a contiguous iteration through atomic environments and by applying template based methods as curiously recurring template pattern (CRTP) to prevent runtime lookups of virtual functions with the tradeoff of higher compile time costs.
-One of my contributions to \texttt{librascal} has been the implementation of a cublic spline to interpolate the radial expansion coefficients in Eq.~\ref{eq:radial_expansion}.
+One of main contributions to \texttt{librascal} has been the implementation of a cublic spline to interpolate the radial expansion coefficients as expressed in Eq.~\eqref{eq:radial_expansion}.
 %iin the last year has been the development of efficient methods for the computation of the radial basis expansion for the SOAP descriptor.
 %In contrast to the approaches discussed in Section~\ref{sec:evaluation_of_radial_contribution}, for librascal Gaussian typed orbital (GTO) functions are used as radial basis functions 
 %\begin{subequations}
@@ -52,8 +61,8 @@ One of my contributions to \texttt{librascal} has been the implementation of a c
 %Performance test done with the descriptor library Dscribe show a speed up of $10.07\pm 0.56$ times of the GTO basis over the polynomial one\cite{himanen2020dscribe}.
 %In librascal the GTO improve the expansion on the radial part is to separate the radial and angular part in the original atomic density function as proposed by Marco...
 %that allowed further works
-%the computation analytically the integral for the radial expansion in Eq.~\ref{eq:radial_part_in_spherical_expansion}. 
-%However, due to the modified spherical Bessel function $i_l$ %in Eq.~\ref{eq:radial_part_in_spherical_expansion}
+%the computation analytically the integral for the radial expansion in Eq.~\eqref{eq:radial_part_in_spherical_expansion}. 
+%However, due to the modified spherical Bessel function $i_l$ %in Eq.~\eqref{eq:radial_part_in_spherical_expansion}
 %an analytical expansion of radial term requires the evaluation of the computationally expensive confluent hypergeometric function $\hyponefone$ 
 %\begin{multline}
 %    \label{eq:radial_integral}
@@ -64,26 +73,51 @@ One of my contributions to \texttt{librascal} has been the implementation of a c
 %\end{multline}
 %The contribution of this function to the overall cost of the radial expansion can be seen in Fig.~\ref{fig:hyp1f1_contribution} ranging from 55\% to 75\%  of the total time.F
 For each coefficient $nl$, the one dimensional function $f^{nl}:[0,r_c]\rightarrow\mathbb{R}$ is splined.
-The function $f^{nl}$ maps the distance $r\in[0,r_c]$ to the neighbor contribution of the radial expansion coefficient as in Eq.~\ref{TODO}.
-For the construction of the cubic spline the targeted interval $[0,r_c]$ is for set of points $0 = r_1 < r_2 < \ldots < r_{K} < r_{K+1} = r_c$ further partitioned into a set of subintervals $[r_1, r_2], \ldots, [r_{K}, r_{K+1}]$.
-The radial expansion coefficients are evaluated for each of the distances $r_1 < r_2 < \ldots < r_{K+1}$ to set up a set of conditions
+The function $f^{nl}$ maps the distance $r\in[0,r_c]$ to the neighbor contribution of the radial expansion coefficient as in Eq.~\eqref{TODO}.
+For the construction of the cubic spline the targeted interval $[0,r_c]$ is further partitioned into a set of subintervals $[r_1, r_2], \ldots, [r_{K}, r_{K+1}]$ where $0 = r_1 < r_2 < \ldots < r_{K} < r_{K+1} = r_c$.
+Then cubic splines are order 3 polynomials $p_k(r) = A_k + B_kr + C_kr^2 + D_kr^3$ on the interval $[0,1]$ with the boundary conditions
+%The radial expansion coefficients are evaluated for each of the distances $r_1 < r_2 < \ldots < r_{K+1}$ to set up a set of conditions
 %The end points of each subinterval are evaluated with the origin approximated by a cubic polynomial boundary conditions.
 %Let $\{r_k\}_{k=1}^{M+1}$ be the set of $M+1$ boundary points in the interval $[0,r_c]$, then cubic spline defines polynomials $p_k(r) = A_k + B_kr + C_kr^2 + D_kr^3$ on the interval $[0,1]$ with the boundary conditions
 \begin{subequations}
-%\label{eq:abscissas_boundary_conditions}
-\begin{align} 
-    p^{nl}_{k}(0) = f^{nl}(r_k)&\text{ and } p^{nl}_{k}(1) =  f^{nl}(r_{k+1})\text{ for } k=1,\ldots,K , \label{eq:function_boundary_conditions}\\
-    p^{nl}_{k}(0) = p^{nl}_{k-1}(1)&\text{ and } p^{nl}_{k}\prime(0)= p^{nl}_{k-1}\prime(1) \text{ for } k=2,\ldots,K  ,\label{eq:points_boundary_conditions}\\
-    p^{nl}_k(1) = p^{nl}_{k+1}(0)&\text{ and }  p^{nl}_k\prime(1) = p^{nl}_{k+1}\prime(0) \text{ for } k=1,\ldots,K-1 ,\label{eq:derivative_boundary_conditions}\\
-    p^{nl}_{1}\prime\prime(0) = 0&\text{ and } p^{nl}_{M}\prime\prime(1) = 0.\label{eq:natural_boundary_conditions}
-\end{align}
+\label{eq:abscissas_boundary_conditions}
+\begin{gather}
+    p^{nl}_{k}(0) = f^{nl}(r_k)\text{ and } p^{nl}_{k}(1) =  f^{nl}(r_{k+1})\text{ for } k=1,\ldots,K , \label{eq:function_boundary_conditions}\\
+    %p^{nl}_{k}(0) = p^{nl}_{k-1}(1)&\text{ and }
+    \left(\frac{\partial p^{nl}_{k}}{\partial r}\right)_{r=1} = \left(\frac{\partial p^{nl}_{k+1}}{\partial r}\right)_{r=0} \text{ for } k=1,\ldots,K-1  ,\label{eq:derivative_boundary_conditions}\\
+    \left(\frac{\partial^2 p^{nl}_{k}}{\partial r^2}\right)_{r=1} = \left(\frac{\partial^2 p^{nl}_{k+1}}{\partial^2 r}\right)_{r=0} \text{ for } k=1,\ldots,K-1  ,\label{eq:second_derivative_boundary_conditions}\\
+    %p^{nl}_k(1) = p^{nl}_{k+1}(0)&\text{ and }  \left(\frac{\partial p^{nl}_k}{\partial r}\right)_{r=1} = \left(\frac{\partial p^{nl}_{k+1}}{\partial r}\right)_{r=0} \text{ for } k=1,\ldots,K-1 ,\label{eq:derivative_boundary_conditions}\\
+    \left(\frac{\partial^2 p^{nl}_{1}}{\partial r^2}\right)_{r=0} = 0\text{ and } \left(\frac{\partial^2 p^{nl}_{K}}{\partial r^2}\right)_{r=1}=0\quad\text{(natural boundary conditions)}.\label{eq:natural_boundary_conditions}
+\end{gather}
 \end{subequations}
-The boundary conditions ensure the smoothness at the boundary points.
-A tridiagonal linear system of these equations can be formed from the $4K$ conditions in Eqs.~\ref{eq:points_boundary_conditions},~\ref{eq:derivative_boundary_conditions},~\ref{eq:natural_boundary_conditions} and their evaluation in Eq.~\ref{eq:function_boundary_conditions} by rearranging them to\cite{bartels1995introduction}
+%The boundary conditions ensure the continuity.
+From these $4K$ boundary conditions a tridiagonal linear system can be formed solving for the $4K$ unknowns~\cite{bartels1998hermite}
+%\begin{subequations}
+%\begin{align}
+%  \left(\frac{\partial p^{nl}_{k}}{\partial r}\right)_{r=0} &= B_k \\
+%  \left(\frac{\partial p^{nl}_{k}}{\partial r}\right)_{r=1} &= B_{k+1} = B_k + 2C_k + 3D_k \\
+%  \left(\frac{\partial^2 p^{nl}_{1}}{\partial r^2}\right)_{r=0} &= 0 = 2C_1 \\
+%  \left(\frac{\partial^2 p^{nl}_{K}}{\partial r^2}\right)_{r=1} &= 0 = 2C_{K} + 6D_K \Rightarrow C_K = - 3D_K
+%  p^{nl}(0) &= A_k \\
+%  p^{nl}(1) &= A_{k+1} = A_k + B_k + C_k + D_k \\
+%  \Rightarrow p^{nl}(1)-p^{nl}(0) &= B_k + C_k + D_k\\
+%  \Rightarrow 3(p^{nl}(1)-p^{nl}(0)) &= 3B_k + 3C_k + 3D_k \\
+%\end{align}
+%\end{subequations}
+%\begin{subequations}
+%\begin{align}
+%   0 = 2C_{k} + 3D_k
+%  p^{nl}(1) - p^{nl}(0) k =
+%  p^{nl}(0) &= A_k \\
+%  p^{nl}(1) &= A_{k+1} = A_k + B_k + C_k + D_k \\
+%  \left(\frac{\partial p^{nl}_{k}}{\partial r}\right)_{r=0} &= B_k \\
+%  \left(\frac{\partial p^{nl}_{k}}{\partial r}\right)_{r=1} &= B_{k+1} = B_k + 2C_k + 3D_k
+%\end{align}
+%\end{subequations}
 \begin{subequations}
 \begin{align}
-A_k = f(r_k),\quad C_k = 3(f^{nl}(r_{k+1})-f^{nl}(r_k)) - 2B_k-B_{k+1},\\
-D_k = 2(f^{nl}(r_{k})-f^{nl}(r_{k+1})) + B_k+B_{k+1},\hspace{5em}\\
+%A_k = f^{nl}(r_k),\quad C_k = 3(f^{nl}(r_{k+1})-f^{nl}(r_k)) - 2B_k-B_{k+1},\\
+%D_k = 2(f^{nl}(r_{k})-f^{nl}(r_{k+1})) + B_k+B_{k+1},\hspace{5em}\\
 \begin{pmatrix}
     2 & 1       &           &       &    \\
     1 & 4       & 1         &           &    \\
@@ -108,43 +142,44 @@ B_{K}
 \end{pmatrix}.
 \end{align}
 \end{subequations}
-A linear systems forming a tridiagonal matrix can be solved in linear time with time complexity $O(2K)$ by iterating two times through the matrix following a Gaussian elimination scheme.
+Such a systems can be solved in linear time with time complexity $O(2K)$ by iterating two times through the matrix following a Gaussian elimination scheme.
 %\begin{equation}
 %    
 %\end{equation}
 %In the forward pass the lower off diagonal is eliminated to zero, in the backward path the upper path is eliminated to zero.
-Commonly, for interpolators the grid size is adaptively changed until it is below an error bound given by the user as input.
-The error can be estimated by sampling points in the intervals $[r_k,r_{k+1}]$ and comparing the results of $f^{nl}$ with $p^{nl}$.
-During implementation it has been shown that conditioning the error on a relative and absolute error has been most robust in terms of interpolation accuracy and convergence of the grid size.
-This means that the boundary points are extended until one of the two estimated errors lies under the given error.
-
-While algorithms for adaptive grids can be advantageous to control the grid size and thus the memory requirements, we have seen that a uniform grid does not reach memory intensive as it can be seen in Fig.~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
-Compared to an adaptive grid the uniform grid reduces the asymptotic complexity for determing the subinterval for evaluation from $O(\log K)$ to constant $O(1)$.
-In additiona as we are building the grid for each $nl$ channel, the construction and evaluation of the spline enables possiblity of parallelization over all coefficients in form of multithreading and/or single instruction multiple data (SIMD) instructions or graphic process unit (GPU) accelerations.
-
-A point $r$ can be evaluated by first determing the corresponding boundary point $r_k$ for which $r\in[r_k,r_{k+1}]$, and then mapping $[r_k,r_{k+1}]$ to the polynomial interval $[0,1]$ with $p_k((r-r_k)/(r_{k+1}-r_k))$.
-The design choice mainly affecting the efficiency of the cubic spline interpolator was the choice of the grid.
-For an arbitrary grid with $K+1$ points, the optimal complexity for searching the boundary point $r_k$ is $O(\log(M+1))$ with a binary search.
-On the other hand for uniform grids the search time can be reduced to $O(1)$ by
-\begin{equation}
-    k = \min(K,\lfloor (r-r_1)\Delta \rfloor+1), \quad \Delta = (K+1)/(r_{K+1}-r_1).
-\end{equation}
+%Commonly, for interpolators the grid size is adaptively changed until it is below an error bound given by the user as input.
+The grid points $\{r_k\}_{k=0}^{K+1}$ are incrementally adjusted until the function approximation error falls beneath a user-specified error threshold.
+The approximation error can be estimated by sampling points in the intervals $(r_k, r_{k+1})$ and computing the difference between the function $f^{nl}$ and the spline $p^{nl}$.
+During implementation, it has been found that conditioning on both the relative and absolute error yields the most robust in terms of interpolation accuracy and convergence of the grid size.
+While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, it has been found that using a uniform grid does not reach a memory intensive regime while having minimal impact on the prediction accuracy.
+This is evidenced by experiments on chemical shieldings of hydrogen environments~\cite{paruzzo2018chemical} presented in Fig.~\ref{fig:chemical_shift-spline}.
+%as it can be seen in Fig.~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
+%A point $r$ can be evaluated by first determining the corresponding boundary point $r_k$ for which $r\in[r_k,r_{k+1}]$, and then mapping $[r_k,r_{k+1}]$ to the polynomial interval $[0,1]$ with $p_k((r-r_k)/(r_{k+1}-r_k))$.
+%For an arbitrary grid with $K+1$ points, the optimal complexity for searching the boundary point $r_k$ is $O(\log(M+1))$ with a binary searchc.
+%\begin{equation}
+%    k = \min(K,\lfloor (r-r_1)\Delta \rfloor+1), \quad \Delta = (K+1)/(r_{K+1}-r_1).
+%\end{equation}
+Compared to an adaptive grid the uniform grid reduces the asymptotic complexity of determining the subinterval for evaluation from logarithmic $O(\log K)$ binary tree search to constant $O(1)$ lookup.
+Moreover, as the grid is constructed for each $nl$ channel, the setup and evaluation of the spline opens the possibility to parallelize the spline evaluation over all channels.
+Viable forms of parallelization encompass multithreading, the use of Single Instruction Multiple Data (SIMD) instructions, or leveraging Graphics Processing Unit (GPU) acceleration.
+%On the other hand for uniform grids the search time can be reduced to $O(1)$ by
 %A non-uniform grid can keep the size of the grid to a minimum by only adding boundary points corresponding to the intervals with the highest error.
 %This minimizes the number of evaluations of the costly function $f^{nl}$.
 %With increasing number of evaluations of the function $f^{nl}$ the uniform grid will be always the better choice.
 %Even though for realistic datasets with a limited number of evaluations this overhead could be crucial, it has been shown during implementation that the space overhead of a uniform grid is insignificant in comparison to the higher time complexity of the non-uniform grid.
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{fig/radial-basis.pdf}
-    \caption{Computational cost for the evaluation of the radial integral and its derivatives with different methods, for structures taken from the QM9 dataset. Note that the dataset has very little influence on this benchmark since the radial integral and its derivative are always evaluated once per neighbor. For the splining an accuracy of $10^{-8}$ was chosen}
-    \label{fig:radial-basis}
-\end{figure}
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=0.5\textwidth]{fig/radial-basis.pdf}
+%    \caption{Computational cost for the evaluation of the radial integral and its derivatives with different methods, for structures taken from the QM9 dataset. Note that the dataset has very little influence on this benchmark since the radial integral and its derivative are always evaluated once per neighbor. For the splining an accuracy of $10^{-8}$ was chosen}
+%    \label{fig:radial-basis}
+%\end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{fig/spline-accuracy-v2.pdf}
-    \caption{The effect of the spline accuracy on the prediction accuracy for chemical shieldings of hydrogen atoms as conducted in Ref.~\cite{paruzzo2018chemical} for a linear model using SOAP descriptors with $l_\textrm{max}=9$. In the work Ref.~\cite{paruzzo2018chemical} a RMSE below $10^{-1}$ has been considered as sufficient enough, while the effect of the spline accuracy effects the predictions multiple magnitudes below that.}
-    \label{fig:spline-accuray}
+    \caption{The relationship of the spline accuracy on the prediction difference for chemical shieldings of hydrogen environments as conducted in Ref.~\cite{paruzzo2018chemical} for a linear model using SOAP descriptors with $l_\textrm{max}=9$.
+    The impact of the spline accuracy on the difference in prediction of the chemical shifts is several magnitudes below the DFT accuracy, which is estimated to be on the order of $10^{-1}$.}
+    \label{fig:chemical_shift-spline}
 \end{figure}
 %\begin{figure}
 %    \centering
@@ -164,37 +199,54 @@ On the other hand for uniform grids the search time can be reduced to $O(1)$ by
 %\end{figure}
 
 \section{Interfacing with molecular dynamics packages}
-In molecular dynamics the separation of the computation of the potential energy into a separate module has been established approach\cite{LAMMPS,abraham2015gromacs,kuhne2020cp2k,kapil2019pi}.
 %To make such simulations possible I implemented an interface with \texttt{LAMMPS} for our in-lab developed machine learning package \texttt{librascal} to exploit the implemented domain decomposition in \texttt{LAMMPS}.
 %The correction of implementation was verified by comparing the trajectories with the MLIP package \texttt{QUIP}.
 %The correctness of the interwork with LAMMPS domain decomposition was verified by running a simulation for different MPI tasks and comparing the results.
 %This allowed obtain results...
-As computation of the potential energy only requires the atomic positions and species and as result returns the energy with its gradients, it is a logical point to separate.
-An advantage for such a separation is to avoid a reimplementation of established thermo- and barostats as well as time integrator.
-While the implementation of these are in principle simple, a robust implementation that covers important corner cases still requires a longer consideration which makes it a time consuming task.
-Another advantage is the fact that longly developed MD software support different parallelizations of the potential energy for interatomic potentials.
-The fact that interatomic short-range potentials separate the total energy into contributions of local environments, allows a decomposition of the cell into smaller domains.
-The computation of the potential energy for each of these domains can be distributed among multiple processors or machines and then be using message passing interface (MPI).
-In the study of barium titanite in Ref.~\cite{gigli2023modeling} this parallelization allowed us to study the effect of long-range dielectric correlations on the predictions of the Curie temperature.
-The domain decomposation requires particular considerations in the implementation of the gradients.
-The force computation for an interatomic potential can be computed as
-%The evaluation of gradients using the neighbor list approach is expressed
+Molecular dynamics (MD) packages, such as LAMMPS, GROMACS, CP2K, and i-PI~\cite{LAMMPS,hess+08jctc,kuhne2020cp2k,kapil2019pi}, commonly adopt the strategy of segregating the computation of the potential energy into a distinct module such that different potentials can be used.
+As the computation of the potential energy only depends the atomic positions and type, and yields the energy and forces, it is a well-suited point for modularizing the code base.
+One significant benefit of this approach is the avoidance of reimplementing established thermostats, barostats, and time integrators.
+Although their implementation may appear straightforward, developing a robust code base transparently handles edge cases for the non-expert user is a time-consuming is nevertheless time-consuming task, demanding extensive documentation.
+Furthermore, well-established MD software packages, such as \texttt{GROMACS}~\cite{abraham2015gromacs} and \texttt{LAMMPS}~\cite{LAMMPS}, offer a variety of parallelization strategies that significantly improve the speed of interatomic potentials.
+These include MPI-based domain decomposition, CUDA- and OpenMP-based multithreading as well as SIMD abstraction modules for hardware-adaptive compute kernels.
+The embedding of hardware dependent parallelization strategies, such as customized CUDA and compute kernels, necessitates adapting the interatomic pontential code to these specific kernel routines.
+In contrast, MPI-based domain decomposition only requires dividing the potential into atomic contributions, as outlined in Eq.~\ref{eq:structural_separation}.
+The forces then further evaluate to
 \begin{equation}
   \label{eq:forces_interatomic_potential}
-  \frac{\partial E_A}{\partial\mathbf{r}_k} = \sum_{i\in A} \frac{\partial E_i}{\mathbf{r}_k} = \sum_{i\in A}\sum_{j\in A_i} \frac{\partial E_i}{\mathbf{r}_{ji}} \frac{\mathbf{r}_{ji}}{\mathbf{r}_k}\textrm{, where }\frac{\mathbf{r}_{ji}}{\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else.} \end{cases}
+    -\frac{\partial E_A}{\partial\mathbf{r}_k}
+  = -\sum_{i\in A} \frac{\partial E_i}{\partial\mathbf{r}_k}
+  = -\sum_{i\in A}\sum_{j\in A_i} \frac{\partial E_i}{\partial\mathbf{r}_{ji}} \frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}
+  \quad\textrm{, where }\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else.} \end{cases}
 \end{equation}
-%Without domain decomposition neighbors outside of the cell are periodic images and partial forces do not need to be assigned as they can be ignored.
-%With domain decomposition neighbors outside of the cell can also be nonperiodic neighbors part of a different domain.
-%\papercomment{Here I could talk about the implementation detail how to add neighbor contributions}
-It can be seen that the forces at position $i$ depend on the partial forces wrt. to energy $i$ and all its neighbors $j\in A_i$.
-Depending on memory storage of partial forces this case needs to be handled with care.
-In particular considering the fact that MD software as \texttt{LAMMPS} offers the option to allow MPI communication between the domains with the \emph{newton\_pair} option.
-Keeping the option on prevents redundant computations of the forces but requires more MPI communication as the partial forces need to be communicated.
-In \texttt{librascal} if atom $j$ is a periodic neighbor, the acces on atom $j$ remapped to corresponding atom in the box.
-The MPI communication requires to differ between periodic neighbors and ghost atoms that are part of another domain.
-One can simplify this complexity storing the partial forces $\partial{E_i}/\partial{\mathbf{r}_{ij}}$ and $\partial{E_j}/\partial{\mathbf{r}_{ij}}$ for redundantly for atom $i$ and $j$.
-This is redundant due to Netwton's third law $\partial{E_j}/\partial{\mathbf{r}_{ij}} = - \partial{E_j}/\partial{\mathbf{r}_{ji}}$.
-While being redundant it does not change asympotic scaling of the memory requirements for the forces.
+It is evident that the forces acting on atom $i$ depend solely local energies within its neighborhood.
+Consequently, these forces can be embarrassingly parallelized by dividing the cells into domains, with each one assigned to an independent hardware component.
+Communication between the domains becomes necessary only when the partial forces $-\partial E_i/\partial\mathbf{r}_{ji}$ for atoms that fall within the neighborhoods of multiple domains are communicated instead of recomputed, see for example the parameter \emph{newton} in the \texttt{LAMMPS} manual~\cite{lammpsnewton}.
+Global communication is required solely for aggregating the local energy contributions into the total energy, as specified by the \emph{nstcalcenergy} parameter in the \texttt{GROMACS} manual~\cite{gromacsnstcalcenergy}.
+In both cases, the implementation of these communication can abstracted out of the potential code, thereby enabling a modular design that does not need to account for these specific details.
+In the case of the study on barium titanate~\cite{gigli2023modeling}, the MPI parallelization of \texttt{LAMMPS} played a crucial role in investigating the impact of long-range dielectric correlations on the Curie temperature, due to the necessity of conducting simulations on large cell sizes.
+%However, this domain decomposition demands careful consideration in the implementation of gradients.
+%The nature of short-range interatomic potentials,  whih decompose total energy into contributions from local environments, facilitates the division of the cell into smaller domains.
+%The potential energy calculations for each of these domains can then be distributed across multiple processors or machines, utilizing a message passing interface (MPI).
+%%The domain decomposation requires particular considerations in the implementation of the gradients.
+%The force computation for an interatomic potential can be computed as
+%%The evaluation of gradients using the neighbor list approach is expressed
+%\begin{equation}
+%  \label{eq:forces_interatomic_potential}
+%  \frac{\partial E_A}{\partial\mathbf{r}_k} = \sum_{i\in A} \frac{\partial E_i}{\mathbf{r}_k} = \sum_{i\in A}\sum_{j\in A_i} \frac{\partial E_i}{\mathbf{r}_{ji}} \frac{\mathbf{r}_{ji}}{\mathbf{r}_k}\textrm{, where }\frac{\mathbf{r}_{ji}}{\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else.} \end{cases}
+%\end{equation}
+%%Without domain decomposition neighbors outside of the cell are periodic images and partial forces do not need to be assigned as they can be ignored.
+%%With domain decomposition neighbors outside of the cell can also be nonperiodic neighbors part of a different domain.
+%%\papercomment{Here I could talk about the implementation detail how to add neighbor contributions}
+%It can be seen that the forces at position $i$ depend on the partial forces wrt. to energy $i$ and all its neighbors $j\in A_i$.
+%Depending on memory storage of partial forces this case needs to be handled with care.
+%In particular considering the fact that MD software as \texttt{LAMMPS} offers the option to allow MPI communication between the domains with the \emph{newton\_pair} option.
+%Keeping the option on prevents redundant computations of the forces but requires more MPI communication as the partial forces need to be communicated.
+%In \texttt{librascal} if atom $j$ is a periodic neighbor, the acces on atom $j$ remapped to corresponding atom in the box.
+%The MPI communication requires to differ between periodic neighbors and ghost atoms that are part of another domain.
+%One can simplify this complexity storing the partial forces $\partial{E_i}/\partial{\mathbf{r}_{ij}}$ and $\partial{E_j}/\partial{\mathbf{r}_{ij}}$ for redundantly for atom $i$ and $j$.
+%This is redundant due to Netwton's third law $\partial{E_j}/\partial{\mathbf{r}_{ij}} = - \partial{E_j}/\partial{\mathbf{r}_{ji}}$.
+%While being redundant it does not change asympotic scaling of the memory requirements for the forces.
 %i, ij
 %j, ji
 %i, ji
@@ -204,59 +256,252 @@ While being redundant it does not change asympotic scaling of the memory require
 \section{Implementation of gradients in kernel models}
 %As invariant 3-body descriptors are easy to evaluate from the spherical expansion coefficients without requiring additional dependencies to compute the Clebsch-Gordan coefficients as higher-body orders need and as their the memory consumption hits a sweet spot for the current generation of hardware, they have been a popular descriptor in applications.
 %As their accuracy in combination with linear models is often not sufficient enough to produce accurate enough molecular dynamics simulations, one common approach has been to incorperate kernel models instead.
-We do not cover an introduction to kernel methods, but only discuss the specificalities that arise when extending them for gradients.
+We do not give a pedagological introduction to kernel methods, but only discuss the specificalities that arise when extending them for gradients prediction.
 For a comprehensive introduction to kernel models please refer to Ref.~\cite{bishop2006pattern}.
 
-For a given kernel $k$ from a set of training samples $\{c_n\in\mathbb{R}^d\}_{t=1}^N$ and targets $\{c_n\in\mathbb{R}\}_{t=1}^N$ a set of weights $\{\alpha_n\in\mathbb{R}\}_{t=1}^N$ can be retrieved as solution of the minimization problem
+For a kernel $k$ fitted on the samples $\{\mathbf{c}_t\in\mathbb{R}^M\}_{t=1}^N$ and targets $\{y_t\in\mathbb{R}\}_{t=1}^N$ the optimal weights $\boldsymbol{\alpha}\in\mathbb{R}^N$ are retrieved as solution of the minimization problem
 \begin{subequations}
-\begin{align}
-  \min_\mathbf{\alpha} \sum_{n^\prime}^N\| y_{n^\prime} - \sum_{n}^N \alpha_n k(c_n, c_{n^\prime}) \|^2
-\end{align}
+  \label{eq:minkernel}
+  \begin{gather}
+    \boldsymbol{\alpha} = \underset{\boldsymbol{\alpha}^\prime\in\mathbb{R}^N}{{\operatorname{argmin}}}\,\, \ell(\boldsymbol{\alpha}^\prime)\\
+    \ell(\boldsymbol{\alpha}) = \sum_{n}^N\| y_{n} - \sum_{t=1}^N \alpha_t k(\mathbf{c}_t, \mathbf{c}_{n}) \|^2
+  \end{gather}
 \end{subequations}
-that subsequently can be used to evaluate an arbitrary point $i$ by the relationship
-\begin{equation}
-  y_n = \sum_n \alpha_n k(c_n, c_i).
-\end{equation}
-The solution of the problem in matrix form can be expressed as
-\begin{equation}
-  \mathbf{\alpha} = (\mathbf{K} + \mathbf{\Lambda})^{-1}\mathbf{y}
-\end{equation}
-Now to include the gradients wrt. to the atomic position $\partial\mathbf{r}_k$ of atom $k$ into the picture.
-We note that the training points used to construct the kernel are independent with respect to the gradients, therefore we use the notation $k_n(c_i)$ to denote $k(c_n, c_i)$ for easier readability of the derivatives
+can be expressed in vector form as
 \begin{subequations}
+  \label{eq:minkernel}
+  \begin{align}
+    \ell(\boldsymbol{\alpha}) = \|\mathbf{y} - \mathbf{K}\boldsymbol{\alpha}\|^2 \\
+  \end{align}
+\end{subequations}
+that can be easily solved setting the derivative to zero
+\begin{subequations}
+  \label{eq:solving_kernel}
+  \begin{align}
+    0 &= \frac{\partial \ell(\boldsymbol{\alpha})}{\partial\boldsymbol{\alpha}}\\
+    0 &= 2\mathbf{K}^T\mathbf{K}\boldsymbol{\alpha} - 2\mathbf{K}\mathbf{y}\\
+    \mathbf{K}\mathbf{y} &= \mathbf{K}^T\mathbf{K}\boldsymbol{\alpha}\\
+    \mathbf{K}\mathbf{y} &= \mathbf{K}\mathbf{K}\boldsymbol{\alpha},\textrm{ since $\mathbf{K} = \mathbf{K}^T$} \label{eq:kernel_symmetry}
+  \end{align}
+\end{subequations}
+which gives $\mathbf{K}^{-1}\mathbf{y}$ as solution for $\boldsymbol{\alpha}$.
+%(see 6.7 https://people.eecs.berkeley.edu/~wainwrig/stat241b/lec6.pdf 
+The solution can subsequently be used to evaluate on an arbitrary point $i$ by the relationship
+\begin{equation}
+  \label{eq:kernel_evaluation}
+  \sum_{t=1}^N \alpha_t k(\mathbf{c}_t, \mathbf{c}_i) = y_i.
+\end{equation}
+Note that in principle the solution does not resolve in a exact solution, especially considering regularization, but we omitt this detail for simplicity of equations. 
+%The solution to the problem \ref{eq:minkernel} can be expressed in matrix form as
+%\begin{equation}
+%  \boldsymbol{\alpha} = (\mathbf{K} + \boldsymbol{\Lambda})^{-1}\mathbf{y}.
+%\end{equation}
+\subsection{Kernel evaluation}
+Now to include the gradients wrt. to the atomic position $\mathbf{r}_k$ of atom $k$ into the picture, we first note that the training points used to construct the kernel are independent from the points for which gradients are evaluated.
+In other words they are therefore independent to changes in $\mathbf{r}_k$ for any structure when evaluating~\ref{eq:kernel_evaluation}.
+We can therefore use the notation $k_t(\mathbf{c}_i)$ to denote $k(\mathbf{c}_t, \mathbf{c}_i)$ for easier readability of the derivatives.
+The partial force can then be expressed as
+\begin{subequations}
+\label{eq:kernel_forces}
 \begin{align}
-  \frac{\partial E_i}{\partial\mathbf{r}_k} &= \sum_n^N \frac{\partial \alpha_n k_n(\mathbf{c}_i)}{\partial\mathbf{r}_k} \\
-    &= \sum_n^N \alpha_n \frac{k_n(\mathbf{c}_i)}{\partial\mathbf{c}_i} \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_k} \\
-    &= \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_k} \sum_n^N \alpha_n \frac{k_n(\mathbf{c}_i)}{\partial\mathbf{c}_i}.
+  \frac{\partial E_i}{\partial\mathbf{r}_{ji}}
+     &= \sum_{t=1}^N \frac{\partial \alpha_t k_t(\mathbf{c}_i)}{\partial\mathbf{r}_{ji}} \\
+     &= \sum_{t=1}^N \alpha_t \frac{k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i} \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}} \\
+     %&= \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}} \sum_{t=1}^N \alpha_t \frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}. \label{eq:efficient_gradient_eval}\\
+  %\frac{\partial E_i}{\partial\mathbf{r}_{k}} &= \sum_{j\in A_i}\frac{\partial E_i}{\partial\mathbf{r}_{ji}}
     %&= \sum_{j\in A_i}\sum_n \alpha_n \frac{k_n(\mathbf{c}_i)}{\partial\mathbf{c}_i} \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_k} \frac{\partial c_i}{\partial\mathbf{r}_k}
 \end{align}
 \end{subequations}
-Note that the last step is is essential to reduce the number of iterations from $O(dN)$ to $O(d+N)$.
-%A popular approach that works with current hardware is the sun
- % into the evaluation.
-%For that reason for the work $BaTiO_3$ a kernel model was used.
-Since gradients make the evaluation of the kernel matrix computationally costly, low-rank approximation techniques have become essential early on to reduce the memory intensive usage during training.
-The subset of regressor method\cite{quinonero2005unifying} has been a popular low-rank estimation used in the MLIP packages \texttt{QUIP}\cite{Csanyi2007-py}.
-The core idea is to project the data points on a subset of the $M$ pseudo points.
-\begin{subequations}
-\begin{align}
-  \mathbf{K} = \mathbf{K}_{MM} + \mathbf{K}_{MN}\mathbf{\Lambda}^{-2}\mathbf{K}_{MN}^T
-\end{align}
-\end{subequations}
-Note that to compute one kernel entry for two structures with each $N_i$ atoms it requires $N_i^2$ evaluations
-\begin{subequations}
-\begin{align}
-  k^A(A_{i}, A_{i^\prime}) = \sum_{j\in A_i}^{N_i}\sum_{j^\prime\in A_{i^\prime}}^{N_{i^{\prime}}} k(\mathbf{c}_j, \mathbf{c}_{j^\prime}).
-\end{align}
-\end{subequations}
-The low-rank approximation contributes greatly in the reduction of the computation of these kernel entries as it projects the structural features on single $M$ environmental features resulting in a linear scaling of on kernel entry.
-Since the number of atoms in structures is a substantial quantity and the fact that structures typically contain redundant environments, the rank can be reduced quite significantly making this approach indispensable.
+which gives us the final expression
+\begin{equation}
+  \frac{\partial E}{\partial\mathbf{r}_k} = \sum_{t=1}^N \alpha_t \underbrace{\sum_{i\in A} \sum_{j\in A_i}\frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}}_\textrm{i,k kernel force component}
+\end{equation}
+One can include the gradients wrt. to the training points in the original expression and get
+\begin{equation}
+  \label{eq:kernel_evaluation}
+  \sum_{t=1}^N \alpha_t k(\{\mathbf{c}_t\}_{t\in A}, \{\mathbf{c}\}_{n\in A}) = E.
+\end{equation}
+and get
+\begin{equation}
+  \label{eq:kernel_evaluation}
+  \sum_{t=1}^N \alpha_t k(\{\mathbf{c}_t\}_{t\in A}, \{\mathbf{c}\}_{n\in A}) 
+  %\sum_{(t,p)=1}^{\partial\!\! N} \alpha_n k(\{\mathbf{c}_(t,p)\}_{t\in A}, \{\mathbf{c}\}_{n\in A})
+  + \sum_{t\in A^\prime} \alpha_t \sum_{j^\prime\in A^\prime_t}\frac{\partial k(\mathbf{c}_t, \mathbf{c}_i)}{\partial\mathbf{c}_t}\frac{\partial\mathbf{c}_t}{\partial\mathbf{r}^\prime_{j^\prime t}}\frac{\partial\mathbf{r}^\prime_{jt}}{\partial\mathbf{r}^\prime_{k^\prime}} \\
+     = E.
+\end{equation}
+Then we can solve for the loss
 
+It can be seen that wa part that can be factored out of the weights is contributing to the
+%(TODO this needs to be written at the end) Note that extracting the partial feature gradients out of the sum reduces the complexity from $O(MN)$ to $O(M+N)$ when evaluating for gradients after the training.
+We note that including gradients into the training also changes the evaluation of the kernel entries
+\begin{subequations}
+\begin{align}
+  %k\Large(\frac{\partial\mathbf{c}_t}{\partial\mathbf{r}^\prime_k}, \mathbf{c}_i\Large) &= 
+  k\Large((t,k^\prime), \mathbf{c}_i\Large) &= 
+  \sum_{t\in A^\prime} \sum_{j^\prime\in A^\prime_t}\frac{\partial k(\mathbf{c}_t, \mathbf{c}_i)}{\partial\mathbf{c}_t}\frac{\partial\mathbf{c}_t}{\partial\mathbf{r}^\prime_{j^\prime t}}\frac{\partial\mathbf{r}^\prime_{jt}}{\partial\mathbf{r}^\prime_{k^\prime}} \\
+  \frac{\partial k\Large((t,k^\prime), \mathbf{c}_i\Large)}{\partial \mathbf{r}_{k}} %&= 
+    %\sum_{t\in A^\prime} \sum_{j^\prime\in A^\prime_t}\frac{\partial k(\mathbf{c}_t, \mathbf{c}_i)}{\partial\mathbf{c}_t}\frac{\partial\mathbf{c}_t}{\partial\mathbf{r}^\prime_{j^\prime t}}\frac{\partial\mathbf{r}^\prime_{j^\prime t}}{\partial\mathbf{r}^\prime_k} \sum_{i\in A} \sum_{j\in A_i}\frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}\\
+    &= \sum_{i\in A}\sum_{j\in A_i}\sum_{t\in A^\prime} \sum_{j^\prime\in A^\prime_t}\frac{\partial^2 k(\mathbf{c}_t, \mathbf{c}_i)}{\partial\mathbf{c}_t\partial\mathbf{c}_i}\frac{\partial\mathbf{c}_t}{\partial\mathbf{r}^\prime_{jt}}\frac{\partial\mathbf{r}^\prime_{jt}}{\partial\mathbf{r}^\prime_{k^\prime}} \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}\\
+    %\frac{\partial k\Large(\frac{\partial\mathbf{c}_t}{\partial \mathbf{r}_k}, \mathbf{c}_i}{\partial ...}\Large) = 
+    %  \sum_{i\in A} \sum_{j\in A_i}\frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k} \\
+\end{align}
+\end{subequations}
+This adds an additional complexity which we hide away by using the notation $k_t(\mathbf{c}_n)$ as we will see later that people typically ignore the gradient part as training points when using a low-rank approximation. 
+
+%k(\frac{\partial\mathbf{c}_t}{\partial r_k^{(p)}}, \mathbf{c}_i)
+
+\subsection{Kernel fitting}
+We can include the forces into the optimization problem using Eqs.~\ref{eq:kernel_forces} and~\ref{eq:forces_interatomic_potential}
+%\begin{multline}
+%  \label{eq:loss_forces}
+%\ell_n = 
+% \ell(\boldsymbol{\alpha}) = 
+%                      \sum_{n}^N \| 
+%                      E^{(n)} - \sum_{t=1}^N \alpha^\prime_t k_t(\mathbf{c}_{n}) + \sum_{t=1}^{\grad N} \beta_t k_{\partial t}(\mathbf{c}_{n})\|^2
+%                         \\ + \sum_{k\in A^{(n)}} \|\frac{\partial E^{(n)}}{\partial\mathbf{r}_{k}} 
+%                             - \big(
+%                                 \sum_{t=1}^N \alpha_t \sum_{i\in A^{(n)}}
+%                                 \sum_{j\in A^{(n)}_i}\frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}
+%                                 \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}
+%                                 \\ +
+%                                 \sum_{t=1}^{\grad N} \beta_t \sum_{i\in A^{(n)}}
+%                                 \sum_{j\in A^{(n)}_i}\frac{\partial k_{\partial t}(\mathbf{c}_i)}{\partial\mathbf{c}_i}
+%                                 \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}
+%                               \big)
+%                        \|^2.
+%\end{multline}
+
+...
+\begin{multline}
+  \label{eq:loss_forces}
+%\ell_n = 
+ \ell(\boldsymbol{\alpha}) = 
+                      \sum_{n}^N \| 
+                         E^{(n)} - \sum_{t=1}^N \alpha^\prime_t k_t(\mathbf{c}_{n}) \|^2
+                         + \sum_{k\in A^{(n)}} \|\frac{\partial E^{(n)}}{\partial\mathbf{r}_{k}} 
+                             - \sum_{t=1}^N \alpha_t \sum_{i\in A^{(n)}} \sum_{j\in A^{(n)}_i}\frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}
+                        \|^2.
+\end{multline}
+We use $A^{(n)}$ to index structures as we use $A_n$ to index the atom within a structure.
+Unlike in Eq.~\ref{eq:efficient_gradient_eval} the $\alpha_t$ has been extracted out to see more clearly that the loss function can be translated into the vectorial form
+\begin{subequations}
+  \begin{gather}
+    \ell(\boldsymbol{\alpha}) = \|\mathbf{K}\boldsymbol{\alpha} - \mathbf{y}\|^2, \\
+    \textrm{with }\quad \mathbf{K} =
+    \left[
+      \begin{array}{cc}
+        \mathbf{K}_{N,N} & \mathbf{K}_{N, \partial\!\! N}\\
+        %\hline
+        \mathbf{K}_{\partial\!\! N,N} & \mathbf{K}_{\partial\!\! N, \partial\!\! N}
+      \end{array}
+    \right]
+    \quad\textrm{and }\quad \mathbf{y} = 
+    \left[
+      \begin{array}{c}
+        \mathbf{E} \\
+        %\hline
+        \frac{\partial \mathbf{E}}{\partial \mathbf{r}_k}
+      \end{array}
+    \right],\\
+    \mathbf{K}_{NN}\in\mathbb{R}^{N,N},\qquad \mathbf{K}_{\partial\!\! NN}\in\mathbb{R}^{\partial\!\! N,N},\qquad \partial\!\! N = 3\sum_n |A^{(n)}|,\\
+    \mathbf{E}\in\mathbb{R}^N,\qquad \frac{\partial\mathbf{E}}{\partial\mathbf{r}_k}\in\mathbb{R}^{\partial\!\! N}
+  \end{gather}
+\end{subequations}
+where $\mathbf{K}_{\grad NN}$ is the matrix from the stacked sum-product of the feature and kernel gradients in the loss~\ref{eq:loss_forces}, explicitely written
+where $\partial N$ denotes the number stacked gradients for each Cartesian dimension $3\sum_n |A^{(n)}|$
+and $\mathbf{K}_{\grad NN}$ is the matrix from the stacked sum-product of the feature and kernel gradients in the loss~\ref{eq:loss_forces}, explicitely written
+\begin{subequations}
+  \begin{align}
+    [\mathbf{K}_{\grad NN}]_{(n,k,p),t} = \sum_{i\in A^{(n)}} \sum_{j\in A^{(n)}_i}\frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}\frac{\partial\mathbf{c}_i}{\partial r^{(p)}_{ji}}\frac{\partial r_{ji}^{(p)}}{\partial r_k^{(p)}},
+  \end{align}
+\end{subequations}
+where $(n,k,p)$ is the flattened multi-index specifiyng the structure, the atom and the Cartesian dimension.
+%Note that $\mathbf{K}$ is in this case not symmetric and therefore cannot be solved the usual way as shown in Eq.~\ref{eq:kernel_symmetry}.
+%One can still derive a solution from Eq.~\ref{eq:solving_kernel} as it is done for linear regression,
+%\begin{equation}
+%  \boldsymbol{\alpha} = (\mathbf{K}^T\mathbf{K})^{-1}\mathbf{K}^T\mathbf{Y},
+%\end{equation}
+The inclusion of the gradients explodes the size of the memory requirements for the kernel matrix, because the $\partial N$ grows with total number of atoms instead of structures like the energies.
+A fruitful approach has been therefore to perform a low-rank approximation of the kernel matrix~\cite{silverman1985some,williams2000using,smola2000sparse,quinonero2005unifying} by projecting the $3\sum_n N_n$ points onto a fixed number of representative points $\{\tilde{c}_t\}_{t=1}^T$, we refer as \emph{pseudo points} as used in referencei~\cite{quinonero2005unifying}.
+In the Bayesian community the low-rank approximation has established the naming \emph{subset of regressor}~\cite{quinonero2005unifying} while the frequentist community it is more commonly referred as Nyström approximation~\cite{williams2000using}.
+\begin{subequations}
+\begin{align}
+  \tilde{\mathbf{K}} = \mathbf{K}_{TT} + \mathbf{K}_{T,N + \partial N}\mathbf{\Lambda}^{-2}\mathbf{K}_{T,N + \partial N}^T,
+\end{align}
+\end{subequations}
+An established way has been to only use single envirnoments as pseudo points and to dismiss gradient contributions in them.
+One advantage is that this skips an expensive evaluation of kernel entries using gradients as training points.
+The additional advantage is that environmental information is often redundantly present within structures, thus a much smaller "represantative" set can be found reducing the evaluation time of one kernel entry from $N_n^2$ to $N_n$.
+%The low-rank approximation contributes greatly in the reduction of the computation of these kernel entries as it projects the structural features on single $M$ environmental features resulting in a linear scaling of on kernel entry.
+%Since the number of atoms in structures is a substantial quantity and the fact that structures typically contain redundant environments, the rank can be reduced quite significantly making this approach indispensable.
+%
+%We can further 
+%%  = alpha^2 - 2alphak*y + alphak + 
+%%  (XX+X_FX_F)^{-1} (XY + X_FF)
+%%   => K= XX+X_FX_F
+%\begin{subequations}
+%  \label{eq:.}
+%  \begin{align}
+%  \sum_{k\in A^{(n)}} \|\frac{\partial E}{\partial\mathbf{r}_{k}}  
+%                               - \sum_{i\in A^{(n)}} \sum_{j\in A^{(n)}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}} \sum_{t=1}^N \alpha^\prime_t \frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}
+%  \end{align}
+%\end{subequations}
+%
+%We can extract the alphas out 
+%\begin{equation}
+%   \sum_{t=1}^N \alpha^\prime_t \sum_{i\in A^{(n)}} \sum_{j\in A^{(n)}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}} \frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i} %= \sum_{t=1}^N \alpha^\prime_t \nabla k_t(\mathbf{c}_i)
+%   %\frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{r}_{k}}
+%\end{equation}
+%which solves to a kernel of form system of
+%\begin{equation}
+%  %\sum_{t=1}^N \alpha^\prime_t \sum_{i\in A^{(n)}} \sum_{j\in A^{(n)}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}} \frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}
+%  \grad k_t(c_i) = k_t(\mathbf{c}_{i}) 
+%                      %+ \sum_{i\in A^{(i)}} \sum_{j\in A^{(n)}_i}\frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}} \frac{\partial k_t(\mathbf{c}_{i}) }{\partial\mathbf{c}_i} 
+%  + \sum_{i\in A^{(n)}} \sum_{j\in A^{(n)}_i}\frac{\partial\mathbf{c}_i}{\partial r^{d}_{ji}} \frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}
+%\end{equation}
+%Which ends up in the common formulation of stacking the features and gradient featuers to obtain a matrix~\cite{willattcsanyTODO}
+%\begin{equation}
+%  \tilde{K} = \begin{pmatrix}K \\ \grad K \end{pmatrix}; \tilde{K}^T\tilde{K}
+%\end{equation}
+%
+%One can see that the gradient evaluation depends per atom property, thus the kernel matrix is growing with respect to number of atoms in all training structures which increase memory consumption even for small systems by a factor of 10.
+%%A popular approach that works with current hardware is the sun
+% % into the evaluation.
+%%For that reason for the work $BaTiO_3$ a kernel model was used.
+%Since gradients make the evaluation of the full kernel matrix computationally costly, low-rank approximation techniques have become indispensable early on to reduce the memory intensive usage during training.
+%The subset of regressor method\cite{quinonero2005unifying} has been a popular low-rank estimation used in the MLIP packages \texttt{QUIP}\cite{Csanyi2007-py}.
+%
+%The core idea is to project the data points on a subset of the $M$ pseudo points.
+%\begin{subequations}
+%\begin{align}
+%  \mathbf{K} = \mathbf{K}_{MM} + \mathbf{K}_{MN}\mathbf{\Lambda}^{-2}\mathbf{K}_{MN}^T
+%\end{align}
+%\end{subequations}
+%Note that to compute one kernel entry for two structures with each $N_i$ atoms it requires $N_i^2$ evaluations
+%\begin{subequations}
+%\begin{align}
+%  k^A(A_{i}, A_{i^\prime}) = \sum_{j\in A_i}^{N_i}\sum_{j^\prime\in A_{i^\prime}}^{N_{i^{\prime}}} k(\mathbf{c}_j, \mathbf{c}_{j^\prime}).
+%\end{align}
+%\end{subequations}
+%The low-rank approximation contributes greatly in the reduction of the computation of these kernel entries as it projects the structural features on single $M$ environmental features resulting in a linear scaling of on kernel entry.
+%Since the number of atoms in structures is a substantial quantity and the fact that structures typically contain redundant environments, the rank can be reduced quite significantly making this approach indispensable.
+
+\subsection{Moduler kernel computation}
 One disadvantage in the design of \texttt{librascal} in the entanglement of the featurization and the model building to the libraray.
-This was required as the construction of the kernel matrix requires understanding by the model building tool of the decomposition of the target property into local contributions Eq.~\ref{eq:structural_separation} as well as what its gradients are, domain-agnostic packages as \texttt{scikit-learn} are not suitable for a direct application in this case.
+This was required as the construction of the kernel matrix requires understanding by the model building tool of the decomposition of the target property into local contributions Eq.~\eqref{eq:structural_separation} as well as what its gradients are, domain-agnostic packages as \texttt{scikit-learn} are not suitable for a direct application in this case.
+
+
 The software package \texttt{metatensor} allows to attribute these structural characteristics to the object itself as metadata and offers \texttt{numpy}-like data manipulations that take advantage of the metadata.
 This allowed a disentanglement of the featurization that has reimplemented in a new package \texttt{rascaline} and model construction that has been moved to \texttt{equisolve}.
 Part of my contribution was to participate in the development of \texttt{metatensor} as well as heavily developing on the initial design of \texttt{equisolve} contributing module of shallow methods including standardizer, linear and the above-presented kernel model as well as the inital designs for neural network models based on the data formate created in \texttt{metatensor}.
+
+While the term $\partial\mathbf{c}_i/\partial\mathbf{r}_k$ depends solely on the choice of featurization, the term $\partial k_t(\mathbf{c}_i)/\partial\mathbf{c}_i$ depends on the choice of kernel, thus the computation of the kernels and featurizations can be separated.
+A problem that arised in \texttt{librascal} is that the species introduce a high structural sparsity in the features that needs to be also considered in the kernel computation to be efficient.
+For that the kernel needs to support such a sparsity.
+While there exist multiple sparsity formats\cite{}, they are agnostic to the structure of the data and thus do not allow us to exploit structural sparsities that depend on specif information as the species.
+To solve  was the implementation of metatensor.
+
+
 %Due to the structural nature of samples in atomistic learning, one sample consists of features for each atom presen in the structure, the  has been a popular approach as it allows a selection of individual atomic features as pseudo points unlike to the more common low-rank Nyström approach where whole structures would need to be selected.
 %The partial forces in the kernel model can this be evaluated by 
 %\begin{subequations}
@@ -286,7 +531,7 @@ A schematic of the interwork between the software packages can be seen in Fig.~\
 As CV for the metadynamics $l=1$ components of the spherical expansion coefficients computed with \texttt{librascal} were used.
 My implementation of the cubic spline helped to speed up the computation of the bias term.
 Since only the expansion coefficients centered for the oxygen neighbors centered on the titanite was sufficient for the CV, I further implemented an option to selectively computate the partial gradients for certain species.
-Note that a selectional computation of partial gradients also needs to consider dependencies of the gradient on the central energies of its neighbors as pointed out in Eq.~\ref{eq:forces_interatomic_potential}.
+Note that a selectional computation of partial gradients also needs to consider dependencies of the gradient on the central energies of its neighbors as pointed out in Eq.~\eqref{eq:forces_interatomic_potential}.
 %implementation of was implemented by me to speed up the metadynamics simulation
 %work are adjustments to the
 %In the subsequent sections we will discuss the technica

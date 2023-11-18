@@ -21,16 +21,6 @@
   year={2012},
   publisher={APS}
 }
-@article{willatt2019atom,
-  title={Atom-density representations for machine learning},
-  author={Willatt, Michael J and Musil, F{\'e}lix and Ceriotti, Michele},
-  journal={The Journal of chemical physics},
-  volume={150},
-  number={15},
-  pages={154110},
-  year={2019},
-  publisher={AIP Publishing LLC}
-}
 @article{aharonov1991complete,
   title={Complete description of a quantum system at a given time},
   author={Aharonov, Yakir and Vaidman, Lev},
@@ -182,16 +172,16 @@
   year={1939},
   publisher={Nature Publishing Group}
 }
-@article{willatt2018feature,
-  title={Feature optimization for atomistic machine learning yields a data-driven construction of the periodic table of the elements},
-  author={Willatt, Michael J and Musil, F{\'e}lix and Ceriotti, Michele},
-  journal={Physical Chemistry Chemical Physics},
-  volume={20},
-  number={47},
-  pages={29661--29668},
-  year={2018},
-  publisher={Royal Society of Chemistry}
-}
+%@article{willatt2018feature,
+%  title={Feature optimization for atomistic machine learning yields a data-driven construction of the periodic table of the elements},
+%  author={Willatt, Michael J and Musil, F{\'e}lix and Ceriotti, Michele},
+%  journal={Physical Chemistry Chemical Physics},
+%  volume={20},
+%  number={47},
+%  pages={29661--29668},
+%  year={2018},
+%  publisher={Royal Society of Chemistry}
+%}
 @article{de2016comparing,
   title={Comparing molecules and solids across structural and alchemical space},
   author={De, Sandip and Bart{\'o}k, Albert P and Cs{\'a}nyi, G{\'a}bor and Ceriotti, Michele},
@@ -210,17 +200,6 @@
   year={2017},
   publisher={e-print}
 }
-@article{willatt2019atom,
-  title={Atom-density representations for machine learning},
-  author={Willatt, Michael J and Musil, F{\'e}lix and Ceriotti, Michele},
-  journal={The Journal of chemical physics},
-  volume={150},
-  number={15},
-  pages={154110},
-  year={2019},
-  publisher={AIP Publishing LLC}
-}
-
 @article{barker2016localized,
   title={Localized Coulomb descriptors for the Gaussian approximation potential},
   author={Barker, James and Bulin, Johannes and Hamaekers, Jan and Mathias, Sonja},
@@ -404,14 +383,19 @@
 }
 
 @article{bartok2018machine,
-  title={Machine learning a general-purpose interatomic potential for silicon},
-  author={Bart{\'o}k, Albert P and Kermode, James and Bernstein, Noam and Cs{\'a}nyi, G{\'a}bor},
-  journal={Physical Review X},
-  volume={8},
-  number={4},
-  pages={041048},
-  year={2018},
-  publisher={APS}
+  title = {Machine {{Learning}} a {{General}}-{{Purpose Interatomic Potential}} for {{Silicon}}},
+  author = {Bart{\'o}k, Albert P. and Kermode, James and Bernstein, Noam and Cs{\'a}nyi, G{\'a}bor},
+  year = {2018},
+  month = dec,
+  volume = {8},
+  pages = {041048},
+  publisher = {{American Physical Society}},
+  issn = {21603308},
+  doi = {10.1103/PhysRevX.8.041048},
+  abstract = {The success of first principles electronic structure calculation for predictive modeling in chemistry, solid state physics, and materials science is constrained by the limitations on simulated length and time scales due to computational cost and its scaling. Techniques based on machine learning ideas for interpolating the Born-Oppenheimer potential energy surface without explicitly describing electrons have recently shown great promise, but accurately and efficiently fitting the physically relevant space of configurations has remained a challenging goal. Here we present a Gaussian Approximation Potential for silicon that achieves this milestone, accurately reproducing density functional theory reference results for a wide range of observable properties, including crystal, liquid, and amorphous bulk phases, as well as point, line, and plane defects. We demonstrate that this new potential enables calculations that would be extremely expensive with a first principles electronic structure method, such as finite temperature phase boundary lines, self-diffusivity in the liquid, formation of the amorphous by slow quench, and dynamic brittle fracture. We show that the uncertainty quantification inherent to the Gaussian process regression framework gives a qualitative estimate of the potential's accuracy for a given atomic configuration. The success of this model shows that it is indeed possible to create a useful machine-learning-based interatomic potential that comprehensively describes a material, and serves as a template for the development of such models in the future.},
+  journal = {Phys. Rev. X},
+  note = {\url{https://link.aps.org/doi/10.1103/PhysRevX.8.041048}},
+  number = {4}
 }
 
 @article{jager2018machine,
@@ -455,15 +439,18 @@
   publisher={Swiss Chemical Society}
 }
 @article{shapeev2016moment,
-  title={Moment tensor potentials: A class of systematically improvable interatomic potentials},
-  author={Shapeev, Alexander V},
-  journal={Multiscale Modeling \& Simulation},
-  volume={14},
-  number={3},
-  pages={1153--1173},
-  year={2016},
-  publisher={SIAM}
+  title = {Moment {{Tensor Potentials}}: {{A Class}} of {{Systematically Improvable Interatomic Potentials}}},
+  author = {Shapeev, Alexander V.},
+  year = {2016},
+  month = jan,
+  volume = {14},
+  pages = {1153--1173},
+  issn = {1540-3459},
+  doi = {10.1137/15M1054183},
+  journal = {Multiscale Model. Simul.},
+  number = {3}
 }
+
 @article{zuo2020performance,
   title={Performance and Cost Assessment of Machine Learning Interatomic Potentials},
   author={Zuo, Yunxing and Chen, Chi and Li, Xiangguo and Deng, Zhi and Chen, Yiming and Behler, J\"org and Cs{\'a}nyi, G{\'a}bor and Shapeev, Alexander V and Thompson, Aidan P and Wood, Mitchell A and others},
@@ -1175,7 +1162,7 @@ DOI = {10.2312/SPBG/SPBG07/081-090}
   title = {{{AlphaML Website}}},
   author = {Wilkins, David M. and Grisafi, Andrea and Yang, Yang and Lao, Ka Un and A. DiStasio Jr., Robert and Ceriotti, Michele},
   year = {2018},
-  url = {http://alphaml.org}
+  url = {\url{http://alphaml.org}}
 }
 
 @article{alre+18cst,
@@ -10818,8 +10805,21 @@ DOI = {10.2312/SPBG/SPBG07/081-090}
   title = {{{librascal -- A scalable and versatile library to generate representations for atomic-scale learning}}},
   author = {Musil, F{\'e}lix and Veit, Max and Junge, Till and Stricker, Markus and Goscinski, Alexander and Fraux, Guillaume and Cersonsky, Rose and Willatt, Michael J and Grisafi, Andrea and Ceriotti, Michele},
   howpublished = {\url{https://github.com/cosmo-epfl/librascal}},
-  commit = {6dca371}
+  %commit = {6dca371}
 }
+
+@misc{equisolve,
+  title = {{{equisolve -- A ML toolkit package to build models for the prediction of equivariant properties and gradients}}},
+  author = {Loche, Philip and Tisi, Davide and Goscinski, Alexander and Abbott, Joe and Fraux, Guillaume}
+  howpublished = {\url{https://github.com/cosmo-epfl/equisolve}},
+}
+
+@misc{metatensor,
+  title = {{{metatensor -- Self-describing sparse tensor data format for atomistic machine learning and beyond}}},
+  author = {Fraux, Guillaume and Loche, Philip and Tisi, Davide and Bigi, Filippo and Abbott, Joe and Fraux, Guillaume and Goscinski, Alexander and Ceriotti, Michele}
+  howpublished = {\url{https://github.com/cosmo-epfl/metatensor}},
+}
+
 
 @article{lim+06prb,
   title = {Decomposition of {{SiH3}} to {{SiH2}} on {{Si}} (100)-(2\{\textbackslash times\}1)},
@@ -16430,18 +16430,6 @@ DOI = {10.2312/SPBG/SPBG07/081-090}
   number = {7}
 }
 
-@article{shap16mms,
-  title = {Moment {{Tensor Potentials}}: {{A Class}} of {{Systematically Improvable Interatomic Potentials}}},
-  author = {Shapeev, Alexander V.},
-  year = {2016},
-  month = jan,
-  volume = {14},
-  pages = {1153--1173},
-  issn = {1540-3459},
-  doi = {10.1137/15M1054183},
-  journal = {Multiscale Model. Simul.},
-  number = {3}
-}
 
 @article{shar+05prl,
   title = {Intermolecular {{Dynamical Charge Fluctuations}} in {{Water}}: {{A Signature}} of the {{H}}-{{Bond Network}}},
@@ -20441,7 +20429,14 @@ author = {Lucjan Piela}
   year={2005},
   publisher={JMLR. org}
 }
-@Article{LAMMPS,
+@article{smola2000sparse,
+  title={Sparse greedy Gaussian process regression},
+  author={Smola, Alex and Bartlett, Peter},
+  journal={Advances in neural information processing systems},
+  volume={13},
+  year={2000}
+}
+@article{LAMMPS,
   author = "A. P. Thompson and H. M. Aktulga and R. Berger and 
      D. S. Bolintineanu and W. M. Brown and P. S. Crozier and
      P. J. in 't Veld and A. Kohlmeyer and S. G. Moore and T. D. Nguyen and
@@ -20670,5 +20665,132 @@ author = {Lucjan Piela}
   organization={Springer}
 }
 
+@misc{NICE-REPO,
+  title = {{{NICE}} Libraries},
+  author = {Pozdnyakov, Sergey},
+  url = {https://github.com/cosmo-epfl/nice},
+  collaborator = {Nigam, Jigyasa and Agrawal, Richa and Ceriotti, Michele},
+  howpublished = {\url{https://github.com/cosmo-epfl/nice}}
+}
+
+@article{mill2020arxiv,
+      title={Relevance of Rotationally Equivariant Convolutions for Predicting Molecular Properties}, 
+      author={Benjamin Kurt Miller and Mario Geiger and Tess E. Smidt and Frank Noé},
+      year={2020},
+      url = {http://arxiv.org/abs/2008.08461},
+      journal = {ArXiv Prepr. ArXiv200808461}
+}
+
+@article{cers+21mlst,
+  title = {Improving {{Sample}} and {{Feature Selection}} with {{Principal Covariates Regression}}},
+  author = {Cersonsky, Rose K and Helfrecht, Benjamin and Engel, Edgar Albert and Kliavinek, Sergei and Ceriotti, Michele},
+  year = {2021},
+  month = may,
+  issn = {2632-2153},
+  doi = {10.1088/2632-2153/abfe7c},
+  journal = {Mach. Learn.: Sci. Technol.}
+}
+@article{lopanitsyna2023modeling,
+  title = {Modeling high-entropy transition metal alloys with alchemical compression},
+  author = {Lopanitsyna, Nataliya and Fraux, Guillaume and Springer, Maximilian A. and De, Sandip and Ceriotti, Michele},
+  journal = {Phys. Rev. Mater.},
+  volume = {7},
+  issue = {4},
+  pages = {045802},
+  numpages = {15},
+  year = {2023},
+  month = {Apr},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevMaterials.7.045802},
+  url = {https://link.aps.org/doi/10.1103/PhysRevMaterials.7.045802}
+}
+@article{blank1995neural,
+  title={Neural network models of potential energy surfaces},
+  author={Blank, Thomas B and Brown, Steven D and Calhoun, August W and Doren, Douglas J},
+  journal={The Journal of chemical physics},
+  volume={103},
+  number={10},
+  pages={4129--4137},
+  year={1995},
+  publisher={American Institute of Physics}
+}
+@article{brown2003classical,
+  title={Classical and quasiclassical spectral analysis of CH 5+ using an ab initio potential energy surface},
+  author={Brown, Alex and Braams, Bastiaan J and Christoffel, Kurt and Jin, Zhong and Bowman, Joel M},
+  journal={The Journal of chemical physics},
+  volume={119},
+  number={17},
+  pages={8790--8793},
+  year={2003},
+  publisher={American Institute of Physics}
+}
+@article{lorenz2006descriptions,
+  title={Descriptions of surface chemical reactions using a neural network representation of the potential-energy surface},
+  author={Lorenz, S{\"o}nke and Scheffler, Matthias and Gross, Axel},
+  journal={Physical Review B},
+  volume={73},
+  number={11},
+  pages={115431},
+  year={2006},
+  publisher={APS}
+}
+
+@misc{Haddad2023Artificial,
+  author = {Haddad, Ibrahim},
+  title = {Artificial Intelligence and Data in Open Source},
+  year = {2022},
+  month = {mar},
+  howpublished = {\url{https://www.linuxfoundation.org/research/artificial-intelligence-and-data-in-open-source}},
+}
+@article{bartels1998hermite,
+  title={Hermite and cubic spline interpolation},
+  author={Bartels, Richard H and Beatty, John C and Barsky, Brian A},
+  journal={An Introduction to Splines for Use in Computer Graphics and Geometric Modelling},
+  pages={9--17},
+  year={1998},
+  publisher={Morgan Kaufmann San Francisco, CA}
+}
+@article{phillips2005scalable,
+  title={Scalable molecular dynamics with NAMD},
+  author={Phillips, James C and Braun, Rosemary and Wang, Wei and Gumbart, James and Tajkhorshid, Emad and Villa, Elizabeth and Chipot, Christophe and Skeel, Robert D and Kale, Laxmikant and Schulten, Klaus},
+  journal={Journal of computational chemistry},
+  volume={26},
+  number={16},
+  pages={1781--1802},
+  year={2005},
+  publisher={Wiley Online Library}
+}
+
+@misc{lammpsnewton,
+  title = {{{LAMMPS Users Manual - newton command}}},
+  author = {LAMMPS developers},
+  year = {2023},
+  url = {\url{https://docs.lammps.org/newton.html}}
+}
+@misc{gromacsnstcalcenergy,
+  title = {{{GROMACS Users Manual - nstcalcenergy}}},
+  author = {GROMMACS developers},
+  year = {2023},
+  url = {\url{https://manual.gromacs.org/current/user-guide/mdp-options.html#mdp-nstcalcenergy}}
+}
+@article{williams2000using,
+  title={Using the Nystr{\"o}m method to speed up kernel machines},
+  author={Williams, Christopher and Seeger, Matthias},
+  journal={Advances in neural information processing systems},
+  volume={13},
+  year={2000}
+}
+@article{silverman1985some,
+  title={Some aspects of the spline smoothing approach to non-parametric regression curve fitting},
+  author={Silverman, Bernhard W},
+  journal={Journal of the Royal Statistical Society: Series B (Methodological)},
+  volume={47},
+  number={1},
+  pages={1--21},
+  year={1985},
+  publisher={Wiley Online Library}
+}
+
 % from mc-bib
 @preamble{ "\newcommand{\noopsort}[1]{} " }
+

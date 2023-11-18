@@ -217,7 +217,7 @@ We demonstrate the use of the GFRE, LFRE and GFRD to assess with quantifiable me
 
 \subsection{SOAP and BPFS}
 \label{sub:hypers}
-We begin by considering two practical realizations of atom-centred symmetrized features of order $\nu=2$ in Eq.~\ref{eq:soap} as implemented in \texttt{librascal}\cite{LIBRASCAL}, and the BPSF\cite{behl11jcp} as implemented in the n2p2 package\cite{singraber2019parallel}. 
+We begin by considering two practical realizations of atom-centred symmetrized features of order $\nu=2$ in Eq.~\eqref{eq:soap} as implemented in \texttt{librascal}\cite{LIBRASCAL}, and the BPSF\cite{behl11jcp} as implemented in the n2p2 package\cite{singraber2019parallel}. 
 %In the SOAP representation the atom-centred density is written as a sum of Gaussians with finite width $\sigmag$, and the density is expanded in a basis that is a product of spherical harmonics $Y^l_m(\bxhat)\equiv\rep<\bxhat||lm>$ and a radial basis $R_n(x)\equiv\rep<x||n>$,
 %\begin{equation}
 %\rep<nlm||A; \rho_i> = \sum_j \int \D{\bx}
@@ -239,7 +239,7 @@ R_n^\textrm{DVR}= \sqrt{w_n}\delta(r-r_n)
 \end{equation}
 where $r_n$ are Gaussian quadrature points and $w_n$ their corresponding weights.
 For both bases, the integral~\eqref{eq:radial_expansion} can be evaluated analytically, and the density coefficient computed as a sum over the neighbors of the $i$-th atom.
-%The invariant SOAP features are then computed as specified in Eq.~\ref{eq:soap},
+%The invariant SOAP features are then computed as specified in Eq.~\eqref{eq:soap},
 %\begin{equation}
 %\label{eq:SOAP}
 %\rep<nn^{\prime}l||\frho_i^2> = 
@@ -266,6 +266,7 @@ and the three-body functions
 where $f_c$ is a cutoff function, and $\eta,\zeta,\lambda,R_s$ are parameters that define the shape of each BPSF. We generate systematically groups of symmetry functions of different size by varying the values of these parameters following the prescriptions discussed in Ref.~\citenum{imba+18jcp}. The list of values for the BPSF parameters we used are supplied in supplementary information.
 
 \paragraph*{GTO and DVR radial basis.}\,
+\label{sec:gto-dvr-comparison}
 We start by considering the convergence of the SOAP representation with different choices of radial basis. Figure~\ref{fig:soap-convergence} demonstrates the convergence  with the number of radial functions $\nmax$ and angular momentum channels $\lmax$ (in a Cauchy sense, i.e. comparing results for successive increments of these parameters). Overall, the GTO basis converges faster than DVR for most cases, both in terms of GFRE and GFRD. 
 The slower radial convergence of the GFRD indicates that even as the discretization approaches convergence, the changing position of peaks and nodes of the basis functions gives different emphasis to interatomic correlations over different ranges. This is consistent with the observation that, particularly for small $(\nmax, \lmax)$, regression accuracy depends on the number of basis functions in a way that is not necessarily monotonic.
 When considering the convergence of the angular component $\lmax$, GTO and DVR show nearly identical error decay, indicating that the convergence of the radial and angular basis are largely independent of each other.
@@ -354,7 +355,7 @@ This difference in scaling is due to the different mechanism for evaluating 3-bo
 \subsection{ Body order feature truncation. }
 
 The examples in Section~\ref{sub:hypers} demonstrate the impact of implementation details and hyperparameters choices on the information content of features that are all equivalent to a three-body correlation of the atom density. A more substantial issue is connected to the use of representations based on different $\nu$-body correlations of a decorated atom density, which is equivalent to the pair correlation function (2-body, $\nu=1$), to the SOAP power spectrum (3-body, $\nu=2$) or to the bispectrum (4-body, $\nu=3$).
-Different orders incorporate conceptually distinct kinds of information: when used in linear regression, different density correlation orders correspond to a body-order expansion of the target property~\cite{shap16mms,glie+18prb,will+19jcp,drau19prb,jinn+20jcp}, and the link between the convergence of the body-order expansion and the injectivity of the structure-feature map is an open problem, with known counter-examples showing that low values of $\nu$ are insufficient to achieve a complete representation of an atomic environment~\cite{pozd+20prl}.
+Different orders incorporate conceptually distinct kinds of information: when used in linear regression, different density correlation orders correspond to a body-order expansion of the target property~\cite{shapeev2016moment,glie+18prb,will+19jcp,drau19prb,jinn+20jcp}, and the link between the convergence of the body-order expansion and the injectivity of the structure-feature map is an open problem, with known counter-examples showing that low values of $\nu$ are insufficient to achieve a complete representation of an atomic environment~\cite{pozd+20prl}.
 
 \begin{figure}
     \centering
@@ -538,7 +539,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\section{Reconstruction error}
 %An approach independent of a target property is to compare the reconstruction error of the basis expansion to the original functional form on which the features are expanded
 %Given a representation $f$ of the atomic structure $A$ and a basis expansion as in
-%Eq.~\ref{eq:basis_expansion} with an orthornormal basis, the approximation error
+%Eq.~\eqref{eq:basis_expansion} with an orthornormal basis, the approximation error
 %of a basis $\{b_k\}_{k=1}^M$ to $f$ can be expressed
 %\begin{subequations}
 %\begin{align}
@@ -564,7 +565,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%The derivation also expresses the duality between a definite distance metric and similarity measure\cite{TODO(maybe)}.
 %%If we chose only one basis function, we can see that the distance is zero when $b_k$ is $f$
 %%One basis function, we can see that the distance is zero when $b_k$ is $f$
-%%For a simple functional form of $f$ as the order 1 expressions in Eq.~\ref{eq:order1_analytical_solution} the integral can be solved for radial basis functions.
+%%For a simple functional form of $f$ as the order 1 expressions in Eq.~\eqref{eq:order1_analytical_solution} the integral can be solved for radial basis functions.
 %%\begin{subequations}
 %%\begin{align}
 %%  \ell(\{c_nb_n\}^M_{n=1}, g) 
@@ -612,7 +613,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %In fact the global radial factor first increases the error up to $n_\textrm{max}=4$ till it has a reducening effect.
 %%An effect that is due to the fast decrease of the LJ function at the beginning that is better reconstructed with the $1/r$ terms for larger $n_\textrm{max}$.
 %%We further see that an orthogonal basis can be 
-%%The basis coefficient can be made orthogonormal by the Löwden normalization\cite{PIELA2014e99} so obtain the basis coefficient by solving Eq.~\ref{eq:information_capacity} using least squares. 
+%%The basis coefficient can be made orthogonormal by the Löwden normalization\cite{PIELA2014e99} so obtain the basis coefficient by solving Eq.~\eqref{eq:information_capacity} using least squares. 
 %
 %\begin{figure}
 %    \includegraphics[width=\textwidth]{fig/convergence_results-grid500.pdf}
@@ -620,7 +621,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %    \label{fig:radial-scaling}
 %    % TODO maybe plot basis and LJ potential
 %\end{figure}
-%Due to the duality expressed in Eq.~\ref{TODO} the reconstruction error is a reformulation of the mean-squared linear regression error of the energy determined by the defined LJ potential assuming uniform sampling.
+%Due to the duality expressed in Eq.~\eqref{TODO} the reconstruction error is a reformulation of the mean-squared linear regression error of the energy determined by the defined LJ potential assuming uniform sampling.
 %Numerous cases of interest however do not have a clear functional form as the LJ potential (e.g. neural network representations) such that this approach becomes unapplicable.
 %%Furthermore Often the intervals of interest are not easy expressable.
 %Furthermore, in the case of the LJ potential we purposefully did not include the range close to $0$ as the target function explodes and a reconstruction error would be dominated by that range providing not much insight.
@@ -634,7 +635,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%\papercomment{We can also compare GTO and and shifted Gaussian for LJ potential of dimers and should see that GTOs work better. Here we use numerical integration}
 %
 %\section{Formulation as optimization problem}
-%%Furthermore, even if a functional form exists for high order functions (see Eq.~\ref{eq:integration_over_subgroup_higher_order}) such that a numerical integration becomes costly for higher-orders due to the polynomial cost of the integration wrt. the dimension of the integration space.
+%%Furthermore, even if a functional form exists for high order functions (see Eq.~\eqref{eq:integration_over_subgroup_higher_order}) such that a numerical integration becomes costly for higher-orders due to the polynomial cost of the integration wrt. the dimension of the integration space.
 %%But even for order $2$ a numerical integration is costly when conducted over a large dataset.
 %To address the problems discussed in the last section we reformulate the integration problem into an optimization problem that can be solved more efficiently.
 %%with a scaling wrt. the number of basis functions
@@ -678,7 +679,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %Assume a reconstruction of $\{(1, 0)_1, (0, 1)_2\}$ by coefficients $\{(1, 0)_1, (1, 0)_2\}$.
 %By introducing a linear transformation to the targeted coefficients, the error can be made arbitrary large.
 %This is crucial since it limits the insights we can get about the feature relationship, since a full rank linear transformation of the features does not reduce regression performance, but vice-versa the reconstruction error.
-%For analysis that still can be related the meaning of Eq.~\ref{eq:reconstruction_error_basis} we therefore have to use an orthonormal basis for the target features.
+%For analysis that still can be related the meaning of Eq.~\eqref{eq:reconstruction_error_basis} we therefore have to use an orthonormal basis for the target features.
 %In this case a full rank orthonormality matrix can be absorbed by the linear transformation so we have equivalance to the orthonormal coefficients
 %\begin{subequations}
 %\begin{align}
@@ -696,7 +697,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%\tilde{c}_k\tilde{b}_k = (\sum_{i} U_{ki}c_{i})(\sum_{i} U_{ki}b_{i}(\mathbf{q})) = (\sum_{ij} U_{ki}U_{kj}c_{i}b_{j}(\mathbf{q}))
 %\end{align}
 %\end{subequations}
-%so we only constrain the targeted feature space to be orthonormal if we want to retrieve Eq.~\ref{eq:reconstruction_error_basis}.
+%so we only constrain the targeted feature space to be orthonormal if we want to retrieve Eq.~\eqref{eq:reconstruction_error_basis}.
 %On the other hand reconstruction of a nonorthonormal basis can still be justified by the fact that until the limit of convergence is not reached even a full rank linear transformations affects the regularization and thus also effects the regression performance.
 %%Furthemore, even in the limit of convergence when comparing NN features, we can argue that the optimizers find similar local minimas with a similar $\|S\|$ factor %TODO for that argument I would need to dig into literature and change also the equation (find an equality relationship)
 %
@@ -729,7 +730,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%  \sum_{n=1}^M \|\sum_k T(c_kb_k) - y \|^2 \leq ...
 %%\end{equation}
 %%We therefore can make a more general statement about any target functions wrt. to a transformation relating the targeted feature space to $y$ for a dataset. 
-%%therefore focus on the development of error measurements as in Eq.~\ref{eq:information_capacity} that provide quantative results for the information capacity of feature spaces and that are efficient to compute.
+%%therefore focus on the development of error measurements as in Eq.~\eqref{eq:information_capacity} that provide quantative results for the information capacity of feature spaces and that are efficient to compute.
 %%a numerical integration in the high-order space is also not feasible
 %%the density for Sec.~\ref{eq:radial_angular_density} 
 %%\begin{equation}
@@ -786,7 +787,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%Extending the analysis to non-linear dependencies, the local feature reconstruction error (LFRE) applies ridge regression for each point locally on the $k$-nearest neighbors.
 %%These methods are of particular use in assessing the hyperparameters of ML descriptors\cite{goscinski2021role} and have been employed to compare the efficiency of different basis sets in encoding geometrical information\cite{musil2021physics, goscinski2021optimal}.
 %
-%In the following sections we show error measures based on the loss in Eq.~\ref{eq:reconstruction_error_basis_coefficients} that constraint the transformation $\mathbf{T}$ to provide different insights to the feature-relationship.
+%In the following sections we show error measures based on the loss in Eq.~\eqref{eq:reconstruction_error_basis_coefficients} that constraint the transformation $\mathbf{T}$ to provide different insights to the feature-relationship.
 %In Figure~\ref{fig:frm} a schematic of the different types of transformations $T$ that are covered in the upcoming sections.
 %These methods are of particular use in assessing the hyperparameters of ML descriptors\cite{goscinski2021role} and have been employed to compare the efficiency of different basis sets in encoding geometrical information\cite{musil2021physics, goscinski2021optimal}.
 %
@@ -825,13 +826,13 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\end{equation}
 %averaging, if needed, over multiple random splits.  The $\GFRE$ is a positive quantity, which is equal to zero when there is no error in the reconstruction, and that is usually bound by one\footnote{This is due to the fact that feature matrices are standardized, and so $\norm{\bX^{\CDte}_{\CF^\prime}}/\ns_\test $ is of the order of one}.
 %
-%Notice that by expressing the basis and target functions on a radial grid basis we retrieve the numerical integration loss in Eq.~\ref{TODO}.
+%Notice that by expressing the basis and target functions on a radial grid basis we retrieve the numerical integration loss in Eq.~\eqref{TODO}.
 %The minimization problem is moved from an optimization of $\mathbf{c}$ to an optimization of $\mathbf{W}$.
 %%to solving for $M\times n_\textrm{grid}$.% matrix retrieving the expansion coefficients.
 %While the former requires to solve the loss for each datapoint the later only needs one the whole dataset.
 %As solving the minimization problem has worst scaling behavior in the computation of the loss, the later approach is typically more efficient to compute.
 %%an$c_k$ changes for datapoint and $M\times n_\textrm{grid}$ is constant over samples.
-%%In the limit of number basis function for $f$, thus we obtain a similar loss as the numerical integration in Eq.~\ref{TODO} where target function is evaluated on some grid to compute the integral.
+%%In the limit of number basis function for $f$, thus we obtain a similar loss as the numerical integration in Eq.~\eqref{TODO} where target function is evaluated on some grid to compute the integral.
 %
 %For numbers of features larger than $\ns_\train$, the covariance matrix is not full rank, and one needs to compute a pseudoinverse. Without loss of generality, one can regularize the regression to stabilize the calculation. In this paper, we computed the pseudoinverse by means of a singular value decomposition, and we determined the optimal regularization in terms of the truncation of the singular value spectrum, using 2-fold cross-validation over the training set to determine the optimal truncation threshold. Often, it is also useful to observe the behavior of the $\GFRE$ in the absence of any regularization: overfitting is in itself a signal of the instability of the mapping between feature spaces.
 %In general, $\GFRE^\CD(\CF,\CF^\prime)$ is not symmetric. If $\GFRE^\CD(\CF,\CF^\prime)\approx\GFRE^\CD(\CF^\prime,\CF)\approx 0$, $\CF$ and $\CF^\prime$ contain similar types of information; if $\GFRE^\CD(\CF,\CF^\prime)\approx 0$, while $\GFRE^\CD(\CF^\prime,\CF)>0$, one can say that $\CF$ is more descriptive than $\CF^\prime$: this is the case, for instance, one would observe if $\CF^\prime$ consists of a sparse version of $\CF$, with some important and linearly-independent features removed; finally, if  $\GFRE^\CD(\CF,\CF^\prime)\approx\GFRE^\CD(\CF^\prime,\CF)>0$, the two feature spaces contain different, and complementary, kinds of information and it may be beneficial to combine them to achieve a more thorough description of the problem.
@@ -1027,7 +1028,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %As these models are also often opaque in their learned representation, it is essential to develop a measure that can also work for nonlinearities.
 %%Even higher-body orders are type of nonlinear nonlinearities is interesting to analyze
 %
-%In principle for the transformation $T$ in Eq.~\ref{eq:fre_transformationTODO} a neural network could be used that model nonlinearities.
+%In principle for the transformation $T$ in Eq.~\eqref{eq:fre_transformationTODO} a neural network could be used that model nonlinearities.
 %Neural networks are however usually only efficient in the prediction of a few target properties and not large number of features where convergence might be unfeasible.
 %In addition NNs have a lot model parameters that need to be chosen (e.g. activation function, number of layers) making the loss highly dependent on the exact architecture which makes it hard to make general statements.
 %
@@ -1172,7 +1173,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %    %    \label{fig:sval-line-ps-nmax8-lmax6}
 %    %\end{subfigure}
 %    \caption{
-%      The procedure for estimating the threshold for a Jacobian matrix $\mathbf{J}$. a) We sample directions corresponding to global translations which are invariant to features. b) By mapping these directions on the Jacobian matrix corresponding, we sample from a distribution of the numerical error over the features. c) Then we use the maximal numerical error over the features to estimate the threshold using Eq.~\ref{eq:threshold-random-matrix-theory}.}
+%      The procedure for estimating the threshold for a Jacobian matrix $\mathbf{J}$. a) We sample directions corresponding to global translations which are invariant to features. b) By mapping these directions on the Jacobian matrix corresponding, we sample from a distribution of the numerical error over the features. c) Then we use the maximal numerical error over the features to estimate the threshold using Eq.~\eqref{eq:threshold-random-matrix-theory}.}
 %    \label{fig:threshold-estimation}
 %\end{figure}
 %
@@ -1269,17 +1270,17 @@ The feature space reconstruction error and distortion can be incorporated into a
 %In contrast, an identity map can be kept constant over the whole dataset and is thereby not affected by the penalization term.
 %This term is closely related to a stretching energy term in the optimization of elastic maps\cite{kass1988snakes}.
 %One can see for the toy example in Figure~\ref{fig:nonlinearm}c) mapping $x$ to $1$ that by increasing $\beta$ the mapping starts to break at the degenerate point at $x=0$.
-%In Figure~\ref{fig:nonlinearm}b) the $1$-features and $0.5\sin(x)$ are compared, both reconstructing the $x$-features by optimizing the loss function described in Eq.~\ref{eq:nonlinearm}.
+%In Figure~\ref{fig:nonlinearm}b) the $1$-features and $0.5\sin(x)$ are compared, both reconstructing the $x$-features by optimizing the loss function described in Eq.~\eqref{eq:nonlinearm}.
 %We can see that initially $1$ to $x$ produces a smaller errors, since its eigenvalue spectrum is more uniform than $0.5\sin(x)$, while the mapping $0.5\sin(x)$ to $x$ gives smaller error for large $\beta$ values, because the feature mapping $0.5\sin(x)$ to $x$ requires fewer changes of the weights over the dataset than $1$ to $x$ and is thus more stable.
 %Increasing $\beta$ even more results in the mapping constant over the whole dataset which recovers the global mapping.
 %\begin{figure}
 %    \centering
 %    \includegraphics[width=\textwidth]{fig/nonlinear-measure_toy-example.png}
-%    \caption{The regression error for the toy dataset $\{x\in [-1,1]\}$ for different features over the spectrum of a) ridge regularization and b) stretch regularization as described in Eq.~\ref{eq:nonlinearm}. c) The error reconstructing the $1$-features from $x$-features for increasing $\beta$ (left) samplewise (right) and averaged over the whole dataset. It can be seen that the error starts to spread starting from the degeneracy at $x=0$.}
+%    \caption{The regression error for the toy dataset $\{x\in [-1,1]\}$ for different features over the spectrum of a) ridge regularization and b) stretch regularization as described in Eq.~\eqref{eq:nonlinearm}. c) The error reconstructing the $1$-features from $x$-features for increasing $\beta$ (left) samplewise (right) and averaged over the whole dataset. It can be seen that the error starts to spread starting from the degeneracy at $x=0$.}
 %    \label{fig:nonlinearm}
 %\end{figure}
 %
-%While the loss in Eq.~\ref{eq:nonlinearm} is not jointly convex over all $W_i$, it is convex in $W_i$ separately keeping all $W_j$ for $i\neq j$ fixed\cite{LI2015127}.
+%While the loss in Eq.~\eqref{eq:nonlinearm} is not jointly convex over all $W_i$, it is convex in $W_i$ separately keeping all $W_j$ for $i\neq j$ fixed\cite{LI2015127}.
 %We can therefore solve it iteratively until convergence by optimizing in every iteration each weight matrix separately
 %\begin{align}
 %%&\frac{\partial \ell}{W_i} = 0 \\

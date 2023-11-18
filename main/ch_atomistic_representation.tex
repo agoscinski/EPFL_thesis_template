@@ -5,7 +5,7 @@ This chapter covers the theory and computation of symmetrized features on the at
 %The methods presented have been historically developped incrementally improving fferent aspects in the computation of the 
 %advantage of mathematical tricks to compute efficiently features, the connection between those has been much later.
 %We take an approach similar to \cite{willatt2019atom} defining summarizing all approaches 
-A similar approach as in Ref.~\cite{willatt2019atom} is taken that introduces the topic by utilizing concepts from representation theory.
+A similar approach as in Ref.~\cite{will+19jcp} is taken that introduces the topic by utilizing concepts from representation theory.
 We therefore first introduce different functional forms $f_A:V\rightarrow\mathbb{R}$ to represent an atomic structure $A$ where the vector space $V$ considers different encoding of the atomic structure $A$ as input. In its simplest form the encoding is simply the atomic positions.
 To construct a numerical description that can be used for a data-driven model, we expand on a choice of representation with a set of \emph{basis functions} $\{b_k:V\rightarrow\mathbb{R}\}_{k=1}^{M}$, to obtain a set of \emph{expansion coefficients} $\{c_k\in\mathbb{R}\}_{k=1}^{M}$.
 The basis expansion is expressed as
@@ -30,11 +30,11 @@ Additionally, general characteristics of basis functions deployed in atomic-scal
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{fig/atomistic_repr_schematic.pdf}
-  \caption{A schematic showing the construction of features as input for a data-driven model based on the atomic-centered density correlation functions. The figure of the atoms in the box are retrieved from Ref.~\cite{noh2019inverse}. The figure of the atomic environments is retrieved from Ref.~\cite{willatt2019atom}. The methanol molecule is retrieved from Ref.~\cite{wiki:Alcohol_(chemistry)}.}
+  \caption{A schematic showing the construction of features as input for a data-driven model based on the atomic-centered density correlation functions. The figure of the atoms in the box are retrieved from Ref.~\cite{noh2019inverse}. The figure of the atomic environments is retrieved from Ref.~\cite{will+19jcp}. The methanol molecule is retrieved from Ref.~\cite{wiki:Alcohol_(chemistry)}.}
   \label{fig:acdc-scheme}
 \end{figure}
 
-%In the following methods of encoding the information present in the symmetrized many-body correlation function in Eq.~\ref{eq:invariant_many_body_correlation_function} into a vector representation are presented.
+%In the following methods of encoding the information present in the symmetrized many-body correlation function in Eq.~\eqref{eq:invariant_many_body_correlation_function} into a vector representation are presented.
 
 %By separating the atomic structure descriptor into descriptors for atomic environments different methods for constructing a structural descriptor out of atomic environment contributions have been proposed.
 
@@ -137,7 +137,7 @@ Here we present the solutions for order 1 and 2
 \end{align}
 \end{subequations}
 %that should make clear how it generalizes to higher orders.
-We use $\propto_r$ to ommit constant factors and radial terms $r$ that appear due to the integration over the rotation group that are not essential since typically a radial scaling term is added to the density to control the general scaling\cite{behler2011atom,LIBRASCAL,drautz2019atomic}.
+We use $\propto_r$ to ommit constant factors and radial terms $r$ that appear due to the integration over the rotation group that are not essential since typically a radial scaling term is added to the density to control the general scaling\cite{behler2011atom,huan-vonl16jcp,will+18pccp,drautz2019atomic,}
 The correlation function of order 1 naturally results in a description of the distance to atom $i$ and the order 2 function in the two distances and an angle wrt. atom $i$.
 This can be generalized to higher-orders retrieving a decomposition into different body-order contributions as it is done for interatomic potentials.
 This expansion makes the close relationship of ACDC-based descriptors to interatomic potentials apparent that decompose the energy into different body-order contributions.
@@ -148,7 +148,7 @@ This expansion makes the close relationship of ACDC-based descriptors to interat
 
 \subsection{Ordered support of representation}
 One branch of approaches to obtain an input for a data-driven model from the functions is to use their support, the values the function does not evaluate to zero, to a vector.th
-In the case of the order 1 function in Eq.~\ref{eq:dirac_delta_haar_integral_2body} it corresponds to the 2-body distances $r_{ji}$ as used in Refs.~\cite{rupp2012fast, montavon2012learning, montavon2013machine, sadeghi2013metrics}, order 2 to the 3-body angles and order 3 to the 4-body torsions as used in Ref.~\cite{huang2016communication}.
+In the case of the order 1 function in Eq.~\eqref{eq:dirac_delta_haar_integral_2body} it corresponds to the 2-body distances $r_{ji}$ as used in Refs.~\cite{rupp2012fast, montavon2012learning, montavon2013machine, sadeghi2013metrics}, order 2 to the 3-body angles and order 3 to the 4-body torsions as used in Ref.~\cite{huang2016communication}.
 In the view of basis expansion coefficients this approach can be seen as selecting a different basis set of Dirac $\delta$ functions for each atomic environment.
 For example in the case of order 1 the basis set for the atomic envirnoment $i$ can be defined as $\{\delta(r-r_{ji}):\mathbb{R}\rightarrow\mathbb{R}\}_{j\in A_i}$.
 %%\begin{equation}
@@ -218,7 +218,7 @@ In the next section we discuss how this approach is used for Gaussian densities.
 %    \int G_4(r,r\prime,\theta_{ijk})\delta(r-r_{ij})\delta(r-r_{ik})\delta(\theta-\theta_{ijk}) \,\mathrm{d}\mathbf{r}\mathrm{d}\mathbf{r}^\prime &\propto G_4(r_{ij},r_{ik}, \theta_{ijk})
 %  \end{align}
 %\end{subequations}
-For Gaussian densities the order 1 expression in Eq.~\ref{eq:integration_over_subgroup} can be analytically solved by exploiting properties of the Gaussian function\cite{musil2019machine}
+For Gaussian densities the order 1 expression in Eq.~\eqref{eq:integration_over_subgroup} can be analytically solved by exploiting properties of the Gaussian function\cite{musil2019machine}
 \begin{equation}
   \label{eq:order1_analytical_solution}
   \int_{SO(3)} \mathrm{d}\hat{R}\, g(\hat{R}\mathbf{r}-\mathbf{r}_{ji}) %\propto_r ... \approx g(r-r_i) 
@@ -235,7 +235,7 @@ A solution of the integral for higher orders requires a more complex derivation 
 %\end{equation}
 %which requires rotational symmetry of the density $\rho(\hat{R}\mathbf{r}) = \rho(\mathbf{r})$ as it is for the Gaussian function. % or Coulomb potential. %Student's t-distribution.
 %Since asymetric densities typically are integration, it is not a restrictive constraint.
-Spherical harmonics have been studied extensively in invariant theory\cite{dowker2008spherical} and in angular momentum theory\cite{yutsis1965theory} which make them a suitable candidate to solve the integral in Eq.~\ref{eq:integration_over_subgroup_higher_order}.
+Spherical harmonics have been studied extensively in invariant theory\cite{dowker2008spherical} and in angular momentum theory\cite{yutsis1965theory} which make them a suitable candidate to solve the integral in Eq.~\eqref{eq:integration_over_subgroup_higher_order}.
 Consequently, to exploit the mathematical properties of spheriacl harmonics the atomic density requires to be reexpressed in form of spherical harmonics.
 We extend the spherical harmonics by a complete orthonormal radial basis $\{R_n(r) :\mathbb{R}\rightarrow\mathbb{R}\}_{n=1}^{n_\textrm{max}}$ to cover the radial part of the density.
 %For simplicity in the derivation we impose orthogonality on $R_n(r)$,
@@ -250,7 +250,7 @@ Then the atomic density can be reformulated as
 %\begin{equation}
 %  \rho(\mathbf{r}) = \sum_{nlm}R_n(r)Y^l_m(\hat{\mathbf{r}})
 %\end{equation}
-This reformulation allows us to solve Eq.~\ref{eq:integration_over_subgroup_higher_order} for order 2.
+This reformulation allows us to solve Eq.~\eqref{eq:integration_over_subgroup_higher_order} for order 2.
 The radial basis can be extracted out of the integral as it is not affected 
 %\begin{subequations}
 %  \rho(\mathbf{r}) = \sum_{lm} \rho_{lm}(\mathbf{r}).\\
@@ -292,13 +292,14 @@ where $C^{l l_1l_2}_{\mu m_1m_2}$ are the real Clebsch-Gordan coefficients\cite{
 This relationship was initially utilized in Ref.~\cite{bartok2013representing} to generate order 3 functions, commonly referred as \emph{bispectrum}.
 Subsequently, it has been formulated into a recursive expression to derive higher-order functions of the form
 \begin{subequations}
+\label{eq:recursive_higherorder}
 \begin{align}
-  \label{eq:recursive_higherorder}
   \overline{\rho_i^{\otimes\nu}}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu+1}) &= \sum_{k^{\nu+1}} c_{k^{\nu+1}} f^{\nu+1}_{k^{\nu+1}}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu+1}), \\
   %\overline{\rho_i^{\otimes\nu}}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu}) &= \sum_{k^\nu} c_{k^\nu} f^{\nu}_{k^\nu}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu}) \\
   %\rho_i(\mathbf{r}) &= \sum_{k^1} c_{k^1}f^{1}_{k^1}(\mathbf{r}) \\\sum_{k^\nu k^1} c_{k^\nu k^1} c_{k^1}
   f^{\nu+1}_{k^{\nu+1}}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu+1}) &= \sum_{k^\nu k^1} c_{k^\nu k^1}\, c_{k^1} f^{1}_{k^1}(\mathbf{r}_{\nu+1}) c_{k^\nu} f^{\nu}_{k^\nu}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu}), \\
   c_{k^{\nu+1}} &= \sum_{k^\nu k^1} c_{k^\nu k^1}\, c_{k^1}\, c_{k^\nu},
+  %c_{nlk\lambda\mu} &= \sum_{k^\nu k^1} c_{k^\nu k^1}\, c_{k^\nu} c_{n\lambda\mu}\,,
   %\overline{\rho_i^{\otimes\nu+1}}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu+1}) &= 
   %  \sum_{k^\nu} 
   %  c_{k^\nu} f^{\nu}_{k^\nu}(\mathbf{r}_1, \ldots, \mathbf{r}_{\nu})
@@ -333,8 +334,8 @@ with various strategies for compressing the basis coefficients in high-dimension
 
 
 \section{Basis expansion}
-Solving the integral by expanding the atomic density onto a certain basis as shown in Eq.~\ref{eq:solving_haar_integral} naturally enforces the same choice for the basis set to solve for the expansion coefficients
-%To solve the integral as shown in Eq.~\ref{eq:solving_haar_integral} an expansion of the neighbor density into a radial and spherical term is necessary.
+Solving the integral by expanding the atomic density onto a certain basis as shown in Eq.~\eqref{eq:solving_haar_integral} naturally enforces the same choice for the basis set to solve for the expansion coefficients
+%To solve the integral as shown in Eq.~\eqref{eq:solving_haar_integral} an expansion of the neighbor density into a radial and spherical term is necessary.
 \begin{subequations}
 \label{eq:acdc_expansion}
 \begin{align}
@@ -348,13 +349,13 @@ Solving the integral by expanding the atomic density onto a certain basis as sho
 The order 2 expansion coefficients are frequently referred as \emph{smooth overlap of atomic positions} (SOAP)\cite{bartok2013representing}.
 
 \subsection{Density trick}
-It becomes apparent from Eqs.~\ref{eq:acdc_expansion} that the order 2 coefficients can be computed from the spherical expansion coefficients.
-Taking into account the recursion formula presented in Eq.~\ref{eq:recursive_higherorder} it becomes evident that all higher order correlations can be constructed from the spherical expansion coefficients.
+It becomes apparent from Eqs.~\eqref{eq:acdc_expansion} that the order 2 coefficients can be computed from the spherical expansion coefficients.
+Taking into account the recursion formula presented in Eq.~\eqref{eq:recursive_higherorder} it becomes evident that all higher order correlations can be constructed from the spherical expansion coefficients.
 This fact %that the propagation to higher-body orders does only require an expansion of the order 1 terms 
 has been coined the \emph{density trick}.
-It moves the computation from the evaluation of the basis expansions across all $\nu$-tuples to the computation of tensor products between the expansion coefficients of order $\nu$ as indicated the derivation in Eq.~\ref{eq:soap_expansion}.
+It moves the computation from the evaluation of the basis expansions across all $\nu$-tuples to the computation of tensor products between the expansion coefficients of order $\nu$ as indicated the derivation in Eq.~\eqref{eq:soap_expansion}.
 %Given $M$ basis functions and $N$ neighbors in an atomic environment, the cost the body-order from the expansion coefficients of order $\nu$ to $\nu+1$ scales as $O(NM+M^{\nu})$ while a direct expansion of the higher-order function scales as $O(M^{\nu+1}N^{\nu+1})$\cite{goscinski2021role}.
-For example, the cost of the order 2 coefficients in Eq.~\ref{eq:soap_expansion} without the usage of the density trick requires the evaluation of $O({N\choose 3}) = O(N^3)$ triplets for each of the $M$ basis functions resulting in a total time complexity of $O(M^2N^3)$.
+For example, the cost of the order 2 coefficients in Eq.~\eqref{eq:soap_expansion} without the usage of the density trick requires the evaluation of $O({N\choose 3}) = O(N^3)$ triplets for each of the $M$ basis functions resulting in a total time complexity of $O(M^2N^3)$.
 With the density trick one has to compute the expansion coefficients for the density $O(MN)$ to then to increase the order by a contracted tensor product scaling with $O(M^2)$ resulting a total time complexity of $O(MN+M^2)$.
 %One has to be aware that this comparison considers the scaling behavior of two different factors the number of neighbors $N$ and the number of basis functions $M$.
 Even though the scaling favors the use of the density trick, when embedding splines into the computation of the features, the slower iteration over all $(\nu+1)$-body parts can be balanced out by omitting the computational cost of tensor product and the model as shown in Ref~.\cite{xie2023ultra}.
@@ -402,7 +403,7 @@ However, since data-driven models often aim to only represent a subset of all at
 
 \subsection{Decomposition of basis expansion}
 %he choice of radial basis %TODO into what
-When deriving an expresion for the spherical expansion coefficients in Eq.~\ref{eq:gaussian_expansion}, the coefficients naturally decompose into neighbor contributions
+When deriving an expresion for the spherical expansion coefficients in Eq.~\eqref{eq:gaussian_expansion}, the coefficients naturally decompose into neighbor contributions
 
 \begin{equation}
   \label{eq:neighbor_contr}
@@ -427,6 +428,13 @@ One approach has been therefore to express the atomic density into a form that d
 Nevertheless, this approach removes the information that is encoded in this coupling.
 The approach of splining the radial expansion coefficients has been demonstrated to be more effective as it avoids the cost of the integration for any choice of basis while preserving the information contained in coupling. 
 More technical details about the splining of the radial expansion coefficients can be found in Section~\ref{sec:cubic_spline}.
+
+One further includes the chemical type/species $a_j$ of atom $j$ into the the coefficients by separate the neighbor contributions in different species channels
+\begin{equation}
+  \label{eq:chemical_decomposition}
+  c^{i}_{anlm} = \sum_{j\in A_i} \delta_{aa_j}c^{ij}_{nlm}.
+  %c^{i}_{n\lambda\mu} = \sum \underbrace{c_{n\lambda}}_{\textrm{radial expansion}} c_{\lambda\mu}\tilde{Y}^\lambda_\mu(\hat{r}),\\
+\end{equation}
 %is to spline the radial expansion coefficents $c_{n\lambda}$ allowing an evaluation of the integral at constant time.
 %TODO check how I introduce splines in chapter 5
 %Since the splining of the radial expansion coefficients has been shown to be cost-efficient\cite{musil2021efficient}, costly optimizations of the radial expansion coefficients have entered the design space\cite{goscinski2021optimal,bigi2022smooth,lopanitsyna2023modeling}.
@@ -454,8 +462,8 @@ More technical details about the splining of the radial expansion coefficients c
 %\end{subequations}
 %It can be also seen as projections of 
 %%the symmetrized many-body order correlations of the atomic environment 
-%$\ket{\mathcal{X}_i^{(\nu)}}_{\hat{R},\delta}$ by smoothen the Dirac $\delta$ functions in Eq.~\ref{eq:dirac_delta_haar_integral} to Gaussian functions $g$ after the Haar integral has been applied.
-%This smoothen operation will be notated with $\delta\rightarrow g$ allowing to express the functions in Eq.~\ref{eq:mbtr} as
+%$\ket{\mathcal{X}_i^{(\nu)}}_{\hat{R},\delta}$ by smoothen the Dirac $\delta$ functions in Eq.~\eqref{eq:dirac_delta_haar_integral} to Gaussian functions $g$ after the Haar integral has been applied.
+%This smoothen operation will be notated with $\delta\rightarrow g$ allowing to express the functions in Eq.~\eqref{eq:mbtr} as
 %\begin{subequations}
 %\begin{gather}
 %g_{2}(r) = \langle r | \mathcal{X}_i\rangle_{\delta\rightarrow g,\hat{R},h\rightarrow\delta}, \quad
@@ -473,8 +481,8 @@ More technical details about the splining of the radial expansion coefficients c
 %- hyperspherical harmonics expansion
 %- radial basis function + spherical harmonics 
 %- Tensor Moment
-%More descriptive representations can be motivated by the observation that the aforementioned descriptors can be expressed as projections of the symmetrized many-body correlation function in Eq.~\ref{eq:invariant_many_body_correlation_function}.
-%as expressed in Eqs.~\ref{eq:symmetry_function_as_projection}.
+%More descriptive representations can be motivated by the observation that the aforementioned descriptors can be expressed as projections of the symmetrized many-body correlation function in Eq.~\eqref{eq:invariant_many_body_correlation_function}.
+%as expressed in Eqs.~\eqref{eq:symmetry_function_as_projection}.
 %Instead of constructing a descriptor by concatenating scattered projections together, a more systematic approach is to find a complete description by expanding the ADF on a complete basis set to then resolve the Haar integral for the chosen basis.
 %\[\langle\mathbf{r}|\mathcal{A}\rangle = \sum_{i\in\mathcal{A}} g(\mathbf{r}-\mathbf{r}_i).\]
 %and using the coefficients as descriptor.
@@ -581,11 +589,11 @@ More technical details about the splining of the radial expansion coefficients c
 %%p_{4} = (f_4,1, f)
 
 %\subsubsection{Density trick}
-%From Eq.~\ref{eq:soap_expansion} and the recursion Eq.~\ref{eq:recursive_higherorder} becomes apparent that higher order correlations can be constructed from the spherical expansion coefficients.
+%From Eq.~\eqref{eq:soap_expansion} and the recursion Eq.~\eqref{eq:recursive_higherorder} becomes apparent that higher order correlations can be constructed from the spherical expansion coefficients.
 %The fact that the propagation to higher-body orders does only require an expansion of the order 1 terms has been coined \emph{density trick}.
-%It moves the computation from evaluating the basis expansions for $(\nu+1)$-tuples to tensor products between the expansion coefficients of order $\nu$ as the recursive formula in Eq.~\ref{eq:recursive_higherorder}indicatest.
+%It moves the computation from evaluating the basis expansions for $(\nu+1)$-tuples to tensor products between the expansion coefficients of order $\nu$ as the recursive formula in Eq.~\eqref{eq:recursive_higherorder}indicatest.
 %Increasing the body-order from the expansion coefficients of order $\nu$ to $\nu+1$ scales as $O(NM+M^{\nu})$ while a direct expansion of the higher-order function scales as $O(M^{\nu+1}N^{\nu+1})$\cite{goscinski2021role}.
-%As example the costs for order 2 features in Eq.~\ref{TODO} without using the density trick the computation of the features for one atomic environem requires the expansion of $O({N\choose 3}) = O(N^3)$ triplets for each of the $M$ basis functions resulting in a total time complexity of $O(M^2N^3)$.
+%As example the costs for order 2 features in Eq.~\eqref{TODO} without using the density trick the computation of the features for one atomic environem requires the expansion of $O({N\choose 3}) = O(N^3)$ triplets for each of the $M$ basis functions resulting in a total time complexity of $O(M^2N^3)$.
 %With the density trick one has to compute the expansion coefficients for the density $O(MN)$ to then to increase the order by a contracted tensor product scaling with $O(M^2)$ resulting a total time complexity of $O(MN+M^2)$.
 %%One has to be aware that this comparison considers the scaling behavior of two different factors the number of neighbors $N$ and the number of basis functions $M$.
 %Even though the scaling favors the use of the density trick, when embedding splines into the computation of the features, the slower iteration over all $(\nu+1)$-body parts can be balanced out by omitting the computational cost of tensor product and the model as shown in Ref~.\cite{xie2023ultra}.
