@@ -1,4 +1,11 @@
-\chapter{Symmetry-preserving basis optimization}
+\chapter{Symmetry-adapted data-driven basis optimization}
+\label{sec:basisopt}
+
+Several algorithmic recipes for the construction of basis have been proposed~\cite{shapeev2016moment, drau19prb, dusson2022atomic, musil2021efficient} that aim at achieving computational efficiency, and/or at being best adapted to the specific requirement of a given fitting problem, typically the construction of a machine learning model of the potential energy.
+We bring these considerations to their logical conclusion, by showing that a data-driven basis to expand the atom density, that is optimal in terms of the information content for a given number of functions, can be built as a contraction of a larger primitive basis set, similarly to what is routinely done in quantum chemistry for Gaussian type orbitals (GTOs)~\cite{scha+92jcp}, and that it can be practically, and inexpensively, evaluated as a numerical basis with striking similarities to ideas in electronic-structure methods~\cite{AIMS}.
+Using an effective basis reduces the number of features that are needed to encode the same information, and thereby reduces the training and prediction time of the resulting machine learning (ML) models.
+We demonstrate the accuracy, and the computational efficiency, of this approach for both the construction of machine learning potentials for materials, and for the prediction of molecular properties. 
+
 %The splining of the radial expansion the door for optimizing the basis function without any additional cost at evaluation time (e.g. when running molecular dynamics).
 %We present in this chapter several optimization methods for the basis preserving symmetries that can be used in combination with splining that can be summarized by 
 %\begin{equation}
@@ -60,7 +67,6 @@
 %We discuss in the SI some considerations on the practical evaluation of density coefficients. 
 
 %\subsection{Optimal density basis}
-TODO...
 \section{Unsupervised optimization}
 Principal component analysis has been proposed to compute the data-driven contractions of equivariant features that represent in the most informative way the variability of a dataset as part of the N-body iterative contraction of equivariant (NICE) frameworks~\cite{niga+20jcp}.
 
@@ -84,12 +90,12 @@ The number of contracted numerical coefficients $\qmax$ can be chosen inspecting
 At first, it might appear that in order to evaluate the contracted basis one has to compute the full set of $\nmax$ coefficients, and this is how the idea was applied in Ref.~\citenum{niga+20jcp}. 
 When combining Eq.~\eqref{eq:contract} with Eq.~\eqref{eq:radial_expansion}, however, one sees that the contracted coefficients can be evaluated directly 
 \begin{equation}
-  c^{i}_{\e qlm} = \sum_{j\in A_i} \delta_{\e\e_j} c^{ij}_{\e ql} c_{alm}^{ij}.
+  c^{i}_{\e qlm} = \sum_{j\in A_i} \delta_{\e\e_j} c^{ij}_{ql} c_{lm}^{ij}.
 \label{eq:neighbor-contract}
 \end{equation}
 using the contracted radial integrals
 \begin{equation}
-  c^{ij}_{\e ql} = \sum_n U^{\e l}_{qn} c^{ij}_{\e nl} \label{eq:contract-integral}
+  c^{ij}_{ql} = \sum_n U^{\e_j l}_{qn} c^{ij}_{nl} \label{eq:contract-integral}
 \end{equation}
 that can be computed over $r$, approximated with cubic splines in the range $[0, r_c]$, and then evaluated at exactly the same cost as for a spline approximation of the radial integrals of a primitive basis of size $\qmax$.
 The exact mathematical form and implementation details of the splines can be found in Section~\ref{sec:cubic_spline}.
@@ -459,7 +465,7 @@ This combined basis can capture the same amount of information of a primitive ba
 We show that linear NICE models built on high-order combinations of the optimal basis yield much lower error than those constructed on a GTO basis of similar size, even though the truncation of the body order iteration, or introducing nonlinearities, can also affect, positively or negatively, convergence. 
 
 The determination of the optimal basis is much less demanding than the fitting of even the simplest models. After fitting, the evaluation of the contracted basis involves no overhead over a primitive basis of equal size, thanks to the use of a spline approximation.
-Given that it provides consistently higher information content, and that it results in models that have comparable (for silicon) or much better (for QM9) accuracy than standard choices of orthogonal bases, we recommend adopting this scheme in any machine-learning approach that requires representing an atomic density -- particularly for systems that involve many chemical species, or for frameworks that rely on the evaluation of high-order density correlations.
+Given that it provides consistently higher information content, and that it results in models that have comparable (for silicon) or much better (for QM9) accuracy than standard choices of orthogonal bases, we recommend adopting this scheme in any machine learning approach that requires representing an atomic density -- particularly for systems that involve many chemical species, or for frameworks that rely on the evaluation of high-order density correlations.
 
 %%\label{sec:evaluation_of_radial_contribution}
 %%An efficient implementation for the evaluation of the radial basis function in the spherical expansion for the computation of SOAP was part of my work in the first year.

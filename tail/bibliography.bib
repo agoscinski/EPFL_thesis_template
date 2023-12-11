@@ -172,16 +172,16 @@
   year={1939},
   publisher={Nature Publishing Group}
 }
-%@article{willatt2018feature,
-%  title={Feature optimization for atomistic machine learning yields a data-driven construction of the periodic table of the elements},
-%  author={Willatt, Michael J and Musil, F{\'e}lix and Ceriotti, Michele},
-%  journal={Physical Chemistry Chemical Physics},
-%  volume={20},
-%  number={47},
-%  pages={29661--29668},
-%  year={2018},
-%  publisher={Royal Society of Chemistry}
-%}
+@article{willatt2018feature,
+  title={Feature optimization for atomistic machine learning yields a data-driven construction of the periodic table of the elements},
+  author={Willatt, Michael J and Musil, F{\'e}lix and Ceriotti, Michele},
+  journal={Physical Chemistry Chemical Physics},
+  volume={20},
+  number={47},
+  pages={29661--29668},
+  year={2018},
+  publisher={Royal Society of Chemistry}
+}
 @article{de2016comparing,
   title={Comparing molecules and solids across structural and alchemical space},
   author={De, Sandip and Bart{\'o}k, Albert P and Cs{\'a}nyi, G{\'a}bor and Ceriotti, Michele},
@@ -5584,6 +5584,22 @@ DOI = {10.2312/SPBG/SPBG07/081-090}
 }
 
 @article{drau19prb,
+  title = {Atomic cluster expansion for accurate and transferable interatomic potentials},
+  author = {Drautz, Ralf},
+  journal = {Phys. Rev. B},
+  volume = {99},
+  issue = {1},
+  pages = {014104},
+  numpages = {15},
+  year = {2019},
+  month = {Jan},
+  publisher = {American Physical Society},
+  doi = {10.1103/PhysRevB.99.014104},
+  url = {https://link.aps.org/doi/10.1103/PhysRevB.99.014104}
+}
+
+
+@article{drau19prb,
   title = {Atomic Cluster Expansion for Accurate and Transferable Interatomic Potentials},
   author = {Drautz, Ralf},
   year = {2019},
@@ -5597,18 +5613,6 @@ DOI = {10.2312/SPBG/SPBG07/081-090}
   number = {1}
 }
 
-@article{drau20prb,
-  title = {Atomic Cluster Expansion of Scalar, Vectorial, and Tensorial Properties Including Magnetism and Charge Transfer},
-  author = {Drautz, Ralf},
-  year = {2020},
-  month = jul,
-  volume = {102},
-  pages = {024104},
-  issn = {2469-9950, 2469-9969},
-  doi = {10.1103/PhysRevB.102.024104},
-  journal = {Phys. Rev. B},
-  number = {2}
-}
 
 @article{droz+15nature,
   title = {Conventional Superconductivity at 203 Kelvin at High Pressures in the Sulfur Hydride System},
@@ -20243,16 +20247,6 @@ author = {Lucjan Piela}
   year={2022},
   publisher={AIP Publishing}
 }
-@article{lopanitsyna2023modeling,
-  title={Modeling high-entropy transition metal alloys with alchemical compression},
-  author={Lopanitsyna, Nataliya and Fraux, Guillaume and Springer, Maximilian A and De, Sandip and Ceriotti, Michele},
-  journal={Physical Review Materials},
-  volume={7},
-  number={4},
-  pages={045802},
-  year={2023},
-  publisher={APS}
-}
 @article{nigam2022unified,
   title={Unified theory of atom-centered representations and message-passing machine-learning schemes},
   author={Nigam, Jigyasa and Pozdnyakov, Sergey and Fraux, Guillaume and Ceriotti, Michele},
@@ -20762,11 +20756,42 @@ author = {Lucjan Piela}
 }
 
 @misc{lammpsnewton,
-  title = {{{LAMMPS Users Manual - newton command}}},
+  title = {{{LAMMPS Users Manual - Commands - newton command}}},
   author = {LAMMPS developers},
   year = {2023},
   url = {\url{https://docs.lammps.org/newton.html}}
 }
+@misc{lammpsmliap,
+  title = {{{LAMMPS Users Manual - Build LAMMPS - Packages with extra build options - ML-IAP}}},
+  author = {LAMMPS developers},
+  year = {2023},
+  url = {\url{https://docs.lammps.org/Build_extras.html#ml-iap}}
+}
+@misc{lammpsmlpace,
+  title = {{{LAMMPS Users Manual - Build LAMMPS - Packages with extra build options - ML-PACE}}},
+  author = {LAMMPS developers},
+  year = {2023},
+  url = {\url{https://docs.lammps.org/Build_extras.html#ml-pace}}
+}
+@misc{lammpsmlpod,
+  title = {{{LAMMPS Users Manual - Build LAMMPS - Packages with extra build options - ML-POD}}},
+  author = {LAMMPS developers},
+  year = {2023},
+  url = {\url{https://docs.lammps.org/Build_extras.html#ml-quip}}
+}
+@misc{lammpsmlquip,
+  title = {{{LAMMPS Users Manual - Build LAMMPS - Packages with extra build options - ML-QUIP}}},
+  author = {LAMMPS developers},
+  year = {2023},
+  url = {\url{https://docs.lammps.org/Build_extras.html#ml-pod}}
+}
+@misc{lammpsmlhdnnp,
+  title = {{{LAMMPS Users Manual - Build LAMMPS - Packages with extra build options - ML-HDNNP}}},
+  author = {LAMMPS developers},
+  year = {2023},
+  url = {\url{https://docs.lammps.org/Build_extras.html#ml-hdnnp}}
+}
+
 @misc{gromacsnstcalcenergy,
   title = {{{GROMACS Users Manual - nstcalcenergy}}},
   author = {GROMMACS developers},
@@ -20790,7 +20815,271 @@ author = {Lucjan Piela}
   year={1985},
   publisher={Wiley Online Library}
 }
+@article{wahba1998bias,
+  title={The bias-variance tradeoff and the randomized GACV},
+  author={Wahba, Grace and Lin, Xiwu and Gao, Fangyu and Xiang, Dong and Klein, Ronald and Klein, Barbara},
+  journal={Advances in Neural Information Processing Systems},
+  volume={11},
+  year={1998}
+}
+@article{bussi2020using,
+  title={Using metadynamics to explore complex free-energy landscapes},
+  author={Bussi, Giovanni and Laio, Alessandro},
+  journal={Nature Reviews Physics},
+  volume={2},
+  number={4},
+  pages={200--212},
+  year={2020},
+  publisher={Nature Publishing Group UK London}
+}
+@article{gigli2022thermodynamics,
+  title={Thermodynamics and dielectric response of BaTiO3 by data-driven modeling},
+  author={Gigli, Lorenzo and Veit, Max and Kotiuga, Michele and Pizzi, Giovanni and Marzari, Nicola and Ceriotti, Michele},
+  journal={npj Computational Materials},
+  volume={8},
+  number={1},
+  pages={209},
+  year={2022},
+  publisher={Nature Publishing Group UK London}
+}
+@article{bussi2020using,
+  title={Using metadynamics to explore complex free-energy landscapes},
+  author={Bussi, Giovanni and Laio, Alessandro},
+  journal={Nature Reviews Physics},
+  volume={2},
+  number={4},
+  pages={200--212},
+  year={2020},
+  publisher={Nature Publishing Group UK London}
+}
+@article{bartok2010gaussian,
+  title={Gaussian approximation potentials: The accuracy of quantum mechanics, without the electrons},
+  author={Bart{\'o}k, Albert P and Payne, Mike C and Kondor, Risi and Cs{\'a}nyi, G{\'a}bor},
+  journal={Physical review letters},
+  volume={104},
+  number={13},
+  pages={136403},
+  year={2010},
+  publisher={APS}
+}
+
+@article{bartok2015gaptutorial,
+author = {Bartók, Albert P. and Csányi, Gábor},
+title = {Gaussian approximation potentials: A brief tutorial introduction},
+journal = {International Journal of Quantum Chemistry},
+volume = {115},
+number = {16},
+pages = {1051-1057},
+keywords = {interatomic potentials, machine learning, Gaussian process, ab initio, atomic environments},
+doi = {https://doi.org/10.1002/qua.24927},
+url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/qua.24927},
+eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/qua.24927},
+abstract = {We present a swift walk-through of our recent work that uses machine learning to fit interatomic potentials based on quantum mechanical data. We describe our Gaussian approximation potentials (GAP) framework, discuss a variety of descriptors, how to train the model on total energies and derivatives, and the simultaneous use of multiple models of different complexity. We also show a small example using QUIP, the software sandbox implementation of GAP that is available for noncommercial use. © 2015 Wiley Periodicals, Inc.},
+year = {2015}
+}
+@article{ceriotti2020machine,
+  title={Machine learning of atomic-scale properties based on physical principles},
+  author={Ceriotti, Michele and Willatt, Michael J and Cs{\'a}nyi, G{\'a}bor},
+  journal={Handbook of Materials Modeling: Methods: Theory and Modeling},
+  pages={1911--1937},
+  year={2020},
+  publisher={Springer}
+}
+
+@article{cayl+20mlst,
+  title = {Wasserstein Metric for Improved Quantum Machine Learning with Adjacency Matrix Representations},
+  author = {{\c C}aylak, Onur and {\noopsort{lilienfeld}}{von Lilienfeld}, Anatole and Baumeier, Bj{\"o}rn},
+  year = {2020},
+  month = jun,
+  issn = {2632-2153},
+  doi = {10.1088/2632-2153/aba048},
+  journal = {Mach. Learn.: Sci. Technol.}
+}
+
+@article{scha+92jcp,
+  title = {Fully Optimized Contracted {{Gaussian}} Basis Sets for Atoms {{Li}} to {{Kr}}},
+  author = {Sch{\"a}fer, Ansgar and Horn, Hans and Ahlrichs, Reinhart},
+  year = {1992},
+  month = aug,
+  volume = {97},
+  pages = {2571--2577},
+  issn = {0021-9606, 1089-7690},
+  doi = {10.1063/1.463096},
+  journal = {The Journal of Chemical Physics},
+  number = {4}
+}
+
+@incollection{NEURIPS2019_9015,
+title = {PyTorch: An Imperative Style, High-Performance Deep Learning Library},
+author = {Paszke, Adam and Gross, Sam and Massa, Francisco and Lerer, Adam and Bradbury, James and Chanan, Gregory and Killeen, Trevor and Lin, Zeming and Gimelshein, Natalia and Antiga, Luca and Desmaison, Alban and Kopf, Andreas and Yang, Edward and DeVito, Zachary and Raison, Martin and Tejani, Alykhan and Chilamkurthy, Sasank and Steiner, Benoit and Fang, Lu and Bai, Junjie and Chintala, Soumith},
+booktitle = {Advances in Neural Information Processing Systems 32},
+pages = {8024--8035},
+year = {2019},
+publisher = {Curran Associates, Inc.},
+url = {http://papers.neurips.cc/paper/9015-pytorch-an-imperative-style-high-performance-deep-learning-library.pdf}
+}
+@article{pedregosa2011scikit,
+  title={Scikit-learn: Machine learning in Python},
+  author={Pedregosa, Fabian and Varoquaux, Ga{\"e}l and Gramfort, Alexandre and Michel, Vincent and Thirion, Bertrand and Grisel, Olivier and Blondel, Mathieu and Prettenhofer, Peter and Weiss, Ron and Dubourg, Vincent and others},
+  journal={Journal of machine learning research},
+  volume={12},
+  number={Oct},
+  pages={2825--2830},
+  year={2011}
+}
+
+@misc{bai2019,
+    author = {Bai, Junjie and Lu, Fang and Zhang, Ke and others},
+    title = {ONNX: Open Neural Network Exchange},
+    year = {2019},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/onnx/onnx}},
+}
+
+
+@article{gigli_thermodynamics_2022,
+	title = {Thermodynamics and dielectric response of {BaTiO3} by data-driven modeling},
+	volume = {8},
+	copyright = {2022 The Author(s)},
+	issn = {2057-3960},
+	url = {https://www.nature.com/articles/s41524-022-00845-0},
+	doi = {10.1038/s41524-022-00845-0},
+	abstract = {Modeling ferroelectric materials from first principles is one of the successes of density-functional theory and the driver of much development effort, requiring an accurate description of the electronic processes and the thermodynamic equilibrium that drive the spontaneous symmetry breaking and the emergence of macroscopic polarization. We demonstrate the development and application of an integrated machine learning model that describes on the same footing structural, energetic, and functional properties of barium titanate (BaTiO3), a prototypical ferroelectric. The model uses ab initio calculations as a reference and achieves accurate yet inexpensive predictions of energy and polarization on time and length scales that are not accessible to direct ab initio modeling. These predictions allow us to assess the microscopic mechanism of the ferroelectric transition. The presence of an order-disorder transition for the Ti off-centered states is the main driver of the ferroelectric transition, even though the coupling between symmetry breaking and cell distortions determines the presence of intermediate, partly-ordered phases. Moreover, we thoroughly probe the static and dynamical behavior of BaTiO3 across its phase diagram without the need to introduce a coarse-grained description of the ferroelectric transition. Finally, we apply the polarization model to calculate the dielectric response properties of the material in a full ab initio manner, again reproducing the correct qualitative experimental behavior.},
+	number = {1},
+	urldate = {2023-02-23},
+	journal = {npj Computational Materials},
+	author = {Gigli, Lorenzo and Veit, Max and Kotiuga, Michele and Pizzi, Giovanni and Marzari, Nicola and Ceriotti, Michele},
+	month = sep,
+	year = {2022},
+	note = {Number: 1
+Publisher: Nature Publishing Group},
+	keywords = {Computational methods, Ferroelectrics and multiferroics},
+	pages = {1--17},
+	file = {Full Text PDF:/home/gigli/Zotero/storage/EBCRG5K6/Gigli et al. - 2022 - Thermodynamics and dielectric response of BaTiO3 b.pdf:application/pdf},
+}
+
+
+@article{gigli_thermodynamics_2022,
+	title = {Thermodynamics and dielectric response of {BaTiO3} by data-driven modeling},
+	volume = {8},
+	copyright = {2022 The Author(s)},
+	issn = {2057-3960},
+	url = {https://www.nature.com/articles/s41524-022-00845-0},
+	doi = {10.1038/s41524-022-00845-0},
+	abstract = {Modeling ferroelectric materials from first principles is one of the successes of density-functional theory and the driver of much development effort, requiring an accurate description of the electronic processes and the thermodynamic equilibrium that drive the spontaneous symmetry breaking and the emergence of macroscopic polarization. We demonstrate the development and application of an integrated machine learning model that describes on the same footing structural, energetic, and functional properties of barium titanate (BaTiO3), a prototypical ferroelectric. The model uses ab initio calculations as a reference and achieves accurate yet inexpensive predictions of energy and polarization on time and length scales that are not accessible to direct ab initio modeling. These predictions allow us to assess the microscopic mechanism of the ferroelectric transition. The presence of an order-disorder transition for the Ti off-centered states is the main driver of the ferroelectric transition, even though the coupling between symmetry breaking and cell distortions determines the presence of intermediate, partly-ordered phases. Moreover, we thoroughly probe the static and dynamical behavior of BaTiO3 across its phase diagram without the need to introduce a coarse-grained description of the ferroelectric transition. Finally, we apply the polarization model to calculate the dielectric response properties of the material in a full ab initio manner, again reproducing the correct qualitative experimental behavior.},
+	number = {1},
+	urldate = {2023-02-23},
+	journal = {npj Computational Materials},
+	author = {Gigli, Lorenzo and Veit, Max and Kotiuga, Michele and Pizzi, Giovanni and Marzari, Nicola and Ceriotti, Michele},
+	month = sep,
+	year = {2022},
+	note = {Number: 1
+Publisher: Nature Publishing Group},
+	keywords = {Computational methods, Ferroelectrics and multiferroics},
+	pages = {1--17},
+	file = {Full Text PDF:/home/gigli/Zotero/storage/EBCRG5K6/Gigli et al. - 2022 - Thermodynamics and dielectric response of BaTiO3 b.pdf:application/pdf},
+}
+
+@article{giberti_iterative_2020,
+	title = {Iterative {Unbiasing} of {Quasi}-{Equilibrium} {Sampling}},
+	volume = {16},
+	issn = {1549-9618},
+	url = {https://doi.org/10.1021/acs.jctc.9b00907},
+	doi = {10.1021/acs.jctc.9b00907},
+	abstract = {Atomistic modeling of phase transitions, chemical reactions, or other rare events that involve overcoming high free energy barriers usually entails prohibitively long simulation times. Introducing a bias potential as a function of an appropriately chosen set of collective variables can significantly accelerate the exploration of phase space, albeit at the price of distorting the distribution of microstates. Efficient reweighting to recover the unbiased distribution can be nontrivial when employing adaptive sampling techniques such as metadynamics, variationally enhanced sampling, or parallel bias metadynamics, in which the system evolves in a quasi-equilibrium manner under a time-dependent bias. We introduce an iterative unbiasing scheme that makes efficient use of all the trajectory data and that does not require the distribution to be evaluated on a grid. The method can thus be used even when the bias has a high dimensionality. We benchmark this approach against some of the existing schemes on model systems with different complexity and dimensionality.},
+	number = {1},
+	urldate = {2021-06-24},
+	journal = {Journal of Chemical Theory and Computation},
+	author = {Giberti, F. and Cheng, B. and Tribello, G. A. and Ceriotti, M.},
+	month = jan,
+	year = {2020},
+	pages = {100--107},
+	file = {ACS Full Text Snapshot:/home/gigli/Zotero/storage/8CJ6UI3M/Giberti et al. - 2020 - Iterative Unbiasing of Quasi-Equilibrium Sampling.html:text/html;Full Text PDF:/home/gigli/Zotero/storage/DJXMZCA6/Giberti et al. - 2020 - Iterative Unbiasing of Quasi-Equilibrium Sampling.pdf:application/pdf},
+}
+
+@article{gasparotto_recognizing_2018,
+	title = {Recognizing {Local} and {Global} {Structural} {Motifs} at the {Atomic} {Scale}},
+	volume = {14},
+	issn = {1549-9618},
+	url = {https://doi.org/10.1021/acs.jctc.7b00993},
+	doi = {10.1021/acs.jctc.7b00993},
+	abstract = {Most of the current understanding of structure–property relations at the molecular and the supramolecular scales can be formulated in terms of the stability of and the interactions between a limited number of recurring structural motifs (e.g., H-bonds, coordination polyhedra, and protein secondary structure). Here we demonstrate an algorithm to automatically recognize such patterns, based on the identification of local maxima in the probability distributions observed in atomistic computer simulations, which is robust to the dimensionality and the sparsity of the reference atomistic data. We first discuss its main features, demonstrating some on artificial data sets, and then show how it can be applied to identify coordination environments in Lennard-Jones clusters and to recognize secondary-structure patterns in the simulation of an oligopeptide. To assess the applicability of this algorithm for motifs that involve several interdependent degrees of freedom, we also employ it to identify groups of conformers of the cluster and the polypeptide, considered in their entirety. The motifs identified by analyzing atomistic simulations can be used to interpret and rationalize the stability and behavior of the system at hand, and also as a tool to accelerate sampling, in association with biased molecular dynamics schemes.},
+	number = {2},
+	urldate = {2021-06-24},
+	journal = {Journal of Chemical Theory and Computation},
+	author = {Gasparotto, Piero and Meißner, Robert Horst and Ceriotti, Michele},
+	month = feb,
+	year = {2018},
+	pages = {486--498},
+	file = {ACS Full Text Snapshot:/home/gigli/Zotero/storage/7EJSDTA8/Gasparotto et al. - 2018 - Recognizing Local and Global Structural Motifs at .html:text/html;Full Text PDF:/home/gigli/Zotero/storage/95M4JWER/Gasparotto et al. - 2018 - Recognizing Local and Global Structural Motifs at .pdf:application/pdf},
+}
+
+@misc{pickard-carbon,
+  doi = {10.24435/MATERIALSCLOUD:2020.0026/V1},
+  url = {https://archive.materialscloud.org/2020.0026/v1},
+  author = {Pickard,  Chris J.},
+  keywords = {DFT,  ab initio random structure searching,  carbon},
+  title = {{AIRSS} data for carbon at 10GPa and the {C+N+H+O} system at 1GPa},
+  publisher = {Materials Cloud},
+  year = {2020}
+}
+
+@article{bigi2023sphericart,
+    author = {Bigi, Filippo and Fraux, Guillaume and Browning, Nicholas J. and Ceriotti, Michele},
+    title = "{Fast evaluation of spherical harmonics with sphericart}",
+    journal = {The Journal of Chemical Physics},
+    volume = {159},
+    number = {6},
+    pages = {064802},
+    year = {2023},
+    month = {08},
+    abstract = "{Spherical harmonics provide a smooth, orthogonal, and symmetry-adapted basis to expand functions on a sphere, and they are used routinely in physical and theoretical chemistry as well as in different fields of science and technology, from geology and atmospheric sciences to signal processing and computer graphics. More recently, they have become a key component of rotationally equivariant models in geometric machine learning, including applications to atomic-scale modeling of molecules and materials. We present an elegant and efficient algorithm for the evaluation of the real-valued spherical harmonics. Our construction features many of the desirable properties of existing schemes and allows us to compute Cartesian derivatives in a numerically stable and computationally efficient manner. To facilitate usage, we implement this algorithm in sphericart, a fast C++ library that also provides C bindings, a Python API, and a PyTorch implementation that includes a GPU kernel.}",
+    issn = {0021-9606},
+    doi = {10.1063/5.0156307},
+    url = {https://doi.org/10.1063/5.0156307},
+    eprint = {https://pubs.aip.org/aip/jcp/article-pdf/doi/10.1063/5.0156307/18077130/064802\_1\_5.0156307.pdf},
+}
+
+@article{musaelian2023learning,
+  title={Learning local equivariant representations for large-scale atomistic dynamics},
+  author={Musaelian, Albert and Batzner, Simon and Johansson, Anders and Sun, Lixin and Owen, Cameron J and Kornbluth, Mordechai and Kozinsky, Boris},
+  journal={Nature Communications},
+  volume={14},
+  number={1},
+  pages={579},
+  year={2023},
+  publisher={Nature Publishing Group UK London}
+}
+
+@Article{app11041910,
+AUTHOR = {Rozinek, Ondřej and Mareš, Jan},
+TITLE = {The Duality of Similarity and Metric Spaces},
+JOURNAL = {Applied Sciences},
+VOLUME = {11},
+YEAR = {2021},
+NUMBER = {4},
+ARTICLE-NUMBER = {1910},
+URL = {https://www.mdpi.com/2076-3417/11/4/1910},
+ISSN = {2076-3417},
+ABSTRACT = {We introduce a new mathematical basis for similarity space. For the first time, we describe the relationship between distance and similarity from set theory. Then, we derive generally valid relations for the conversion between similarity and a metric and vice versa. We present a general solution for the normalization of a given similarity space or metric space. The derived solutions lead to many already used similarity and distance functions, and combine them into a unified theory. The Jaccard coefficient, Tanimoto coefficient, Steinhaus distance, Ruzicka similarity, Gaussian similarity, edit distance and edit similarity satisfy this relationship, which verifies our fundamental theory.},
+DOI = {10.3390/app11041910}
+}
+
+@Inbook{Wierzchoń2018,
+author="Wierzcho{\'{n}}, S{\l}awomir T.
+and K{\l}opotek, Mieczys{\l}aw A.",
+title="Algorithms of Combinatorial Cluster Analysis",
+bookTitle="Modern Algorithms of Cluster Analysis",
+year="2018",
+publisher="Springer International Publishing",
+address="Cham",
+pages="67--161",
+isbn="978-3-319-69308-8",
+doi="10.1007/978-3-319-69308-8_3",
+url="https://doi.org/10.1007/978-3-319-69308-8_3"
+}
+
 
 % from mc-bib
 @preamble{ "\newcommand{\noopsort}[1]{} " }
-

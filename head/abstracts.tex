@@ -25,36 +25,52 @@ surrogate models that predict inexpensively the outcome of such calculation on
 new materials. The way materials structures are processed into a numerical
 description as input of machine learning algorithms is crucial to obtain
 efficient and computationally inexpensive models.  Recent advancements in the
-design of information-efficient representations have embedded novel types of
-information, such as neighborhood environments or pair descriptions.  Despite
-the rapid development in offloading calculations to more dedicated hardware,
+design of information-efficient representations based on atomic densities have embedded novel types of
+information, such as neighborhood environments or pair descriptions.
+
+%
+Despite the rapid development in offloading calculations to more dedicated hardware,
 these enhancements nevertheless substantially increase the cost of the
 representation that remains a crucial factor in simulations.  It is therefore
 vital to delve deeper into the design space of representations to understand
 the type of information they encapsulate.  Insights from such analyses aid in
 making more informed decisions regarding the trade-off between accuracy and
-performance.  While a substantial amount of work has been undertaken to compare
+performance.
+While a substantial amount of work has been undertaken to compare
 representations concerning their structure-property relationship, a thorough
 exploration into understanding the inherent nature of the information capacity
-of these representations remains mostly uncharted.  This thesis introduces a
+of these representations remains mostly uncharted.
+This thesis introduces a
 set of measures that facilitate quantitative analysis concerning the
 relationship between features and datasets, thereby assisting in such
-decision-making processes and providing valuable insights to the academic
-community.  Additionally, a considerable amount of effort has been dedicated to
-optimize the basis set involved in all representations, typically driven by
+decision-making processes and providing valuable insights to the academic community.
+We demonstrate how these set of measures can be applied to analyse 
+representations that are built in terms of body-order correlations of the atomic densities.
+For this form of featurization we investigate the impact of different choices for the functional form, the basis functions and the induced feature space determined by the similarity measure.
+
+Additionally, a considerable amount of effort has been dedicated to
+optimize the basis set involved featurization of the  representation, typically driven by
 heuristic considerations on the behavior of the regression target.  This thesis
 showcases a scheme that utilizes splines to approximate the basis expansion
 coefficients, paving the way for expansive optimization methods to create more
 effective basis functions at no additional cost during simulation time.  This
 is pivotal in simulations targeting materials encompassing a high variety of
 chemical species or relying on qualitative collective variables.
+
+Lastly, complementing these efforts is the integration of the developed methods into well-maintained and thoroughly documented packages.
+This integration facilitates an enhancement of the existing methods and the incorporation of the methods into new workflows.
+Specifically, this thesis introduces an implemented framework for metadynamics simulation with machine learing interatomic potentials in composition with message-passing interface of \texttt{LAMMPS}
+It also explores the results obtained using this framework, particularly focusing on the finite-size effecs of the Curie point in barium titanate.
+Additionally, the thesis outlines potential future developments in creating a modular machine learning ecosystem for atomistic simulations.
+
+
 %Such schemes can not only be of benificial for machine learning potential but also in metadynamic simulation as.
 
 %yields interpretative representation
 %at no additional cost that
 %
 %optimization methods that s that
-%are accurate and efficient to compute
+%are accurate and efficient to compu5te
 %
 %and computationally efficient, particularly when constructing
 %representations that correspond to high-body order correlations at no
