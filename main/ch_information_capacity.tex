@@ -446,8 +446,8 @@ Errors when reproducing the atomic displacement $\zh$ for a fine (top) and coars
 
 \subsection{Wasserstein metric}
 As an example of the transformation induced by a non-Euclidean metric we consider the effect of using a Wasserstein distance to compare $\nu=1$ density correlation features. 
-The Wasserstein distance (also known as the Earth Mover Distance, EMD) is defined as the minimum  ``work`` that is needed to transform one probability distribution into another -- with the work defined as the amount of probability density multiplied by the extent of the displacement~\cite{vall74siam,cohe-guib97report,cutu07proc}.
-The EMD has been used to define a ``regularized entropy match`` kernel to combine local features into a comparison between structures~\cite{de+16pccp}, to obtain permutation-invariant kernels based on Coulomb matrices~\cite{cayl+20mlst}, and  has been shown to be equivalent to the Euclidean distance between vectors of sorted distances~\cite{will+19jcp}.
+The Wasserstein distance is defined as the minimum  ``work`` that is needed to transform one probability distribution into another -- with the work defined as the amount of probability density multiplied by the extent of the displacement~\cite{vall74siam,cohe-guib97report,cutu07proc}.
+The EMD has been used to define a ``regularized entropy match`` kernel to combine local features into a comparison between structures~\cite{de+16pccp}, to obtain permutation-invariant kernels based on Coulomb matrices~\cite{cayl+20mlst}.
 Here we use the Wasserstein distance to compare two-body ($\nu=1$) features, that can be expressed on a real-space basis and take the form of one-dimensional probability distributions. 
 % MC  this looks like an entirely general definition >> More formally, for an atomic environment with cutoff $r_c$, we can define the $\nu$-body 
 
@@ -509,7 +509,7 @@ Overall, there is no sign of the pathological behavior seen in Fig.~\ref{fig:was
 %where $Z_\mathcal{D}$ is the maximum $Z_i$ value of a dataset $\mathcal{D}$.The iCDF has been approximated from the CDF \begin{equation}    F_i(r) = \int_0^{r}p_i(r^{\prime})\,\mathrm{d}r^{\prime}\quad\text{(CDF)},\end{equation} by a linear interpolation using $200$ Gaussian quadrature points of the CDF in the range of $[0,r_c]$. Likewise, for the distance comparison $200$ Gaussian quadrature points of the interpolated iCDF were used to approximate the Wasserstein distance and the same amount of points of the unnormalized density $p_i$ were used for the Euclidean distance.
 
 
-\section{Future work}
+\section{Conclusion}
 
 Applications of machine learning to atomistic modelling suggest that the featurization that is chosen to represent a molecule or material can be equally or more important than the choice of regression scheme~\cite{fabe+17jctc}. 
 This has led to the proliferation of approaches to build descriptors, that often differ from each other only in implementation details. 
@@ -530,6 +530,14 @@ An analysis based on the GFRE might help determine the high-order correlations t
 
 We also investigate the effect of changing the metric used to compare features, by juxtaposing the Euclidean distance (that is induced by a linear description of the feature space) with a Wasserstein metric, that can be applied to the comparison of $n$-body correlation features when expressed as real-space distributions. We find that -- with an appropriate normalization -- the Wasserstein distance can be seen as a proxy of the minimal amount of distortion needed to transform an environment into another, and that this behavior induces smooth interpolation between sparse reference points, contrary to what is observed for the Euclidean distance. 
 However, both an aggressive smearing of the atom density, and the use of a more realistic data set cure the pathological behavior of the linear featurization, so that the Wasserstein metric should not be regarded as superior to the Euclidean one, but complementary. Generalizing the Wasserstein metric to higher body-order correlations, which induce a higher-dimensional feature space that is more likely to be sparsely populated, would be an interesting further research direction.
+% might mention discontinuity
+
+It is further not clear how the change to the Wasserstein metric generalizes to ACDC functions of higher order.
+Existing approaches only employ sorted one-dimensional projections of higher orders~\cite{huang2016communication}.
+These approaches can be linked to one-dimensional projections of higher-order ACDC functions in the same way as the sorted distances descriptor is linked to the ACDC function of order 1.
+For the coherent higher-order space, however, it is not clear what form the induced feature map has.
+In this case the metric is not negative definite, thus the same substitution kernel used to retrieve the sorted distances descriptor is not positive definite and therefore does not induce a RKHS.
+While the positive definiteness can be relaxed by extending the concept of RKHS to reproducing kernel Krein space (RKKS), there is no bijection between the indefinite kernel and the RKKS~\cite{pmlr-v80-oglic18a} which means there is no unique feature map that can de deduced as representation from this approach.
 
 The analysis in this work can be extended to compare atom-density representation with a broader class of descriptors based on topological~\cite{isayev2017universal, sutton2019crowd, liu2019n} or physicochemical information~\cite{pilania2013accelerating, ward2016general, ouya+18prm} as well as property-dependent representations induced by neural network frameworks~\cite{schu+18jcp, cohen2018spherical}. 
 Even more broadly, an objective measure of the relative effectiveness of features can guide the development of machine learning schemes for any problem that depends strongly on the strategy used to obtain a mathematical description of its inputs. 

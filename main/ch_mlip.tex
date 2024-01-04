@@ -46,7 +46,7 @@ This combination of requirements poses a significant challenge in the developmen
 In this chapter, I discuss my contributions to the software ecosystem that facilitates the deployment of MLIPs into an MD software.
 These contributions include my work to the \texttt{librascal} package~\cite{LIBRASCAL}, instrumental for constructing MLIPs based on the SOAP featurization of atomic structures and the \texttt{scikit-matter}~\cite{goscinski2023scikit} package -- a toolkit for various data-driven preprocessing methods that facilitate the MLIP construction. % as feature and sample selection.
 Additionally, I implemented an interface to \texttt{LAMMPS}~\cite{LAMMPS}, a state of the art classical MD code, enabling the studies on ferroelectric phase transitions in barium titanate, as detailed in Ref.~\cite{gigli2023modeling} and on the transport properties of lithium ortho-thiophosphate, as described in Ref.~\cite{gigli2023mechanism}.
-Finally, we briefly discuss how the packages \texttt{equisolve}~\cite{equisolve} and \texttt{metatensor}~\cite{metatensor} enable a more modular approach to build MLIPs.
+Finally, we briefly discuss how the package \texttt{metatensor}~\cite{metatensor} enable a more modular approach to build MLIPs.
 
 \section{Implementation of cubic splines for featurization}
 \label{sec:cubic_spline}
@@ -77,7 +77,7 @@ One of main contributions to \texttt{librascal} has been the implementation of a
 %    (a+b)^{-\frac{n+l+3}{2}} (ar_{ij})^l \exp[-ar_{ij}^2] \hyponefone\big(\frac{n+l+3}{2},l+\frac32,\frac{a^2r_{ij}^2}{a+b}\big) = f^{nl}(r_{ij}).
 %\end{multline}
 %The contribution of this function to the overall cost of the radial expansion can be seen in Fig.~\ref{fig:hyp1f1_contribution} ranging from 55\% to 75\%  of the total time.F
-For each coefficient $nl$, the one dimensional function $f^{nl}:[0,r_c]\rightarrow\mathbb{R}$ is splined.
+For each coefficient $nl$, the one-dimensional function $f^{nl}:[0,r_c]\rightarrow\mathbb{R}$ is splined.
 The function $f^{nl}$ maps the distance $r\in[0,r_c]$ to the neighbor contribution of the radial expansion coefficient as in Eq.~\eqref{eq:radial_expansion}.
 For the construction of the cubic spline the targeted interval $[0,r_c]$ is further partitioned into a set of subintervals $[r_1, r_2], \ldots, [r_{K}, r_{K+1}]$ where $0 = r_1 < r_2 < \ldots < r_{K} < r_{K+1} = r_c$.
 Then cubic splines are order 3 polynomials $p_k(r) = A_k + B_kr + C_kr^2 + D_kr^3$ on the interval $[0,1]$ with the boundary conditions
@@ -926,6 +926,8 @@ Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature 
 %\subsection{MLIP interface}
 
 \section{Future work}
+The development on \texttt{librascal} has revealed several disadvantages in the design that required to rethink the general approach of creating an ecosystem for the construction of MLIP.
+This redesign can be attributed to the lack of modularity and serialization of models that are discussed in the following in more detail. 
 
 \subsection{Modularity of featurization and model construction}
 A crucial disadvantage in the design of \texttt{librascal} was the entanglement of the featurization and the model construction inside one library.
@@ -939,7 +941,7 @@ That problem is tackled by the development of a new software package \texttt{met
 The package offers a data structure that acts as a container of the feature and its gradients by storing the labels the individual dimensions.
 This allows \texttt{numpy}-like data manipulation that takes structural characteristics of the data into account.
 With that kind of data structure the model and featurization can be separated into two different packages, since the relevant structural information of the features and gradients is kept in the data output.
-That effort is currently in progress with \texttt{rascaline} and \texttt{torch\_spex}, packages for the featurization of atomic structures returning them as \texttt{metatensor} data containers, and \texttt{equisolve}, a package for the model construction from \texttt{metatensor} data containers.
+That effort is currently in progress with the development of \texttt{rascaline} and \texttt{torch\_spex}, packages for the featurization of atomic structures returning them as \texttt{metatensor} data containers, and \texttt{metatensor-learn} a subpackage for the model construction from \texttt{metatensor} data containers.
 %he feature and their attribution to these structural characteristics as well to its gradients
 
 

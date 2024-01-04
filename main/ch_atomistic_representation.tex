@@ -19,7 +19,7 @@ For a lot of cases the orthonormality constraint of the basis is relaxed, since 
 %Even though pre-orthonormalization has an effect on the regularization term, often found in shallow models, 
 %Then we project these functions on the representation, 
 %that can be used to build a model mapping the coefficients to phyisical properties like energy and forces.
-The choice of the representation space as well as the basis is essential for an effective numerical description, i.e. a description that captures information with fewer number coeffients. 
+The choice of the representation space as well as the basis is essential for an effective numerical description, i.e. a description that captures information with fewer number coefficients. 
 We will refer to the whole process of transforming a structure $A$ to a representation and then to a numerical description as \emph{featurization} of structure $A$.
 %The advantage of such a mathematical rigorous approach is a clearer understanding of the target we 
 %For an orthonormal basis we in the limit of basis functions
@@ -170,8 +170,7 @@ The relationship can be clearly seen by using fact that the EMD between two dist
   \label{eq:emd_lp_duality}
   \operatorname{EMD}(\textrm{p}, \textrm{p}^\prime)=\int_0^1\mathrm{d}{s}\,\left|P^{-1}(s) -{P^{\prime}}^{-1}(s)\right|\text{, with }P(x)=\int_{-\infty}^s \textrm{p}(x).
 \end{equation}
-Then the EMD between two order 1 ACDC functions using the Dirac $\delta$ function as the atomic densities
-is equal up to a normalization factor dependent on the number of atoms to the $L^1$ difference between their sorted distances vectors.
+Then the EMD between two order 1 ACDC functions using the Dirac $\delta$ function as the atomic densities is equal up to a normalization factor dependent on the number of atoms to the $L^1$ difference between their sorted distances vectors~\cite{will+19jcp}.
 %\begin{subequations}
 %  \begin{align}
 %    \|R_A-R_B\| = $\overline{\rho^{\otimes}}$
@@ -180,18 +179,17 @@ is equal up to a normalization factor dependent on the number of atoms to the $L
 %\end{subequations}
 %As a consequence there exists a one-to-one mapping between t
 %As a consequence the EMD between two order 1 ACDC functions based on Dirac $\delta$ densities is corresponds to the absolute distance between the two sorted distances corresponding to the same environments up to a global normalization factor.
-This fact can be extended to the $L^p$ norm distance and the Wasserstein $W_p$ metric, a generalization of the Earth mover distance similar as $L^p$ is a generalization of $L^1$
+This fact can be extended to the $L^p$ norm distance denoted by the term $W_p$ referring to the more common naming \emph{Wasserstein distance} for the EMD.
 \begin{equation}
   \label{eq:emd_lp_duality}
   W_p(\textrm{p}, \textrm{p}^\prime)^p=\int_0^1\mathrm{d}{s}\,\left|P^{-1}(s) -{P^{\prime}}^{-1}(s)\right|^p.
 \end{equation}
-
 %Another existential crisis is that the Wassertstein distance is usually applied for robustenss, we dont need robustness
-Furthermore, it is not clear how the Wasserstein metric applied to higher orders of the ACDC functions changes the nature of the representation, since for higher dimensions a form as in Eq.~\eqref{eq:emd_lp_duality}, reproducing the Wasserstein distance by the $L^p$ distance for a representation, is not known.
+It is not clear how the Wasserstein metric applied to higher orders of the ACDC functions changes the nature of the representation, since for higher dimensions a form as in Eq.~\eqref{eq:emd_lp_duality}, reproducing the Wasserstein distance by the $L^p$ distance for a representation, is not known.
 %In addition to this problem, there is also no unique mapping from a distance metric to a similarity measure.
 %For example, from the $W_2$ metric we the normalized sorted distance vectors can be formulated $\mathbf{s}\cdot \mathbf{s}^\prime$ and $\exp(\|\mathbf{s}-\mathbf{s}^\prime\|^2)$ valid similarity measure, as defined in Ref.~\cite{app11041910}. 
-An approach that extends this idea to higher orders utilizes sorted angles or sorted torsions a description~\cite{huang2016communication}.
-These can be seen one dimensional projections of the higher order ACDC functions and do not consider the whole correlation space.
+An approach that extends this idea to higher orders utilizes sorted angles or sorted torsions as description~\cite{huang2016communication}.
+These can be seen one-dimensional projections of the higher-order ACDC functions and do not consider the whole correlation space.
 It has been shown that descriptors in this category can reach comparable accuracies to other methods~\cite{barker2016localized,huang2016communication} with energy accuracies close to 1 kcal/mol on the QM9 and QM7b dataset. % as well as an efficient removal of the discontinuouties introduced by the sorting as well as 
 These descriptions nevertheless have undesired characteristics with regard to differentiability and extensibility.
 The sorted quantities have discontinuities with respect to changes in the atomic positions that emerge when two distances are swapped due to the sorting, which is problematic for predictions of derivatives.
@@ -405,7 +403,7 @@ Subsequently, it has been formulated into a recursive expression to derive highe
 \end{align}
 \end{subequations}
 where we can separate between coefficients of the form $c_{k_\nu}$ that depend solely on the order $\nu$ function, and further coefficients of the form $c_{k_\nu k_1}$ that couple the order $\nu$ and 1 functions.
-The coefficients $c_{k_\nu k_1}$ are connected to the Clebsch-Gordan coefficients in Eq.~\eqref{eq:clebsch-gordan}, formally derived in Ref.~\cite{nigam2020recursive}. 
+The coefficients $c_{k_\nu k_1}$ are connected to the Clebsch-Gordan coefficients in Eq.~\eqref{eq:clebsch-gordan}, the relationship is more formally derived in Ref.~\cite{nigam2020recursive}. 
 Due to the polynomial increase of the feature size with body-order, there exist various strategies for compressing the basis coefficients in high-dimensional space~\cite{kondor2018clebsch,yan2019fourier,nigam2020recursive}.
 %A key problem in propagation to higher orders is to find a suitable basis set that represents higher order space effectively has been solved in several ways~\cite{kondor2018clebsch,yan2019fourier,nigam2020recursive}.
 % such that they reach accuraciesthat are sufficient for applications while operating on a much faster level~\cite{zuo2020performance,xie2023ultra}.
@@ -446,22 +444,28 @@ Solving the integral by expanding the atomic density onto a certain basis as sho
 \end{align}
 \end{subequations}
 The order 2 expansion coefficients are frequently referred to as \emph{smooth overlap of atomic positions} (SOAP)~\cite{bartok2013representing}.
+Note that while we motivated the decomposition of the representation into an angular and radial part as a means to solve the Haar integral for higher orders, one can also motivate this decomposition for the Dirac $\delta$ density.
+An extensively employed representative of Dirac $\delta$ densities is named \emph{atomic cluster expansion} (ACE)~\cite{drautz2019atomic}.
 
 \subsection{Density trick}
-It becomes apparent from Eqs.~\eqref{eq:acdc_expansion} that the order 2 coefficients can be computed from the spherical expansion coefficients.
+The Eqs.~\eqref{eq:acdc_expansion} show that the order 2 coefficients can be computed from the spherical expansion coefficients.
 Taking into account the recursion formula presented in Eq.~\eqref{eq:recursive_higherorder} it becomes evident that all higher-order correlations can be constructed from the spherical expansion coefficients.
-This fact %that the propagation to higher-body orders does only require an expansion of the order 1 terms 
-has been referret to as the \emph{density trick}.
-It shifts the computation from the evaluation of the basis expansions across all $\nu$-tuples to the computation of tensor products between the expansion coefficients of order $\nu$ as indicated the derivation in Eq.~\eqref{eq:soap_expansion}.
+This way of propagating to higher orders %that the propagation to higher-body orders does only require an expansion of the order 1 terms 
+has been referred to as the \emph{density trick}.
+It shifts the computation from the evaluation of the basis expansions across all $\nu$-tuples to the computation of the contracted tensor products between the expansion coefficients of order $\nu$ with the spherical expansion coefficients. % as indicated in the derivation in Eq.~\eqref{eq:soap_expansion}.
 %Given $M$ basis functions and $N$ neighbors in an atomic environment, the cost the body-order from the expansion coefficients of order $\nu$ to $\nu+1$ scales as $O(NM+M^{\nu})$ while a direct expansion of the higher-order function scales as $O(M^{\nu+1}N^{\nu+1})$~\cite{goscinski2021role}.
-For example, the cost of the order 2 coefficients in Eq.~\eqref{eq:soap_expansion} without the usage of the density trick requires the evaluation of $O({N\choose 2}) = O(N^2)$ triplets for each of the $O(M^2)$ basis functions resulting in a total time complexity of $O(M^2N^2)$.
-In principle, the number of basis functions can be chosen arbitrary, we compare however a number of basis functions that is equal to the number of basis function acquired by applying the density trick. 
-With the density trick one has to compute the expansion coefficients for the density $O(MN)$ to then to increase the order by a contracted tensor product scaling as $O(M^2)$ resulting in a total time complexity of $O(MN+M^2)$.
+%
+%\begin{equation}
+%  c^i_{nn^\prime l} = \int B_{nn^\prime l}(r,r^\prime, \hat{\mathbf{r}}\cdot\hat{\mathbf{r}}^\prime)
+%\end{equation}
+%For example, the cost of the order 2 coefficients in Eq.~\eqref{eq:soap_expansion} without the usage of the density trick requires the evaluation of $O({N\choose 2}) = O(N^2)$ triplets for each of the $O(M^2)$ basis functions resulting in a total time complexity of $O(M^2N^2)$.
+%In principle, the number of basis functions can be chosen arbitrary, we compare however a number of basis functions that is equal to the number of basis functions acquired by applying the density trick. 
+%With the density trick one has to compute the expansion coefficients for the density $O(MN)$ to then to increase the order by a contracted tensor product scaling as $O(M^2)$ resulting in a total time complexity of $O(MN+M^2)$.
+For example, using the density trick to compute the order 2 coefficients in Eq.~\eqref{eq:soap_expansion} for an environment one has to compute the $M$ expansion coefficients for a density with $N$ neighbors resulting in a complexity of $O(MN)$ to then increase the order by a contracted tensor product scaling as $O(M^2)$ resulting in a total time complexity of $O(MN+M^2)$ to obtain $M^2$ expansion coefficients.
+Without the usage of the density trick it requires the evaluation of $O({N\choose 2}) = O(N^2)$ neighbor pairs for each of the $O(M^2)$ basis functions resulting in a total time complexity of $O(M^2N^2)$ for $M^2$ expansion coefficients.
+%In principle, the number of basis functions can be chosen arbitrary, we compare however a number of basis functions that is equal to the number of basis functions acquired by applying the density trick. 
 %One has to be aware that this comparison considers the scaling behavior of two different factors the number of neighbors $N$ and the number of basis functions $M$.
-Even though the scaling favors the use of the density trick, when embedding splines into the computation of the features, the slower iteration over all $(\nu+1)$-body parts can be balanced out by omitting the computational cost of tensor product and the model as shown in Ref~.~\cite{xie2023ultra}.
-
-Note that while we motivated the decomposition of the representation into an angular and radial part as a means to solve the Haar integral for higher orders, one can also motivate this decomposition for the Dirac $\delta$ density as a means to apply the density trick to produce higher-order coefficients.
-An extensively employed representative of using the density trick with Dirac $\delta$ densities is named \emph{atomic cluster expansion} (ACE)~\cite{drautz2019atomic}.
+Even though the scaling favors the use of the density trick, when replacing the feature computation with splines, one can mitigate the $M^2$ scaling across all $(\nu+1)$-body parts by omitting the computational cost of the contracted tensor product and the model prediction as shown in Ref~.~\cite{xie2023ultra}.
 
 \subsection{Radial basis}
 \label{sec:radial_basis_set}
@@ -490,19 +494,23 @@ This can be proceeded by a subsequent optimization step of the basis according t
 %Introduce here DVR, GTO, Bartok
 %}
 \subsection{Angular basis}
-The choice of the spherical harmonics as angular basis is essentially fixed, since they form an irreducible representation of $SO(3)$, and thus cannot be further compressed without mitigating the convergence in $L^2$ of the sphere. % for representing a function defined on a unit sphere $f:S^2\rightarrow\mathbb{R}$~\cite{ragozin1971uniform}.
+The choice of the spherical harmonics as angular basis is essentially fixed, since they form an irreducible representation of $SO(3)$ and thus cannot be further compressed without diminishing the representation space. % mitigating the convergence for a function defined on the domain of a sphere. % for representing a function defined on a unit sphere $f:S^2\rightarrow\mathbb{R}$~\cite{ragozin1971uniform}.
+%
+%Any other choice of basis can be decomposed into a direct sum of the l spherical harmonics and can thus be retrieved from the spherical harmonics in a reduced form.
+%A natural choice for the basis is the spherical harmonics that forms an irreduci
+%
 One direction of angular dependent optimization has been therefore to bias the construction of the radial basis for each angular channel separately by the criteria of maximal variance~\cite{goscinski2021optimal} or maximal smoothness~\cite{bigi2022smooth}.
 While in principle similar optimizations across the angular channels, mixing them, are possible, a strict preservation of the angular channels in the spherical harmonics is needed to propagate to higher orders as shown in Eq.~\eqref{eq:recursive_higherorder} or Ref.~\cite{kondor2018clebsch}.
 % as described in Eq.~\eqref{eq:recursive_higherorder} or in Ref.~\cite{kondor2018clebsch} 
-Due to this limitation, recent advancements have been more focused on improving the computation of the spherical harmonics itself by exploiting recursive relationships~\cite{bigi2023sphericart} or switching to a Cartesian tensor basis~\cite{shapeev2016moment,schutt2021equivariant,simeon2023tensornet}
+Due to this limitation, recent advancements have been more focused on improving the computation of the spherical harmonics itself by exploiting recursive relationships in its gradients~\cite{bigi2023sphericart} or switching to a Cartesian tensor basis~\cite{shapeev2016moment,schutt2021equivariant,simeon2023tensornet}
 \begin{equation}
-  \mathbf{T}^{(\nu)} = \hat{\mathbf{r}}_{1i} \otimes \cdots \otimes\hat{\mathbf{r}}_{\nu i}\quad \text{(Cartesion moment tensor of order $\nu$).}
+  \mathbf{T}^{(\nu)} = \hat{\mathbf{r}}_{ji} \otimes \cdots \otimes\hat{\mathbf{r}}_{ji}\in\mathbb{R}^{3^\nu}\quad \text{(Cartesion moment tensor of order $\nu$).}
 \end{equation}
 %choice of the angular channels can be a as a bthe spherical harmonics has become a viable approach~\cite{}. %TODO reformulate this
 %Approaches that uniform convergence 
 %As the loss uniform convergence exploitable
 %The latter direction is to use a reducible angular basis that in return allows a more efficient computation of the angular components such as the moment tensor potential~\cite{shapeev2016moment}, PaiNN~\cite{schutt2021equivariant} and TensorNet~\cite{simeon2023tensornet} based on the Cartesian tensor.
-While the Cartesian moment tensor forms a reducible angular basis, in return it allows a more efficient computation of the angular components at a minimal loss of accuracy~\cite{zuo2020performance,xie2023ultra}.
+While the Cartesian moment tensor forms a reducible angular basis, in return it allows a more efficient computation of the angular components at a minimal loss of accuracy~\cite{zuo2020performance}.
 %Due to their fast evaluation time they achieve high accuracies at much cheaper computation cost~\cite{zuo2020performance,xie2023ultra}.
 
 %better mapping to single instruction multiple threads (SIMT) hardware as GPUs.
@@ -540,7 +548,7 @@ One approach has been therefore to express the atomic density into a form that d
 %Another approach is to chose a radial basis that allows an analytical expression as Gaussian type orbitals~\cite{musil2021efficient}.
 Nevertheless, this approach removes the information that is encoded in this coupling.
 Instead, the information can be preserved at minimum computational cost by splining the radial expansion coefficients.
-For each coefficient $nl$, the one dimensional function $f^{nl}:[0,r_c]\rightarrow\mathbb{R}$, that returns the radial expansion coefficients $f(r_{ji}) = c_{nl}^{ij}$, is splined.
+For each coefficient $nl$, the one-dimensional function $f^{nl}:[0,r_c]\rightarrow\mathbb{R}$, that returns the radial expansion coefficients $f(r_{ji}) = c_{nl}^{ij}$, is splined.
 More technical details about the splining of the radial expansion coefficients can be found in Section~\ref{sec:cubic_spline}.
 As this approach avoids the cost of the integration it opens the door to a wider choice of the basis while preserving the information contained in the coupling~\cite{goscinski2021optimal,bigi2022smooth,lopanitsyna2023modeling}. 
 
