@@ -465,7 +465,8 @@ For example, using the density trick to compute the order 2 coefficients in Eq.~
 Without the usage of the density trick it requires the evaluation of $O({N\choose 2}) = O(N^2)$ neighbor pairs for each of the $O(M^2)$ basis functions resulting in a total time complexity of $O(M^2N^2)$ for $M^2$ expansion coefficients.
 %In principle, the number of basis functions can be chosen arbitrary, we compare however a number of basis functions that is equal to the number of basis functions acquired by applying the density trick. 
 %One has to be aware that this comparison considers the scaling behavior of two different factors the number of neighbors $N$ and the number of basis functions $M$.
-Even though the scaling favors the use of the density trick, when replacing the feature computation with splines, one can mitigate the $M^2$ scaling across all $(\nu+1)$-body parts by omitting the computational cost of the contracted tensor product and the model prediction as shown in Ref~.~\cite{xie2023ultra}.
+Even though the scaling favors the use of the density trick, when replacing the combined feature computation and model prediction by a spline, one can directly evaluate the $(\nu+1)$-body potential, thereby eliminate altogether the evaluation of features, effectively setting $M=1$~\cite{pozdnyakov2019fast,xie2023ultra}.
+Despite the remaining $O(N^2)$ cost, it is drastically faster than comparable methods utilizing the density trick as shown in the benchmarks in Ref.~\cite{xie2023ultra}. 
 
 \subsection{Radial basis}
 \label{sec:radial_basis_set}

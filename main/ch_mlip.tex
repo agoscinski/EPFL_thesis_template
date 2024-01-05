@@ -156,8 +156,9 @@ This system can be solved in linear time with time complexity $O(2K)$ by iterati
 The grid points $\{r_k\}_{k=0}^{K+1}$ are incrementally adjusted until the function approximation error falls beneath a user-specified error threshold.
 The approximation error can be estimated by sampling points in the intervals $(r_k, r_{k+1})$ and computing the difference between the function $f^{nl}$ and the spline $p^{nl}$.
 During implementation, it has been found that conditioning on both, the relative and absolute error, yields the most robust results in terms of interpolation accuracy and convergence of the grid size.
-While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, it has been found that using a uniform grid does not reach a memory intensive regime while having minimal impact on the prediction accuracy.
-This is evidenced by experiments on chemical shieldings of hydrogen environments~\cite{paruzzo2018chemical} presented in Fig.~\ref{fig:chemical_shift-spline}.
+While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, for atomistic applications a uniform grid does not reach a memory intensive regime while having minimal impact on the prediction accuracy.
+We analyzed the effect of the splining accuracy on the prediction error for chemical shieldings of hydrogen environments (dataset can be found in Ref.~\cite{paruzzo2018chemical}).
+The results presented in Fig.~\ref{fig:chemical_shift-spline} show that the change in the prediction error is several magnitudes below the DFT accuracy, which is estimated to be in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.
 %as it can be seen in Fig.~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
 %A point $r$ can be evaluated by first determining the corresponding boundary point $r_k$ for which $r\in[r_k,r_{k+1}]$, and then mapping $[r_k,r_{k+1}]$ to the polynomial interval $[0,1]$ with $p_k((r-r_k)/(r_{k+1}-r_k))$.
 %For an arbitrary grid with $K+1$ points, the optimal complexity for searching the boundary point $r_k$ is $O(\log(M+1))$ with a binary searchc.
@@ -182,8 +183,9 @@ Viable forms of parallelization encompass multithreading, the use of single inst
 \begin{figure}
     \centering
     \includegraphics[width=0.7\textwidth]{fig/spline-accuracy-v2.pdf}
-    \caption{The relationship of the spline accuracy on the prediction difference for chemical shieldings of hydrogen environments as conducted in Ref.~\cite{paruzzo2018chemical} for a linear model using SOAP descriptors with $l_\textrm{max}=9$.
-    The impact of the spline accuracy on the difference in prediction of the chemical shifts is several magnitudes below the DFT accuracy, which is estimated to be on the order of $10^{-1}$.}
+    \caption{The relationship of the spline accuracy to the difference of the prediction error compared to using no spline for a linear model using SOAP descriptors with $l_\textrm{max}=9$.
+      The chemical shieldings of hydrogen environments were used as target property~\cite{paruzzo2018chemical}.
+    The effect of the spline on the difference is several magnitudes below the DFT accuracy in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.}
     \label{fig:chemical_shift-spline}
 \end{figure}
 %\begin{figure}
