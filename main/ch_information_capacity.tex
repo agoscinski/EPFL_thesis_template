@@ -1,4 +1,5 @@
 \chapter{Measures of information capacity}
+\label{sec:infocap}
 
 %\def\GFRE{\operatorname{GFRE}}
 %\def\GFRD{\operatorname{GFRD}}
@@ -21,7 +22,7 @@
 %In the last chapter we learned about the process of chosing a set of basis
 %functions and the target function to obatain a numerical description, a process
 %referred as \emph{featurization}.  As we discussed common characterstics of
-%widely-applied radial basis in Sec.~\ref{sec:radial_basis_set}, the design of
+%widely-applied radial basis in Section~\ref{sec:radial_basis_set}, the design of
 %these characterstics is driven by physical and chemical intuition and is then
 %tested on a variety of datasets to quantify the effectiveness of the design
 %choice\cite{musil2021efficient}.  This makes the quantification dependent on a
@@ -59,10 +60,10 @@ Consider a second featurization $\CF^{\prime}$. We want to be able to compare th
 \caption{\revadd{A schematic representation of the different measures of feature-space dissimilarity we introduce in this work, discussed from left to right.
 The figure considers a dataset containing five samples, embedded in a two-dimensional feature space $\CF$ and a one-dimensional feature space $\CF^{\prime}$.
 As shown, the relationship between the two embeddings can involve arbitrary linear and non-linear transformations (panel a).
-The global feature space reconstruction error (GFRE) defined in Eq.~\eqref{eq:GFRE} amounts to finding the best linear mapping between the two feature spaces.
+The global feature space reconstruction error (GFRE) defined in Equation~\eqref{eq:GFRE} amounts to finding the best linear mapping between the two feature spaces.
 This measure is not symmetric: in this example the $\GFRE(\CF,\CF^{\prime})$ (panel b) is smaller than the $\GFRE(\CF^{\prime},\CF)$ (panel c), since $\CF$ contains an additional nonzero dimension.
-The local version of the reconstruction error (LFRE) defined in Eq.~\eqref{eq:LFRE} makes it possible to probe whether a non-linear map exists between the two spaces: in this case, the sinus function can be approximated in  neighbourhood of each sample $\bx_i$ by a linear map $\bP{\CF}{\CF^{\prime}}^{(i)}$  defined in Eq.~\eqref{eq:xtilde_lle}; by treating each neighbourhood separately  it is possible to achieve a low $\LFRE(\CF^{\prime},\CF)$ (panel d). 
-Finally, the global feature space reconstruction distortion (GFRD) defined in Eq.~\eqref{eq:GFRD} determines whether the two featurizations are connected by an orthogonal transformation $\bQ{\CF}{\CF^{\prime}}$ defined in Eq.~\eqref{eq:proc-ff1}, by finding the best alignment between $\CF$ and the approximation of $\CF^{\prime}$ that can be obtained as a linear projection of $\CF$.
+The local version of the reconstruction error (LFRE) defined in Equation~\eqref{eq:LFRE} makes it possible to probe whether a non-linear map exists between the two spaces: in this case, the sinus function can be approximated in  neighborhood of each sample $\bx_i$ by a linear map $\bP{\CF}{\CF^{\prime}}^{(i)}$  defined in Equation~\eqref{eq:xtilde_lle}; by treating each neighborhood separately  it is possible to achieve a low $\LFRE(\CF^{\prime},\CF)$ (panel d). 
+Finally, the global feature space reconstruction distortion (GFRD) defined in Equation~\eqref{eq:GFRD} determines whether the two featurizations are connected by an orthogonal transformation $\bQ{\CF}{\CF^{\prime}}$ defined in Equation~\eqref{eq:proc-ff1}, by finding the best alignment between $\CF$ and the approximation of $\CF^{\prime}$ that can be obtained as a linear projection of $\CF$.
 Even though $\GFRE(\CF,\CF^{\prime})$ is small, one of the components of $\CF$ is scaled down to zero, resulting in a large value of $\GFRD(\CF,\CF^{\prime})$ (panel e).}}
 \label{fig:gfr-scheme}
 \end{figure*}
@@ -93,7 +94,7 @@ In general, $\GFRE^\CD(\CF,\CF^{\prime})$ is not symmetric. If $\GFRE^\CD(\CF,\C
 
 The feature space reconstruction error gives insights into whether a feature space can be inferred by knowledge of a second one. However, having both a small $\GFRE^\CD(\CF,\CF^{\prime})$ and $\GFRE^\CD(\CF^{\prime},\CF)$ does not imply two feature spaces are identical. Even though they contain similar amounts of information, one feature space could give more emphasis to some features compared to the other, which can eventually result in different performance when building a model.
 To assess the amount of distortion of $\CF^{\prime}$ relative to $\CF$, we introduce the global feature space reconstruction distortion $\GFRD^\CD(\CF,\CF^{\prime})$.
-To evaluate it, we first compute the singular value decomposition of the projector Eq.~\eqref{eq:proj-ff1}, $\bP{\CF}{\CF^{\prime}}\approx\bU \bSIG \bV^T$, and then use it to reduce the two feature spaces to a common basis, in which the reconstruction error is zero, because the residual has been discarded
+To evaluate it, we first compute the singular value decomposition of the projector Equation~\eqref{eq:proj-ff1}, $\bP{\CF}{\CF^{\prime}}\approx\bU \bSIG \bV^T$, and then use it to reduce the two feature spaces to a common basis, in which the reconstruction error is zero, because the residual has been discarded
 \begin{equation}
 \bXt_{\CF} = \bX_{\CF}\bU \quad  \bXt_{\CF^{\prime}} = \bXt_{\CF} \bSIG.
 \end{equation}
@@ -123,7 +124,7 @@ If desired, the error can be averaged over multiple random splits of the referen
 A downside of the global feature comparison schemes introduced above is that the linear nature of the regression means that they cannot detect if $\CF$ and $\CF^{\prime}$ contain analogous information, but differ by a non-linear transformation.
 In the next Section we discuss how one can generalize the schemes to use kernel features, that can also be used to detect non-linear relationships between the original feature spaces.
 An alternative approach is to compute a local version of the feature space reconstruction error, $\LFRE^\CD(\CF,\CF^{\prime})$, loosely inspired by locally-linear embedding~\cite{rowe-saul00science}. 
-To compute the LFRE, a local regression is set up, computed in the $k$-neighbourhood $\CDki$ around sample $i$  -- the set of $k$ nearest neighbors of sample $i$, based on the Euclidean distance between the samples in $\CF$ -- to reproduce the $\CF^{\prime}$ features using $\CF$ as input features, centred around their mean values $\bar{\bx}_{\CF^{\prime}}$ and $\bar{\bx}_{\CF}$.
+To compute the LFRE, a local regression is set up, computed in the $k$-neighborhood $\CDki$ around sample $i$  -- the set of $k$ nearest neighbors of sample $i$, based on the Euclidean distance between the samples in $\CF$ -- to reproduce the $\CF^{\prime}$ features using $\CF$ as input features, centred around their mean values $\bar{\bx}_{\CF^{\prime}}$ and $\bar{\bx}_{\CF}$.
 
 
 A local embedding of $\bx_i$ is determined as
@@ -188,7 +189,7 @@ It is possible to re-formulate these measures in an explicit kernelized form, as
 \bX_\CH = \bU \bLAM^{-1/2},
 \end{equation}
 which is then standardized as we do for any other set of features. 
-To define a feature space associated with a metric, rather than a kernel, we first center the squared distance matrix (which is equivalent to computing a substitution kernel analogous to Eq.~\eqref{eq:k-0}) and then proceed similarly by diagonalizing the resulting matrix. 
+To define a feature space associated with a metric, rather than a kernel, we first center the squared distance matrix (which is equivalent to computing a substitution kernel analogous to Equation~\eqref{eq:k-0}) and then proceed similarly by diagonalizing the resulting matrix. 
 
 %Most dominantly the dot product or exponential kernels have been used for regression of atomic properties.
 %We just say that we do this to map the problem of comparing metrics to a problem of comparing features
@@ -217,7 +218,7 @@ We demonstrate the use of the GFRE, LFRE and GFRD to assess with quantifiable me
 
 \subsection{SOAP and BPFS}
 \label{sub:hypers}
-We begin by considering two practical realizations of atom-centred symmetrized features of order $\nu=2$ in Eq.~\eqref{eq:soap} as implemented in \texttt{librascal}\cite{LIBRASCAL}, and the BPSF\cite{behl11jcp} as implemented in the n2p2 package\cite{singraber2019parallel}. 
+We begin by considering two practical realizations of atom-centred symmetrized features of order $\nu=2$ in Equation~\eqref{eq:soap} as implemented in \texttt{librascal}\cite{LIBRASCAL}, and the BPSF\cite{behl11jcp} as implemented in the n2p2 package\cite{singraber2019parallel}. 
 %In the SOAP representation the atom-centred density is written as a sum of Gaussians with finite width $\sigmag$, and the density is expanded in a basis that is a product of spherical harmonics $Y^l_m(\bxhat)\equiv\rep<\bxhat||lm>$ and a radial basis $R_n(x)\equiv\rep<x||n>$,
 %\begin{equation}
 %\rep<nlm||A; \rho_i> = \sum_j \int \D{\bx}
@@ -239,7 +240,7 @@ R_n^\textrm{DVR}= \sqrt{w_n}\delta(r-r_n)
 \end{equation}
 where $r_n$ are Gaussian quadrature points and $w_n$ their corresponding weights.
 For both bases, the integral~\eqref{eq:radial_expansion} can be evaluated analytically, and the density coefficient computed as a sum over the neighbors of the $i$-th atom.
-%The invariant SOAP features are then computed as specified in Eq.~\eqref{eq:soap},
+%The invariant SOAP features are then computed as specified in Equation~\eqref{eq:soap},
 %\begin{equation}
 %\label{eq:SOAP}
 %\rep<nn^{\prime}l||\frho_i^2> = 
@@ -253,7 +254,7 @@ For both bases, the integral~\eqref{eq:radial_expansion} can be evaluated analyt
     \label{fig:soap-sigma-radial-body}
 \end{figure*}
 
-Even though they can be seen as a projection on an appropriate basis of the symmetrized atom density that underlies SOAP~\cite{will+19jcp}, BPSF are usually computed as a sum over tuples of neighbouring atoms of functions of interatomic angles and distances. Among the many functional forms that have been proposed~\cite{behl11pccp} we consider the two-body functions
+Even though they can be seen as a projection on an appropriate basis of the symmetrized atom density that underlies SOAP~\cite{will+19jcp}, BPSF are usually computed as a sum over tuples of neighboring atoms of functions of interatomic angles and distances. Among the many functional forms that have been proposed~\cite{behl11pccp} we consider the two-body functions
 %
 \begin{equation}
     G^{(2)}_i = \sum_j e^{-\eta (r_{ji} - R_s)^2} \cdot f_c (r_{ji}), \label{eq:g2}
@@ -278,22 +279,22 @@ When both basis set have converged, they become essentially equivalent. Since th
 %An important aspect in comparing different implementations of the symmetrized density correlation idea is whether using a finite smearing of the atom density adds anything on top of what one obtains using a Dirac-$\delta$ limit of the Gaussians.
 The Gaussian smearing used in SOAP features works as a parameter controlling the balance between local resolution and the smoothness of the mapping between Cartesian coordinates and symmetrized density features. A small $\sigmag$ value can identify minute changes more accurately, but a too small value for $\sigmag$ can lead to ill-conditioned regression, as the features associated with different structures show little overlap with each other.
 In fact, there is a tight interplay between the density smearing, the choice of the basis set, and the regularization of a regression model. 
-As seen in Fig.~\ref{fig:soap-sigma-radial-body}(a,b), in the case of the smooth GTO basis set there is relativley little reconstruction error, and in general smaller $\sigmag$ values give a better reconstruction of large-$\sigmag$ features than vice versa. The opposite is true for the $\delta$-like DVR basis: the GFRE for DVR is larger than in the case of GTO, and it is harder to reconstruct large-$\sigmag$ features from their sharp-Gaussian counterparts than vice versa. It should be also added that, without an automatic choice of regularization, results depend greatly on the way the feature mapping is executed. In particular, sharp-to-smooth mapping can lead to major overfitting problems, with $\GFRE$ becoming much larger than one for the test set.  
+As seen in Figure~\ref{fig:soap-sigma-radial-body}(a,b), in the case of the smooth GTO basis set there is relativley little reconstruction error, and in general smaller $\sigmag$ values give a better reconstruction of large-$\sigmag$ features than vice versa. The opposite is true for the $\delta$-like DVR basis: the GFRE for DVR is larger than in the case of GTO, and it is harder to reconstruct large-$\sigmag$ features from their sharp-Gaussian counterparts than vice versa. It should be also added that, without an automatic choice of regularization, results depend greatly on the way the feature mapping is executed. In particular, sharp-to-smooth mapping can lead to major overfitting problems, with $\GFRE$ becoming much larger than one for the test set.  
 Even in cases where the $\GFRE$ is small, the feature space distortion is large, which highlights the fact that the Gaussian smearing changes significantly the emphasis given to different structural correlations, and can therefore affect the accuracy of regression models. 
 %Both bases show that the distortion increases with larger distance in smearing sigma. untrue! 0.1->0.3 is harder than 0.1->0.5 it seems.
 
 \paragraph*{Radial cutoff and scaling.}\,
 One of the most important hyperparameters when defining an atom-centred representation is the cutoff distance, which restricts the contributions to the density to the atoms with $r_{ji}<r_{\text{c}}$.
-Fig.~\ref{fig:soap-sigma-radial-body}(c,d) shows that the GFRE captures the loss of information associated with an aggressive truncation of the environment, with very similar behavior between GTO and DVR bases. 
+Figure~\ref{fig:soap-sigma-radial-body}(c,d) shows that the GFRE captures the loss of information associated with an aggressive truncation of the environment, with very similar behavior between GTO and DVR bases. 
 The figure also reflects specific features of the different data sets: for instance, $\GFRE(r_\text{c}=4\,\text{\AA},r_\text{c}=6\,\text{\AA})$ is close to zero for the random methane data set, because there are no structures where atoms are farther than $4\,$\AA{} from the centre of the environment. $\GFRE>0$ also when mapping long-cutoff features to short-range features, although the reconstruction error is much smaller than in the opposite direction. 
 This indicates the need for an increase in $\nmax$ to fully describe the structure of an environment when using a large value of $r_\text{c}$, which is consistent with the greater amount of information encoded within a larger environment.
 The GFRD plot also underscores the strong impact of the choice of $r_\text{c}$ on the emphasis that is given to different parts of the atom-density correlations. 
 This effect explains the strong dependency of regression performance on $r_\text{c}$, and the success of multi-scale models that combine features built on different lengthscales~\cite{bart+17sa}. 
-A similar modulation of the contributions from different radial distances can be achieved by scaling the neighbour contribution to the atom-centred density by a decaying function, e.g. $1/(1+(r_{ji}/r_0)^s)$. This approach has proven to be very effective in fine-tuning the performance of regression models using density-based features~\cite{fabe+17jctc,will+18pccp,paru+18ncomm}.
-As shown in Fig.~\ref{fig:soap-sigma-radial-body}(e,f), this is an example of a transformation of the feature space that entails essentially no information loss -- resulting in a very small GFRE between different values of the scaling exponent $s$. However, it does result in substantial $\GFRD$, providing additional evidence of how the emphasis given by a set of features to different inter-atomic correlations can affect regression performance even if it does not remove altogether pieces of structural information.
+A similar modulation of the contributions from different radial distances can be achieved by scaling the neighbor contribution to the atom-centred density by a decaying function, e.g. $1/(1+(r_{ji}/r_0)^s)$. This approach has proven to be very effective in fine-tuning the performance of regression models using density-based features~\cite{fabe+17jctc,will+18pccp,paru+18ncomm}.
+As shown in Figure~\ref{fig:soap-sigma-radial-body}(e,f), this is an example of a transformation of the feature space that entails essentially no information loss -- resulting in a very small GFRE between different values of the scaling exponent $s$. However, it does result in substantial $\GFRD$, providing additional evidence of how the emphasis given by a set of features to different inter-atomic correlations can affect regression performance even if it does not remove altogether pieces of structural information.
 
 %The effect of the radial scaling on the features is compared by multiplying the density~\eqref{eq:density} with $r^q$ where $q$ is the radial scaling exponent.
-%With higher distance between the radial scaling exponents the distortion between features is more significant, while the information is mostly preserves as seen in Fig.~\ref{fig:soap-sigma-radial-body}c),d).
+%With higher distance between the radial scaling exponents the distortion between features is more significant, while the information is mostly preserves as seen in Figure~\ref{fig:soap-sigma-radial-body}c),d).
 
 \begin{figure}
     \centering
@@ -306,13 +307,13 @@ As shown in Fig.~\ref{fig:soap-sigma-radial-body}(e,f), this is an example of a 
 \begin{figure}
     \centering
     \includegraphics[width=0.45\linewidth]{fig/rof/feature_select_convergence_comparison-soap_bpsf-carbon_methane-inkscaped.pdf}
-    \caption{Convergence of a CUR approximation of the full SOAP/BPSF feature vectors (the largest size considered in Fig.~\ref{fig:soap_behler_parinello} )  with number of retained features.}
+    \caption{Convergence of a CUR approximation of the full SOAP/BPSF feature vectors (the largest size considered in Figure~\ref{fig:soap_behler_parinello} )  with number of retained features.}
     \label{fig:soap_behler_parinello-convergence}
 \end{figure}
 
 \paragraph*{Behler-Parinello symmetry functions.}\,
 BPSF can be seen as projections of the same, abstract symmetrized density features that underlies the construction of SOAP features.  While the latter representation is usually implemented using an orthogonal set of basis functions, BPSFs are non-orthogonal, and are usually chosen based on a careful analysis of the inter-atomic correlations that are relevant for a given system~\cite{behl11jcp,jose+12jcp,behl15ijqc}, or selected automatically out of a large pool of candidates~\cite{imba+18jcp}. 
-Fig.~\ref{fig:soap_behler_parinello} shows clearly that an orthogonal basis set provides a more effective strategy to converge a representation than the grid-based enumeration of the non-linear hyperparameters of non-orthogonal basis functions. GFRE(SOAP, BPSF) $<$ GFRE(BPSF, SOAP) for all feature set sizes and both data sets. As usual, we remark that zero reconstruction error does not imply equivalence for regression purpose: the GFRD remains very high even for the largest feature set sizes. 
+Figure~\ref{fig:soap_behler_parinello} shows clearly that an orthogonal basis set provides a more effective strategy to converge a representation than the grid-based enumeration of the non-linear hyperparameters of non-orthogonal basis functions. GFRE(SOAP, BPSF) $<$ GFRE(BPSF, SOAP) for all feature set sizes and both data sets. As usual, we remark that zero reconstruction error does not imply equivalence for regression purpose: the GFRD remains very high even for the largest feature set sizes. 
 
 Given that, in real scenarios, one would usually combine systematic enumeration of BPSF features with an automatic selection method\cite{imba+18jcp}, we also use the feature reconstruction framework to investigate the convergence of the automatic screening procedure, i.e. the error in reconstructing the full vector based on the first $m$ features chosen with a CUR decomposition-based procedure\cite{mahoney2009cur, imba+18jcp}.
 Figure~\ref{fig:soap_behler_parinello-convergence} shows that a few dozens CUR-selected features allow to almost-perfectly reconstruct the full feature vector. The convergence is particularly fast for BPSF, where $m=50$ leads to a minuscule GFRE, indicating that the non-orthogonal features are highly redundant, and explaining the saturation in model performance that was observed in Ref.~\citenum{imba+18jcp}.
@@ -371,14 +372,14 @@ Different orders incorporate conceptually distinct kinds of information: when us
     \label{fig:soap_degenerated_manifold_lfre}
 \end{figure}
 
-Fig.~\ref{fig:soap-bodyorder} shows that high-order features cannot be recovered as linear functions of lower-order features, while an approximate (if not complete) reconstruction of lower-$\nu$ components based on high-$\nu$ components is possible. Reconstructing features of different order entails a large amount of distortion, with the GFRD approaching one in most cases. 
+Figure~\ref{fig:soap-bodyorder} shows that high-order features cannot be recovered as linear functions of lower-order features, while an approximate (if not complete) reconstruction of lower-$\nu$ components based on high-$\nu$ components is possible. Reconstructing features of different order entails a large amount of distortion, with the GFRD approaching one in most cases. 
 We also include in the comparison features obtained with the recently-developed $N$-body iterative contraction of equivariants (NICE) framework, that identifies the most important features for each $\nu$ value, and uses them to compute  $(\nu+1)$-order features~\cite{niga+20jcp}. Keeping 400 features for each body order is sufficient to achieve perfect reconstruction of 2 and 3-body features, but not for the 4-body (bispectrum) term, which cannot be reconstructed fully with 400 NICE features. Considering however that $\GFRE(\text{NICE},\nu=3)\ll \GFRE(\nu=3, \text{NICE})$, one can infer that the of information loss associated with truncating the body order expansion is more severe than when restricting the number of 4-body features. 
 
-The comparison of features of different order can also be used to elucidate the role of the (non-)linearity of the mapping between feature spaces. Figure~\ref{fig:soap-lfre-convergence} compares global and local feature reconstruction errors between 2 and 3-body density correlation features, for the random $\ce{CH4}$ data set. In the case of the low-to-high body order reconstruction, the LFRE is only marginally lower than its global counterpart, indicating that the large $\GFRE(\nu=1,\nu=2)$ is a consequence of lower information content and not only of the linear nature of the map. The reverse case is also revealing: for small $k$-neighbourhood sizes, $\LFRE(\nu=2,\nu=1)>\GFRE(\nu=2,\nu=1)$, because the small number of neighbors included in the model reduce the accuracy of the feature reconstruction map. When the number of neighbors approaches the intrinsic dimensionality of the $\nu=2$ features, instead, $\LFRE<\GFRE$ -- because the reconstruction is based on a locally-linear map that can approximate a non-linear relationship between features. As $k$ approaches the full train set size, the LFRE approaches the GFRE, as the locality of the mapping is lost. 
+The comparison of features of different order can also be used to elucidate the role of the (non-)linearity of the mapping between feature spaces. Figure~\ref{fig:soap-lfre-convergence} compares global and local feature reconstruction errors between 2 and 3-body density correlation features, for the random $\ce{CH4}$ data set. In the case of the low-to-high body order reconstruction, the LFRE is only marginally lower than its global counterpart, indicating that the large $\GFRE(\nu=1,\nu=2)$ is a consequence of lower information content and not only of the linear nature of the map. The reverse case is also revealing: for small $k$-neighborhood sizes, $\LFRE(\nu=2,\nu=1)>\GFRE(\nu=2,\nu=1)$, because the small number of neighbors included in the model reduce the accuracy of the feature reconstruction map. When the number of neighbors approaches the intrinsic dimensionality of the $\nu=2$ features, instead, $\LFRE<\GFRE$ -- because the reconstruction is based on a locally-linear map that can approximate a non-linear relationship between features. As $k$ approaches the full train set size, the LFRE approaches the GFRE, as the locality of the mapping is lost. 
 
 The LFRE also makes it possible to identify regions of phase space for which the construction of a mapping between feature spaces is difficult or impossible. 
 Consider the case of the degenerate manifold discussed in Ref.~\citenum{pozd+20prl}. The dataset includes two sets of \ce{CH4} environments, and those parameterised by $v=0$ cannot be distinguished from each other using 3-body ($\nu=2$) features.
-Fig.~\ref{fig:soap_degenerated_manifold_lfre} shows the LFRE for each point along the two manifolds. When trying to reconstruct 3-body features using as inputs 4-body features (that take different values for the two manifolds) the LFRE is essentially zero. When using the 3-body features as inputs, instead, one observes a very large error for points along the degenerate line, while points that are farther along the manifold can be reconstructed well. This example demonstrates the use of the LFRE to identify regions of feature space for which a simple, low-body-order representation is insufficient to fully characterize the structure of an environment, and can be used as a more stringent, explicit test of the presence of degeneracies than the comparison of pointwise distances discussed in Ref.~\citenum{pozd+20prl}. 
+Figure~\ref{fig:soap_degenerated_manifold_lfre} shows the LFRE for each point along the two manifolds. When trying to reconstruct 3-body features using as inputs 4-body features (that take different values for the two manifolds) the LFRE is essentially zero. When using the 3-body features as inputs, instead, one observes a very large error for points along the degenerate line, while points that are farther along the manifold can be reconstructed well. This example demonstrates the use of the LFRE to identify regions of feature space for which a simple, low-body-order representation is insufficient to fully characterize the structure of an environment, and can be used as a more stringent, explicit test of the presence of degeneracies than the comparison of pointwise distances discussed in Ref.~\citenum{pozd+20prl}. 
 
 \subsection{Kernel-induced feature spaces}
 
@@ -422,7 +423,7 @@ A better understanding of the effect of a non-linear feature space transformatio
 \GFRE^{(i)}(\CF,\CF^{\prime}) = \norm{\bx^{\prime}_i - \bx_i\bP{\CF}{\CF^{\prime}}}. 
 \label{eq:pointwise_GFRE}
 \end{equation}
-The histograms for this ``pointwise $\GFRE$`` (Fig.~\ref{fig:rbf-body-hists}) show that increasing the non-linearity of the kernel does indeed allow to reconstruct more accurately a fraction of both the test and the train set. When extrapolating the mapping to points that have not been seen before, however, there is an increasingly large fraction of outliers for which the reconstruction is catastrophically poor.
+The histograms for this ``pointwise $\GFRE$`` (Figure~\ref{fig:rbf-body-hists}) show that increasing the non-linearity of the kernel does indeed allow to reconstruct more accurately a fraction of both the test and the train set. When extrapolating the mapping to points that have not been seen before, however, there is an increasingly large fraction of outliers for which the reconstruction is catastrophically poor.
 
 The pointwise errors are also revealing of the different nature of the $\nu=1\rightarrow \nu=2$ and $\nu=2\rightarrow \nu=3$ cases.
 In the former case, the clear lack of information in the 2-body descriptor makes it impossible, even for a highly non-linear kernel, to obtain an accurate reconstruction of higher body-order features.
@@ -482,8 +483,8 @@ One can obtain a more physical behavior when atoms enter and leave the cutoff by
 \begin{equation}
 p^{\delta}_i(r) = \frac{1}{Z_\CD}\left[\overline{\rho_i^{\otimes 1}}(r) + (Z_\CD-Z_i)\delta(r-r_c)\right].
 \end{equation}
-Fig.~\ref{fig:wasserstein-distances}b shows that with this choice the Wasserstein metric between $p_i^\delta(r)$ reflects the distance between the moving atoms. With this normalization, in fact, the Wasserstein metric corresponds to a smooth version of the Euclidean metric computed between vectors of sorted interatomic distances~\cite{will+19jcp}, shown in Fig.~\ref{fig:wasserstein-distances}c. 
-The distortions that can be seen in the comparison between Fig.~\ref{fig:wasserstein-distances}b,c are a consequence of the Gaussian smearing, the smooth cutoff function, and the $\SOthree$ integration that modulates the contribution to $\overline{\rho_i^{\otimes 1}}(r)$ coming from atoms at different distances.
+Figure~\ref{fig:wasserstein-distances}b shows that with this choice the Wasserstein metric between $p_i^\delta(r)$ reflects the distance between the moving atoms. With this normalization, in fact, the Wasserstein metric corresponds to a smooth version of the Euclidean metric computed between vectors of sorted interatomic distances~\cite{will+19jcp}, shown in Figure~\ref{fig:wasserstein-distances}c. 
+The distortions that can be seen in the comparison between Figure~\ref{fig:wasserstein-distances}b,c are a consequence of the Gaussian smearing, the smooth cutoff function, and the $\SOthree$ integration that modulates the contribution to $\overline{\rho_i^{\otimes 1}}(r)$ coming from atoms at different distances.
 
 Having defined a meaningful normalization and a probabilistic interpretation of the radial density correlation features, we can investigate how the feature space induced by a Wasserstein metric relates to that induced by an Euclidean distance. 
 Figure~\ref{fig:wasserstein-grid} shows the error in the reconstruction of $\zh$ for the \emph{displaced methane} dataset when restricting the training set to 0.05\AA{} and 1.0\AA{} spaced grids.
@@ -503,7 +504,7 @@ Having rationalized the behavior of the Wasserstein metric for a toy model, we c
 Figure~\ref{fig:wasserstein-carbon} paints a rather nuanced picture of the relationship between the linear and the Wasserstein-induced feature spaces. 
 The GFRE is non-zero in both directions, meaning that (in a linear sense) Wassertein and Euclidean features provide complementary types of information. 
 Smearing of the density has a small effect on the Wasserstein metric, so that both $\GFRE(W(\sigmag=0.1\text{\AA}),W(\sigmag=0.5\text{\AA}))$ and $\GFRD(W(\sigmag=0.1\text{\AA}),W(\sigmag=0.5\text{\AA}))$ are small, whereas for Euclidean features -- as observed in Section~\ref{sub:hypers} -- changing $\sigmag$ induces small information loss, but a large distortion of feature space. 
-Overall, there is no sign of the pathological behavior seen in Fig.~\ref{fig:wasserstein-grid}, which is an indication that (at least for 2-body features) the \emph{carbon} dataset is sufficiently dense, and that the better interpolative behavior of the EMD does not lead to a more informative feature space. 
+Overall, there is no sign of the pathological behavior seen in Figure~\ref{fig:wasserstein-grid}, which is an indication that (at least for 2-body features) the \emph{carbon} dataset is sufficiently dense, and that the better interpolative behavior of the EMD does not lead to a more informative feature space. 
 
 
 %where $Z_\mathcal{D}$ is the maximum $Z_i$ value of a dataset $\mathcal{D}$.The iCDF has been approximated from the CDF \begin{equation}    F_i(r) = \int_0^{r}p_i(r^{\prime})\,\mathrm{d}r^{\prime}\quad\text{(CDF)},\end{equation} by a linear interpolation using $200$ Gaussian quadrature points of the CDF in the range of $[0,r_c]$. Likewise, for the distance comparison $200$ Gaussian quadrature points of the interpolated iCDF were used to approximate the Wasserstein distance and the same amount of points of the unnormalized density $p_i$ were used for the Euclidean distance.
@@ -532,12 +533,12 @@ We also investigate the effect of changing the metric used to compare features, 
 However, both an aggressive smearing of the atom density, and the use of a more realistic data set cure the pathological behavior of the linear featurization, so that the Wasserstein metric should not be regarded as superior to the Euclidean one, but complementary. Generalizing the Wasserstein metric to higher body-order correlations, which induce a higher-dimensional feature space that is more likely to be sparsely populated, would be an interesting further research direction.
 % might mention discontinuity
 
-It is further not clear how the change to the Wasserstein metric generalizes to ACDC functions of higher order.
-Existing approaches only employ sorted one-dimensional projections of higher orders~\cite{huang2016communication}.
+It further is not clear how the change to the Wasserstein metric generalizes to ACDC functions of higher order.
+Existing approaches only employ sorted, one-dimensional projections of higher orders~\cite{huang2016communication}.
 These approaches can be linked to one-dimensional projections of higher-order ACDC functions in the same way as the sorted distances descriptor is linked to the ACDC function of order 1.
 For the coherent higher-order space, however, it is not clear what form the induced feature map has.
 In this case the metric is not negative definite, thus the same substitution kernel used to retrieve the sorted distances descriptor is not positive definite and therefore does not induce a RKHS.
-While the positive definiteness can be relaxed by extending the concept of RKHS to reproducing kernel Krein space (RKKS), there is no bijection between the indefinite kernel and the RKKS~\cite{pmlr-v80-oglic18a} which means there is no unique feature map that can de deduced as representation from this approach.
+While the positive definiteness can be relaxed by extending the concept of RKHS to reproducing kernel Krein space (RKKS), there is no bijection between the indefinite kernel and the RKKS~\cite{pmlr-v80-oglic18a} which means there is no unique feature map that can be deduced as a representation from this approach.
 
 The analysis in this work can be extended to compare atom-density representation with a broader class of descriptors based on topological~\cite{isayev2017universal, sutton2019crowd, liu2019n} or physicochemical information~\cite{pilania2013accelerating, ward2016general, ouya+18prm} as well as property-dependent representations induced by neural network frameworks~\cite{schu+18jcp, cohen2018spherical}. 
 Even more broadly, an objective measure of the relative effectiveness of features can guide the development of machine learning schemes for any problem that depends strongly on the strategy used to obtain a mathematical description of its inputs. 
@@ -547,7 +548,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\section{Reconstruction error}
 %An approach independent of a target property is to compare the reconstruction error of the basis expansion to the original functional form on which the features are expanded
 %Given a representation $f$ of the atomic structure $A$ and a basis expansion as in
-%Eq.~\eqref{eq:basis_expansion} with an orthornormal basis, the approximation error
+%Equation~\eqref{eq:basis_expansion} with an orthornormal basis, the approximation error
 %of a basis $\{b_k\}_{k=1}^M$ to $f$ can be expressed
 %\begin{subequations}
 %\begin{align}
@@ -573,7 +574,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%The derivation also expresses the duality between a definite distance metric and similarity measure\cite{TODO(maybe)}.
 %%If we chose only one basis function, we can see that the distance is zero when $b_k$ is $f$
 %%One basis function, we can see that the distance is zero when $b_k$ is $f$
-%%For a simple functional form of $f$ as the order 1 expressions in Eq.~\eqref{eq:order1_analytical_solution} the integral can be solved for radial basis functions.
+%%For a simple functional form of $f$ as the order 1 expressions in Equation~\eqref{eq:order1_analytical_solution} the integral can be solved for radial basis functions.
 %%\begin{subequations}
 %%\begin{align}
 %%  \ell(\{c_nb_n\}^M_{n=1}, g) 
@@ -616,12 +617,12 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\begin{equation}
 %  f_\textrm{LJ}(r) = \epsilon_\textrm{LJ}\big(\sigma_\textrm{LJ}^{-12}-\sigma_\textrm{LJ}^{-6}\big).
 %\end{equation}
-%From the plots in Fig.~\ref{fig:radial-scaling} we can clearly see that the radial scaling term on the smearing reduces the reconstruction error significantly more than the global factor.
+%From the plots in Figure~\ref{fig:radial-scaling} we can clearly see that the radial scaling term on the smearing reduces the reconstruction error significantly more than the global factor.
 %This observation goes along the lines with the competetiveness of the GTO basis functions that includes a radial scaling term in the smearing shown in Ref.~\ref{goscinski2021optimal,bigi2022smooth}.
 %In fact the global radial factor first increases the error up to $n_\textrm{max}=4$ till it has a reducening effect.
 %%An effect that is due to the fast decrease of the LJ function at the beginning that is better reconstructed with the $1/r$ terms for larger $n_\textrm{max}$.
 %%We further see that an orthogonal basis can be 
-%%The basis coefficient can be made orthogonormal by the Löwden normalization\cite{PIELA2014e99} so obtain the basis coefficient by solving Eq.~\eqref{eq:information_capacity} using least squares. 
+%%The basis coefficient can be made orthogonormal by the Löwden normalization\cite{PIELA2014e99} so obtain the basis coefficient by solving Equation~\eqref{eq:information_capacity} using least squares. 
 %
 %\begin{figure}
 %    \includegraphics[width=\textwidth]{fig/convergence_results-grid500.pdf}
@@ -629,7 +630,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %    \label{fig:radial-scaling}
 %    % TODO maybe plot basis and LJ potential
 %\end{figure}
-%Due to the duality expressed in Eq.~\eqref{TODO} the reconstruction error is a reformulation of the mean-squared linear regression error of the energy determined by the defined LJ potential assuming uniform sampling.
+%Due to the duality expressed in Equation~\eqref{TODO} the reconstruction error is a reformulation of the mean-squared linear regression error of the energy determined by the defined LJ potential assuming uniform sampling.
 %Numerous cases of interest however do not have a clear functional form as the LJ potential (e.g. neural network representations) such that this approach becomes unapplicable.
 %%Furthermore Often the intervals of interest are not easy expressable.
 %Furthermore, in the case of the LJ potential we purposefully did not include the range close to $0$ as the target function explodes and a reconstruction error would be dominated by that range providing not much insight.
@@ -643,7 +644,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%\papercomment{We can also compare GTO and and shifted Gaussian for LJ potential of dimers and should see that GTOs work better. Here we use numerical integration}
 %
 %\section{Formulation as optimization problem}
-%%Furthermore, even if a functional form exists for high order functions (see Eq.~\eqref{eq:integration_over_subgroup_higher_order}) such that a numerical integration becomes costly for higher-orders due to the polynomial cost of the integration wrt. the dimension of the integration space.
+%%Furthermore, even if a functional form exists for high order functions (see Equation~\eqref{eq:integration_over_subgroup_higher_order}) such that a numerical integration becomes costly for higher-orders due to the polynomial cost of the integration wrt. the dimension of the integration space.
 %%But even for order $2$ a numerical integration is costly when conducted over a large dataset.
 %To address the problems discussed in the last section we reformulate the integration problem into an optimization problem that can be solved more efficiently.
 %%with a scaling wrt. the number of basis functions
@@ -687,7 +688,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %Assume a reconstruction of $\{(1, 0)_1, (0, 1)_2\}$ by coefficients $\{(1, 0)_1, (1, 0)_2\}$.
 %By introducing a linear transformation to the targeted coefficients, the error can be made arbitrary large.
 %This is crucial since it limits the insights we can get about the feature relationship, since a full rank linear transformation of the features does not reduce regression performance, but vice-versa the reconstruction error.
-%For analysis that still can be related the meaning of Eq.~\eqref{eq:reconstruction_error_basis} we therefore have to use an orthonormal basis for the target features.
+%For analysis that still can be related the meaning of Equation~\eqref{eq:reconstruction_error_basis} we therefore have to use an orthonormal basis for the target features.
 %In this case a full rank orthonormality matrix can be absorbed by the linear transformation so we have equivalance to the orthonormal coefficients
 %\begin{subequations}
 %\begin{align}
@@ -705,7 +706,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%\tilde{c}_k\tilde{b}_k = (\sum_{i} U_{ki}c_{i})(\sum_{i} U_{ki}b_{i}(\mathbf{q})) = (\sum_{ij} U_{ki}U_{kj}c_{i}b_{j}(\mathbf{q}))
 %\end{align}
 %\end{subequations}
-%so we only constrain the targeted feature space to be orthonormal if we want to retrieve Eq.~\eqref{eq:reconstruction_error_basis}.
+%so we only constrain the targeted feature space to be orthonormal if we want to retrieve Equation~\eqref{eq:reconstruction_error_basis}.
 %On the other hand reconstruction of a nonorthonormal basis can still be justified by the fact that until the limit of convergence is not reached even a full rank linear transformations affects the regularization and thus also effects the regression performance.
 %%Furthemore, even in the limit of convergence when comparing NN features, we can argue that the optimizers find similar local minimas with a similar $\|S\|$ factor %TODO for that argument I would need to dig into literature and change also the equation (find an equality relationship)
 %
@@ -738,9 +739,9 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%  \sum_{n=1}^M \|\sum_k T(c_kb_k) - y \|^2 \leq ...
 %%\end{equation}
 %%We therefore can make a more general statement about any target functions wrt. to a transformation relating the targeted feature space to $y$ for a dataset. 
-%%therefore focus on the development of error measurements as in Eq.~\eqref{eq:information_capacity} that provide quantative results for the information capacity of feature spaces and that are efficient to compute.
+%%therefore focus on the development of error measurements as in Equation~\eqref{eq:information_capacity} that provide quantative results for the information capacity of feature spaces and that are efficient to compute.
 %%a numerical integration in the high-order space is also not feasible
-%%the density for Sec.~\ref{eq:radial_angular_density} 
+%%the density for Section~\ref{eq:radial_angular_density} 
 %%\begin{equation}
 %%  \ell(\{c_kb_k\}^M_{k=1}, f) = \int_V\mathrm{d}\mathbf{q}\, \|\sum_{k=1}^M c_kb_k(\mathbf{q}) - f(\mathbf{q})\|.
 %%\end{equation}
@@ -795,7 +796,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%Extending the analysis to non-linear dependencies, the local feature reconstruction error (LFRE) applies ridge regression for each point locally on the $k$-nearest neighbors.
 %%These methods are of particular use in assessing the hyperparameters of ML descriptors\cite{goscinski2021role} and have been employed to compare the efficiency of different basis sets in encoding geometrical information\cite{musil2021physics, goscinski2021optimal}.
 %
-%In the following sections we show error measures based on the loss in Eq.~\eqref{eq:reconstruction_error_basis_coefficients} that constraint the transformation $\mathbf{T}$ to provide different insights to the feature-relationship.
+%In the following sections we show error measures based on the loss in Equation~\eqref{eq:reconstruction_error_basis_coefficients} that constraint the transformation $\mathbf{T}$ to provide different insights to the feature-relationship.
 %In Figure~\ref{fig:frm} a schematic of the different types of transformations $T$ that are covered in the upcoming sections.
 %These methods are of particular use in assessing the hyperparameters of ML descriptors\cite{goscinski2021role} and have been employed to compare the efficiency of different basis sets in encoding geometrical information\cite{musil2021physics, goscinski2021optimal}.
 %
@@ -803,7 +804,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\includegraphics[width=\linewidth]{fig/frm.pdf}
 %% Titles and legends: Each figure or table should have a concise title of no more than 15 words. A legend for each figure and table should also be provided that briefly describes the key points and explains any symbols and abbreviations used. The legend should be sufficiently detailed so that the figure or table can stand alone from the main text.
 %\caption{\textbf{The different forms of feature reconstructions}
-%to assess two feature spaces (blue and pink) describing the same dataset. Here, we are reconstructing the curved manifold (blue) using the planar manifold (pink), as it is often the case to approximate a complex manifold with a simpler alternative. The area framed by the dotted line is an example of a local neighbourhood of one sample (the pink dot) that enables the reconstruction of nonlinearities. (Top) The linear transformation is used in the global feature reconstruction error (GFRE). (Middle) The orthogonal transformation is used in the global feature reconstruction distortion (GFRD). (Bottom) A local linear transformation of a neighbourhood is used in local feature reconstruction error (LFRE). On the right, the reconstructions of the manifold are drawn in pink together with the curved manifold in blue. The measures correspond to the root-mean-square difference between the reconstructed and curved manifold.
+%to assess two feature spaces (blue and pink) describing the same dataset. Here, we are reconstructing the curved manifold (blue) using the planar manifold (pink), as it is often the case to approximate a complex manifold with a simpler alternative. The area framed by the dotted line is an example of a local neighborhood of one sample (the pink dot) that enables the reconstruction of nonlinearities. (Top) The linear transformation is used in the global feature reconstruction error (GFRE). (Middle) The orthogonal transformation is used in the global feature reconstruction distortion (GFRD). (Bottom) A local linear transformation of a neighborhood is used in local feature reconstruction error (LFRE). On the right, the reconstructions of the manifold are drawn in pink together with the curved manifold in blue. The measures correspond to the root-mean-square difference between the reconstructed and curved manifold.
 %}\label{fig:frm}
 %\end{figure*}
 %
@@ -834,13 +835,13 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\end{equation}
 %averaging, if needed, over multiple random splits.  The $\GFRE$ is a positive quantity, which is equal to zero when there is no error in the reconstruction, and that is usually bound by one\footnote{This is due to the fact that feature matrices are standardized, and so $\norm{\bX^{\CDte}_{\CF^\prime}}/\ns_\test $ is of the order of one}.
 %
-%Notice that by expressing the basis and target functions on a radial grid basis we retrieve the numerical integration loss in Eq.~\eqref{TODO}.
+%Notice that by expressing the basis and target functions on a radial grid basis we retrieve the numerical integration loss in Equation~\eqref{TODO}.
 %The minimization problem is moved from an optimization of $\mathbf{c}$ to an optimization of $\mathbf{W}$.
 %%to solving for $M\times n_\textrm{grid}$.% matrix retrieving the expansion coefficients.
 %While the former requires to solve the loss for each datapoint the later only needs one the whole dataset.
 %As solving the minimization problem has worst scaling behavior in the computation of the loss, the later approach is typically more efficient to compute.
 %%an$c_k$ changes for datapoint and $M\times n_\textrm{grid}$ is constant over samples.
-%%In the limit of number basis function for $f$, thus we obtain a similar loss as the numerical integration in Eq.~\eqref{TODO} where target function is evaluated on some grid to compute the integral.
+%%In the limit of number basis function for $f$, thus we obtain a similar loss as the numerical integration in Equation~\eqref{TODO} where target function is evaluated on some grid to compute the integral.
 %
 %For numbers of features larger than $\ns_\train$, the covariance matrix is not full rank, and one needs to compute a pseudoinverse. Without loss of generality, one can regularize the regression to stabilize the calculation. In this paper, we computed the pseudoinverse by means of a singular value decomposition, and we determined the optimal regularization in terms of the truncation of the singular value spectrum, using 2-fold cross-validation over the training set to determine the optimal truncation threshold. Often, it is also useful to observe the behavior of the $\GFRE$ in the absence of any regularization: overfitting is in itself a signal of the instability of the mapping between feature spaces.
 %In general, $\GFRE^\CD(\CF,\CF^\prime)$ is not symmetric. If $\GFRE^\CD(\CF,\CF^\prime)\approx\GFRE^\CD(\CF^\prime,\CF)\approx 0$, $\CF$ and $\CF^\prime$ contain similar types of information; if $\GFRE^\CD(\CF,\CF^\prime)\approx 0$, while $\GFRE^\CD(\CF^\prime,\CF)>0$, one can say that $\CF$ is more descriptive than $\CF^\prime$: this is the case, for instance, one would observe if $\CF^\prime$ consists of a sparse version of $\CF$, with some important and linearly-independent features removed; finally, if  $\GFRE^\CD(\CF,\CF^\prime)\approx\GFRE^\CD(\CF^\prime,\CF)>0$, the two feature spaces contain different, and complementary, kinds of information and it may be beneficial to combine them to achieve a more thorough description of the problem.
@@ -955,8 +956,8 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\begin{equation}
 %p^{\delta}_i(r) = \frac{1}{Z_\CD}\left[\rep< r||\mathcal{A};\frho_i^1> + (Z_\CD-Z_i)\delta(r-r_c)\right].
 %\end{equation}
-%Fig.~\ref{fig:wasserstein-distances}b shows that with this choice the Wasserstein metric between $p_i^\delta(r)$ reflects the distance between the moving atoms. With this normalization, in fact, the Wasserstein metric corresponds to a smooth version of the Euclidean metric computed between vectors of sorted interatomic distances~\cite{will+19jcp}, shown in Fig.~\ref{fig:wasserstein-distances}c. 
-%The distortions that can be seen in the comparison between Fig.~\ref{fig:wasserstein-distances}b,c are a consequence of the Gaussian smearing, the smooth cutoff function, and the $\SOthree$ integration that modulates the contribution to $\rep< r||\mathcal{A};\frho_i^1>$ coming from atoms at different distances.
+%Figure~\ref{fig:wasserstein-distances}b shows that with this choice the Wasserstein metric between $p_i^\delta(r)$ reflects the distance between the moving atoms. With this normalization, in fact, the Wasserstein metric corresponds to a smooth version of the Euclidean metric computed between vectors of sorted interatomic distances~\cite{will+19jcp}, shown in Figure~\ref{fig:wasserstein-distances}c. 
+%The distortions that can be seen in the comparison between Figure~\ref{fig:wasserstein-distances}b,c are a consequence of the Gaussian smearing, the smooth cutoff function, and the $\SOthree$ integration that modulates the contribution to $\rep< r||\mathcal{A};\frho_i^1>$ coming from atoms at different distances.
 %
 %Having defined a meaningful normalization and a probabilistic interpretation of the radial density correlation features, we can investigate how the feature space induced by a Wasserstein metric relates to that induced by an Euclidean distance. 
 %Figure~\ref{fig:wasserstein-grid} shows the error in the reconstruction of $\zh$ for the \emph{displaced methane} dataset when restricting the training set to 0.05\AA{} and 1.0\AA{} spaced grids.
@@ -975,7 +976,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %Figure~\ref{fig:wasserstein-carbon} paints a rather nuanced picture of the relationship between the linear and the Wasserstein-induced feature spaces. 
 %The GFRE is non-zero in both directions, meaning that (in a linear sense) Wassertein and Euclidean features provide complementary types of information. 
 %Smearing of the density has a small effect on the Wasserstein metric, so that both $\GFRE(W(\sigmag=0.1\text{\AA}),W(\sigmag=0.5\text{\AA}))$ and $\GFRD(W(\sigmag=0.1\text{\AA}),W(\sigmag=0.5\text{\AA}))$ are small, whereas for Euclidean features -- as observed in Section~\ref{sub:hypers} -- changing $\sigmag$ induces small information loss, but a large distortion of feature space. 
-%Overall, there is no sign of the pathological behavior seen in Fig.~\ref{fig:wasserstein-grid}, which is an indication that (at least for 2-body features) the \emph{carbon} dataset is sufficiently dense, and that the better interpolative behavior of the EMD does not lead to a more informative feature space. 
+%Overall, there is no sign of the pathological behavior seen in Figure~\ref{fig:wasserstein-grid}, which is an indication that (at least for 2-body features) the \emph{carbon} dataset is sufficiently dense, and that the better interpolative behavior of the EMD does not lead to a more informative feature space. 
 %
 %\subsection{Example: Comparison of bispectrum and message-passing}
 %\papercomment{Put in Jigyasa^{\prime}s work where the GFRE was used to compare MP with 3-body.}
@@ -983,7 +984,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\section{Distortion in linear transformations}
 %The feature space reconstruction error gives insights into whether a feature space can be inferred by knowledge of a second one. However, having both a small $\GFRE^\CD(\CF,\CF^\prime)$ and $\GFRE^\CD(\CF^\prime,\CF)$ does not imply two feature spaces are identical. Even though they contain similar amounts of information, one feature space could give more emphasis to some features compared to the other, which can eventually result in different performance when building a model.
 %To assess the amount of distortion of $\CF^\prime$ relative to $\CF$, we introduce the global feature space reconstruction distortion $\GFRD^\CD(\CF,\CF^\prime)$.
-%To evaluate it, we first compute the singular value decomposition of the projector Eq.~\eqref{eq:proj-ff1}, $\bP{\CF}{\CF^\prime}\approx\bU \bSIG \bV^T$, and then use it to reduce the two feature spaces to a common basis, in which the reconstruction error is zero, because the residual has been discarded
+%To evaluate it, we first compute the singular value decomposition of the projector Equation~\eqref{eq:proj-ff1}, $\bP{\CF}{\CF^\prime}\approx\bU \bSIG \bV^T$, and then use it to reduce the two feature spaces to a common basis, in which the reconstruction error is zero, because the residual has been discarded
 %\begin{equation}
 %\bXt_{\CF} = \bX_{\CF}\bU \quad  \bXt_{\CF^\prime} = \bXt_{\CF} \bSIG.
 %\end{equation}
@@ -1013,16 +1014,16 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\subsection{Example: Radial scaling}
 %
 %One of the most important hyperparameters when defining an atom-centred representation is the cutoff distance, which restricts the contributions to the density to the atoms with $r_{ji}<r_{\text{c}}$.
-%Fig.~\ref{fig:soap-sigma-radial-body}(c,d) shows that the GFRE captures the loss of information associated with an aggressive truncation of the environment, with very similar behavior between GTO and DVR bases. 
+%Figure~\ref{fig:soap-sigma-radial-body}(c,d) shows that the GFRE captures the loss of information associated with an aggressive truncation of the environment, with very similar behavior between GTO and DVR bases. 
 %The figure also reflects specific features of the different data sets: for instance, $\GFRE(r_\text{c}=4\,\text{\AA},r_\text{c}=6\,\text{\AA})$ is close to zero for the random methane data set, because there are no structures where atoms are farther than $4\,$\AA{} from the centre of the environment. $\GFRE>0$ also when mapping long-cutoff features to short-range features, although the reconstruction error is much smaller than in the opposite direction. 
 %This indicates the need for an increase in $\nmax$ to fully describe the structure of an environment when using a large value of $r_\text{c}$, which is consistent with the greater amount of information encoded within a larger environment.
 %The GFRD plot also underscores the strong impact of the choice of $r_\text{c}$ on the emphasis that is given to different parts of the atom-density correlations. 
 %This effect explains the strong dependency of regression performance on $r_\text{c}$, and the success of multi-scale models that combine features built on different lengthscales~\cite{bart+17sa}. 
-%A similar modulation of the contributions from different radial distances can be achieved by scaling the neighbour contribution to the atom-centred density by a decaying function, e.g. $1/(1+(r_{ji}/r_0)^s)$. This approach has proven to be very effective in fine-tuning the performance of regression models using density-based features~\cite{fabe+17jctc,will+18pccp,paru+18ncomm}.
-%As shown in Fig.~\ref{fig:soap-sigma-radial-body}(e,f), this is an example of a transformation of the feature space that entails essentially no information loss -- resulting in a very small GFRE between different values of the scaling exponent $s$. However, it does result in substantial $\GFRD$, providing additional evidence of how the emphasis given by a set of features to different inter-atomic correlations can affect regression performance even if it does not remove altogether pieces of structural information.
+%A similar modulation of the contributions from different radial distances can be achieved by scaling the neighbor contribution to the atom-centred density by a decaying function, e.g. $1/(1+(r_{ji}/r_0)^s)$. This approach has proven to be very effective in fine-tuning the performance of regression models using density-based features~\cite{fabe+17jctc,will+18pccp,paru+18ncomm}.
+%As shown in Figure~\ref{fig:soap-sigma-radial-body}(e,f), this is an example of a transformation of the feature space that entails essentially no information loss -- resulting in a very small GFRE between different values of the scaling exponent $s$. However, it does result in substantial $\GFRD$, providing additional evidence of how the emphasis given by a set of features to different inter-atomic correlations can affect regression performance even if it does not remove altogether pieces of structural information.
 %
 %%The effect of the radial scaling on the features is compared by multiplying the density~\eqref{eq:density} with $r^q$ where $q$ is the radial scaling exponent.
-%%With higher distance between the radial scaling exponents the distortion between features is more significant, while the information is mostly preserves as seen in Fig.~\ref{fig:soap-sigma-radial-body}c),d).
+%%With higher distance between the radial scaling exponents the distortion between features is more significant, while the information is mostly preserves as seen in Figure~\ref{fig:soap-sigma-radial-body}c),d).
 %
 %\begin{figure*}
 %    \includegraphics[width=0.9\linewidth]{fig/sigma_radial_scaling_cutoff_comparison-gfrd-gto_dvr-methane_carbon-inkscaped-v2.pdf}
@@ -1036,7 +1037,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %As these models are also often opaque in their learned representation, it is essential to develop a measure that can also work for nonlinearities.
 %%Even higher-body orders are type of nonlinear nonlinearities is interesting to analyze
 %
-%In principle for the transformation $T$ in Eq.~\eqref{eq:fre_transformationTODO} a neural network could be used that model nonlinearities.
+%In principle for the transformation $T$ in Equation~\eqref{eq:fre_transformationTODO} a neural network could be used that model nonlinearities.
 %Neural networks are however usually only efficient in the prediction of a few target properties and not large number of features where convergence might be unfeasible.
 %In addition NNs have a lot model parameters that need to be chosen (e.g. activation function, number of layers) making the loss highly dependent on the exact architecture which makes it hard to make general statements.
 %
@@ -1051,7 +1052,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%In the next Section we discuss how one can generalize the schemes to use kernel features, that can also be used to detect non-linear relationships between the original feature spaces.
 %%\newcommand{\CDki}{\CD_{k-\text{neigh}}^{(i)}}
 %An alternative approach is to compute a local version of the feature space reconstruction error, $\LFRE^\CD(\CF,\CF^\prime)$, loosely inspired by locally-linear embedding~\cite{rowe-saul00science}. 
-%To compute the LFRE, a local regression is set up, computed in the $k$-neighbourhood $\CDki$ around sample $i$  -- the set of $k$ nearest neighbors of sample $i$, based on the Euclidean distance between the samples in $\CF$ -- to reproduce the $\CF^\prime$ features using $\CF$ as input features, centred around their mean values $\bar{\bx}_{\CF^\prime}$ and $\bar{\bx}_{\CF}$.
+%To compute the LFRE, a local regression is set up, computed in the $k$-neighborhood $\CDki$ around sample $i$  -- the set of $k$ nearest neighbors of sample $i$, based on the Euclidean distance between the samples in $\CF$ -- to reproduce the $\CF^\prime$ features using $\CF$ as input features, centred around their mean values $\bar{\bx}_{\CF^\prime}$ and $\bar{\bx}_{\CF}$.
 %
 %
 %A local embedding of $\bx_i$ is determined as
@@ -1070,7 +1071,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\subsubsection{Example - Degeneracies in 3-body features}
 %The LFRE also makes it possible to identify regions of phase space for which the construction of a mapping between feature spaces is difficult or impossible. 
 %Consider the case of the degenerate manifold discussed in Ref.~\citenum{pozd+20prl}. The dataset includes two sets of \ce{CH4} environments, and those parameterised by $v=0$ cannot be distinguished from each other using 3-body ($\nu=2$) features.
-%Fig.~\ref{fig:soap_degenerated_manifold_lfre} shows the LFRE for each point along the two manifolds. When trying to reconstruct 3-body features using as inputs 4-body features (that take different values for the two manifolds) the LFRE is essentially zero. When using the 3-body features as inputs, instead, one observes a very large error for points along the degenerate line, while points that are farther along the manifold can be reconstructed well. This example demonstrates the use of the LFRE to identify regions of feature space for which a simple, low-body-order representation is insufficient to fully characterize the structure of an environment, and can be used as a more stringent, explicit test of the presence of degeneracies than the comparison of pointwise distances discussed in Ref.~\citenum{pozd+20prl}. 
+%Figure~\ref{fig:soap_degenerated_manifold_lfre} shows the LFRE for each point along the two manifolds. When trying to reconstruct 3-body features using as inputs 4-body features (that take different values for the two manifolds) the LFRE is essentially zero. When using the 3-body features as inputs, instead, one observes a very large error for points along the degenerate line, while points that are farther along the manifold can be reconstructed well. This example demonstrates the use of the LFRE to identify regions of feature space for which a simple, low-body-order representation is insufficient to fully characterize the structure of an environment, and can be used as a more stringent, explicit test of the presence of degeneracies than the comparison of pointwise distances discussed in Ref.~\citenum{pozd+20prl}. 
 %
 %\begin{figure}
 %    \centering
@@ -1097,12 +1098,12 @@ The feature space reconstruction error and distortion can be incorporated into a
 %%In principle with enough numerical precision the Jacobian reconstruction errors is always zero as long as the precision of the reconstruction is below the numerical noise of the calculation of the features.
 %%In this cas
 %%Nevertheless, we can still extract certain information from the reconstruction error of the Jacobian about the information capacity of the features.
-%%The matrix captures the change of the represention under inifinitesmall changes of neighbouring atoms in one of the spatial direction.
+%%The matrix captures the change of the represention under inifinitesmall changes of neighboring atoms in one of the spatial direction.
 %We therefore need a different method to determine a regularization term that can be seen as an estimation of the noise in the features.
 %Rank deficiencies in the Jacobian matrix correspond to linearly dependent directions with the same change in features.
 %Each symmetry embedded in the features results in a deficiency in the Jacobian matrix.
 %In our setting there are three deficiencies due to translational symmetries and three due to rotational.
-%Additional deficiencies exist due to structure-specific symmetries (see Fig.~\ref{fig:jacobian-symmetry}), or due to directions that the features cannot represent.
+%Additional deficiencies exist due to structure-specific symmetries (see Figure~\ref{fig:jacobian-symmetry}), or due to directions that the features cannot represent.
 %\begin{figure}
 %    \centering\includegraphics[width=0.8\textwidth]{fig/jacobian_rank_deficiencies}
 %    \caption{Sketch of nontrivial rank deficiencies in the Jacobian matrix in case of nontrivial symmetries or singular degeneracies. Adapted from Ref.~\cite{localinvertibility2021pozdnyakov}.}
@@ -1126,8 +1127,8 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\begin{multline}
 %  \tau_\textrm{numpy} = \eta\cdot\max(n,m),\textrm{ where }\eta\textrm{ is number format dependent unit roundoff.}
 %\end{multline}
-%For most cases of interest, the heuristic gives reasonable thresholds, see Fig.~\ref{fig:svals-unsupervised-separation}a).
-%But in cases it produces disputable thresholds, where the singular values are close to the threshold, it is hard to justify that the term $\max(n,m)$ is the correct prefactor for features with arbitrary hyperparameters, as for example in the case of low number of basis functions in Fig.~\ref{fig:svals-unsupervised-separation}b).
+%For most cases of interest, the heuristic gives reasonable thresholds, see Figure~\ref{fig:svals-unsupervised-separation}a).
+%But in cases it produces disputable thresholds, where the singular values are close to the threshold, it is hard to justify that the term $\max(n,m)$ is the correct prefactor for features with arbitrary hyperparameters, as for example in the case of low number of basis functions in Figure~\ref{fig:svals-unsupervised-separation}b).
 %
 %\subsubsection{Signal-noise separation for rank estimation}
 %Another approach assumes that the singular values corresponding to signal and to noise are well-separable.
@@ -1139,9 +1140,9 @@ The feature space reconstruction error and distortion can be incorporated into a
 %\begin{equation}
 %    \hat{d} = \textrm{argmin}_{1\leq d\leq n} (\frac{d}{n}\log(\sigma_\textrm{signal}^2) + \frac{n-d}{n} \log\sigma_\textrm{noise}^2 ).
 %\end{equation}
-%In cases of sufficient number of basis function, no radial scaling and reasonable smearing sigma as in Fig.~\ref{fig:svals-unsupervised-separation}a) a clear separation of the singular values can be achieved.
+%In cases of sufficient number of basis function, no radial scaling and reasonable smearing sigma as in Figure~\ref{fig:svals-unsupervised-separation}a) a clear separation of the singular values can be achieved.
 %%\ref{subfig:svals-unsupervised-separation-large}.
-%Such constraints are not for all cases of interest fulfilled and subsequently this method starts to fail in such cases Fig.~\ref{fig:svals-unsupervised-separation}b) producing arbitrary rank estimations.
+%Such constraints are not for all cases of interest fulfilled and subsequently this method starts to fail in such cases Figure~\ref{fig:svals-unsupervised-separation}b) producing arbitrary rank estimations.
 %\begin{figure}
 %    \centering
 %    \begin{subfigure}[b]{0.49\textwidth}
@@ -1181,7 +1182,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %    %    \label{fig:sval-line-ps-nmax8-lmax6}
 %    %\end{subfigure}
 %    \caption{
-%      The procedure for estimating the threshold for a Jacobian matrix $\mathbf{J}$. a) We sample directions corresponding to global translations which are invariant to features. b) By mapping these directions on the Jacobian matrix corresponding, we sample from a distribution of the numerical error over the features. c) Then we use the maximal numerical error over the features to estimate the threshold using Eq.~\eqref{eq:threshold-random-matrix-theory}.}
+%      The procedure for estimating the threshold for a Jacobian matrix $\mathbf{J}$. a) We sample directions corresponding to global translations which are invariant to features. b) By mapping these directions on the Jacobian matrix corresponding, we sample from a distribution of the numerical error over the features. c) Then we use the maximal numerical error over the features to estimate the threshold using Equation~\eqref{eq:threshold-random-matrix-theory}.}
 %    \label{fig:threshold-estimation}
 %\end{figure}
 %
@@ -1211,9 +1212,9 @@ The feature space reconstruction error and distortion can be incorporated into a
 %While the asymptotic threshold is not necessary optimal for the finite setting, it nevertheless gives decent results as discussed in Ref.~\cite{gavish2014optimal}.
 %When we applied this threshold method on 3-body features we could see that the quality of the rank predictions depends highly on our noise estimation.
 %We observed that the rank of the Jacobian matrix for 3-body features was overestimated for almost $\approx10\%$ of the carbon environments in the random methane dataset.
-%The reason for this rank overestimation is that the noise is not isotropical distributed over the different features seen in Fig.~\ref{fig:threshold-estimation}b).
+%The reason for this rank overestimation is that the noise is not isotropical distributed over the different features seen in Figure~\ref{fig:threshold-estimation}b).
 %% and secondly that the numerical noise estimation does follow a larger tail than $\mathcal{N}(0, \sigma^2)$.
-%To prevent these underestimations, we use the maximal noise over all features for the threshold computation as described in Fig.~\ref{fig:threshold-estimation}.
+%To prevent these underestimations, we use the maximal noise over all features for the threshold computation as described in Figure~\ref{fig:threshold-estimation}.
 %
 %\subsection{Example: Message-passing and connectivity}
 %A lot of development in the community has been targeted on message-passing models due to highly accurate predictions in the low data regime\cite{schutt2021equivariant,batzner20223}.
@@ -1227,7 +1228,7 @@ The feature space reconstruction error and distortion can be incorporated into a
 %  \langle n00| \rho_i^{\otimes([1\leftarrow1])^{m}} \rangle\textrm{, 2-body message-passing features as in Ref.~\cite{nigam2022unified}}.
 %    \label{eq:schnet-message-passing}
 %\end{equation}
-%We analysed the ranks of the Jacobians corresponding to carbon environments with the method presented in Section~\ref{sec:threshold-estimaton}.
+%We analyzed the ranks of the Jacobians corresponding to carbon environments with the method presented in Section~\ref{sec:threshold-estimaton}.
 %We consider environments with a cutoff of $6$\AA where all atoms are connected with each other, and $3$\AA where all hydrogen atoms are connected with the carbon atom, but not necessary with all other hydrogen atoms.
 %\begin{figure}
 %    \centering
@@ -1235,8 +1236,8 @@ The feature space reconstruction error and distortion can be incorporated into a
 %    \caption{Illustration of the atomic graph for one methane structure with a cutoff of $3$\AA.}
 %    \label{fig:atomic-graph}
 %\end{figure}
-%It can observed in Fig.~\ref{fig:threshold-estimation} that the rank does not increase after one interaction for any significant amount of the carbon environments.
-%The maximum rank correlates well with the total number of edges in the graph with respect to the cutoff seen in Fig.~\ref{fig:threshold-estimation}.
+%It can observed in Figure~\ref{fig:threshold-estimation} that the rank does not increase after one interaction for any significant amount of the carbon environments.
+%The maximum rank correlates well with the total number of edges in the graph with respect to the cutoff seen in Figure~\ref{fig:threshold-estimation}.
 %%This preliminary results suggests that message-passing has only negligible effect on the information capacity of the features after one interaction.
 %A simple explanation for this observation is that each edge can by reached two moves from the carbon environment.
 %The correlation of the number of edges with the rank can be explained by the fact that we only deal with a finite system of 5 atoms in total.
@@ -1278,17 +1279,17 @@ The feature space reconstruction error and distortion can be incorporated into a
 %In contrast, an identity map can be kept constant over the whole dataset and is thereby not affected by the penalization term.
 %This term is closely related to a stretching energy term in the optimization of elastic maps\cite{kass1988snakes}.
 %One can see for the toy example in Figure~\ref{fig:nonlinearm}c) mapping $x$ to $1$ that by increasing $\beta$ the mapping starts to break at the degenerate point at $x=0$.
-%In Figure~\ref{fig:nonlinearm}b) the $1$-features and $0.5\sin(x)$ are compared, both reconstructing the $x$-features by optimizing the loss function described in Eq.~\eqref{eq:nonlinearm}.
+%In Figure~\ref{fig:nonlinearm}b) the $1$-features and $0.5\sin(x)$ are compared, both reconstructing the $x$-features by optimizing the loss function described in Equation~\eqref{eq:nonlinearm}.
 %We can see that initially $1$ to $x$ produces a smaller errors, since its eigenvalue spectrum is more uniform than $0.5\sin(x)$, while the mapping $0.5\sin(x)$ to $x$ gives smaller error for large $\beta$ values, because the feature mapping $0.5\sin(x)$ to $x$ requires fewer changes of the weights over the dataset than $1$ to $x$ and is thus more stable.
 %Increasing $\beta$ even more results in the mapping constant over the whole dataset which recovers the global mapping.
 %\begin{figure}
 %    \centering
 %    \includegraphics[width=\textwidth]{fig/nonlinear-measure_toy-example.png}
-%    \caption{The regression error for the toy dataset $\{x\in [-1,1]\}$ for different features over the spectrum of a) ridge regularization and b) stretch regularization as described in Eq.~\eqref{eq:nonlinearm}. c) The error reconstructing the $1$-features from $x$-features for increasing $\beta$ (left) samplewise (right) and averaged over the whole dataset. It can be seen that the error starts to spread starting from the degeneracy at $x=0$.}
+%    \caption{The regression error for the toy dataset $\{x\in [-1,1]\}$ for different features over the spectrum of a) ridge regularization and b) stretch regularization as described in Equation~\eqref{eq:nonlinearm}. c) The error reconstructing the $1$-features from $x$-features for increasing $\beta$ (left) samplewise (right) and averaged over the whole dataset. It can be seen that the error starts to spread starting from the degeneracy at $x=0$.}
 %    \label{fig:nonlinearm}
 %\end{figure}
 %
-%While the loss in Eq.~\eqref{eq:nonlinearm} is not jointly convex over all $W_i$, it is convex in $W_i$ separately keeping all $W_j$ for $i\neq j$ fixed\cite{LI2015127}.
+%While the loss in Equation~\eqref{eq:nonlinearm} is not jointly convex over all $W_i$, it is convex in $W_i$ separately keeping all $W_j$ for $i\neq j$ fixed\cite{LI2015127}.
 %We can therefore solve it iteratively until convergence by optimizing in every iteration each weight matrix separately
 %\begin{align}
 %%&\frac{\partial \ell}{W_i} = 0 \\

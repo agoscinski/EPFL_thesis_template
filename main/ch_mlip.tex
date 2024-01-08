@@ -1,8 +1,8 @@
 \chapter{Implementation of short-range machine learning interatomic potentials}
 %\section{Modular design of MLIP}
 
-Interatomic potentials have been used since long time to approximate the potential energy surface in classical molecular dynamics (MD) simulation by decomposing the systems' total energy into body-order contributions.
-This is done by solving the classicals equations of motions of the system of interest
+Interatomic potentials have been used for a long time to approximate the potential energy surface in classical molecular dynamics (MD) simulation by decomposing the systems' total energy into body-order contributions.
+This is done by solving the classical equations of motion of the system of interest
 %In the picture of the Born-Oppenheimer approximation we can decouple the time propagation of the nuceil and electronic.the potential energy quantum mechanically
 \begin{subequations}
 \begin{align}
@@ -16,14 +16,14 @@ with an interatomic potential of the form
   V(\mathbf{q}) = \sum_{i = 1} V_1(\mathbf{r}_i) + \sum_{i,j = 1} V_2(\mathbf{r}_i, \mathbf{r}_j) + \sum_{i,j,k = 1} V_3(\mathbf{r}_i, \mathbf{r}_j, \mathbf{r}_k) + \ldots \quad\textrm{(interatomic potential)}.
 \end{gather}
 \end{subequations}
-Due to the limitation in the computational power, the development of accurate interatomic potentials historically relied on a meticulous hand-tuning of parametric models called \emph{empirical interatomic potential}.
-They were constrained by the chemical and phase space they could predict accurately~\cite{stillinger1985computer, tersoff1988empirical}.
-However, with the increased computational power available today, the shift towards data-driven models emerged allowing a more automatized construction for fitting models on data generated from empirical potentials~\cite{blank1995neural} or ab initio calculations~\cite{brown2003classical,lorenz2006descriptions,behl-parr07prl}.
-Remarkably, the current generation of machine learning interatomic potentials (MLIP) have reached the capability to extensively cover chemical~\cite{lopanitsyna2023modeling} and phase space~\cite{bartok2018machine} accurately.
+Due to limitation in computational power, the development of accurate interatomic potentials historically relied on a meticulous hand-tuning of parametric models called \emph{empirical interatomic potential}.
+They were constrained by the chemical and phase spaces they could predict accurately~\cite{stillinger1985computer, tersoff1988empirical}.
+However, with the increased computational power available today, the shift towards data-driven models emerged, allowing a more automated construction for fitting models on data generated from empirical potentials~\cite{blank1995neural} or ab initio calculations~\cite{brown2003classical,lorenz2006descriptions,behl-parr07prl}.
+Remarkably, the current generation of machine learning interatomic potentials (MLIPs) has reached the capability to extensively cover chemical~\cite{lopanitsyna2023modeling} and phase space~\cite{bartok2018machine} accurately.
 
-The abundance of ML packages available today~\cite{Haddad2023Artificial}, such as \texttt{scikit-learn}~\cite{pedregosa2011scikit}, \texttt{PyTorch}~\cite{NEURIPS2019_9015}, prompts the question of whether we need to develop a new ML package.
+The abundance of ML packages available today~\cite{Haddad2023Artificial}, such as \texttt{scikit-learn}~\cite{pedregosa2011scikit},\linebreak \texttt{PyTorch}~\cite{NEURIPS2019_9015}, prompts the question of whether we need to develop a new ML package.
 %the need for a new ML package for the development of MLIPs.
-Most of these packages, however, are focused on applications in generic data analysis and computer vision, and are therefore not suited to the specific needs of MLIPs, which include domain-specific featurization of 3D structures and gradient inference as the calculation of forces requires. % with respect to target properties.
+Most of these packages, however, are focused on applications in generic data analysis and computer vision and are therefore not suited to the specific needs of MLIPs, which include domain-specific featurization of 3D structures and gradient inference, as the calculation of forces requires. % with respect to target properties.
 To ensure that the code base remains manageable, strategic integration with existing software solutions is essential, wherever appropriate.
 %To keep development and maintenance efforts of the code base manageable it is necessary to integrate with existing software solutions where adequate.
 This requires not only a solid understanding of relevant mathematical methods but also proficiency in current software tools.
@@ -39,21 +39,21 @@ This combination of requirements poses a significant challenge in the developmen
 %which is not a requirement that is not much shared with other domains.
 %Secondly, the 
 %the ML models rely on a featurization of data which is domain-dependent and therefore requires the development custom software.
-%the creation of a model the shipping to an MD software.
+%the creation of a model the shipping to a MD software.
 %While featurization is domain-specific and needs custom implementations also the existing ML software ecosystem can often not to be reused for our domain as including gradients into the pictures completely changes the constraints on the required software.
 %The gradient computation shifts the bottleneck drastically and thus changes the existing algorithmic design.
 
-In this chapter, I discuss my contributions to the software ecosystem that facilitates the deployment of MLIPs into an MD software.
-These contributions include my work to the \texttt{librascal} package~\cite{LIBRASCAL}, instrumental for constructing MLIPs based on the SOAP featurization of atomic structures and the \texttt{scikit-matter}~\cite{goscinski2023scikit} package -- a toolkit for various data-driven preprocessing methods that facilitate the MLIP construction. % as feature and sample selection.
+In this chapter, I discuss my contributions to the software ecosystem that facilitates the deployment of MLIPs into a MD software.
+These contributions include my work on the \texttt{librascal} package~\cite{LIBRASCAL}, instrumental for constructing MLIPs based on the SOAP featurization of atomic structures and the \texttt{scikit-matter}~\cite{goscinski2023scikit} package -- a toolkit for various data-driven preprocessing methods that facilitate the MLIP construction. % as feature and sample selection.
 Additionally, I implemented an interface to \texttt{LAMMPS}~\cite{LAMMPS}, a state of the art classical MD code, enabling the studies on ferroelectric phase transitions in barium titanate, as detailed in Ref.~\cite{gigli2023modeling} and on the transport properties of lithium ortho-thiophosphate, as described in Ref.~\cite{gigli2023mechanism}.
-Finally, we briefly discuss how the package \texttt{metatensor}~\cite{metatensor} enable a more modular approach to build MLIPs.
+Finally, we briefly discuss how the package \texttt{metatensor}~\cite{metatensor} enables a more modular approach to build MLIPs.
 
 \section{Implementation of cubic splines for featurization}
 \label{sec:cubic_spline}
 %As part my work in the first year, I participated in the development of a library designed to allow efficient computation of atomic density based descriptors, named librascal.
 %The library is designed with most emphasize on efficiency with regard to code structure and computation methods of descriptors.
 %The code structure is focused on reducing runtime cost by allowing a contiguous iteration through atomic environments and by applying template based methods as curiously recurring template pattern (CRTP) to prevent runtime lookups of virtual functions with the tradeoff of higher compile time costs.
-One of main contributions to \texttt{librascal} has been the implementation of a cubic spline to interpolate the radial expansion coefficients as expressed in Eq.~\eqref{eq:radial_expansion}.
+One of main contributions to \texttt{librascal} has been the implementation of a cubic spline to interpolate the radial expansion coefficients as expressed in Equation~\eqref{eq:radial_expansion}.
 %iin the last year has been the development of efficient methods for the computation of the radial basis expansion for the SOAP descriptor.
 %In contrast to the approaches discussed in Section~\ref{sec:evaluation_of_radial_contribution}, for librascal Gaussian typed orbital (GTO) functions are used as radial basis functions 
 %\begin{subequations}
@@ -66,8 +66,8 @@ One of main contributions to \texttt{librascal} has been the implementation of a
 %Performance test done with the descriptor library Dscribe show a speed up of $10.07\pm 0.56$ times of the GTO basis over the polynomial one\cite{himanen2020dscribe}.
 %In librascal the GTO improve the expansion on the radial part is to separate the radial and angular part in the original atomic density function as proposed by Marco...
 %that allowed further works
-%the computation analytically the integral for the radial expansion in Eq.~\eqref{eq:radial_part_in_spherical_expansion}. 
-%However, due to the modified spherical Bessel function $i_l$ %in Eq.~\eqref{eq:radial_part_in_spherical_expansion}
+%the computation analytically the integral for the radial expansion in Equation~\eqref{eq:radial_part_in_spherical_expansion}. 
+%However, due to the modified spherical Bessel function $i_l$ %in Equation~\eqref{eq:radial_part_in_spherical_expansion}
 %an analytical expansion of radial term requires the evaluation of the computationally expensive confluent hypergeometric function $\hyponefone$ 
 %\begin{multline}
 %    \label{eq:radial_integral}
@@ -76,11 +76,11 @@ One of main contributions to \texttt{librascal} has been the implementation of a
 %    = N_n \pi^{\frac32}\frac{\Gamma(\frac{n+l+3}{2})}{\Gamma(l+\frac32)} \\
 %    (a+b)^{-\frac{n+l+3}{2}} (ar_{ij})^l \exp[-ar_{ij}^2] \hyponefone\big(\frac{n+l+3}{2},l+\frac32,\frac{a^2r_{ij}^2}{a+b}\big) = f^{nl}(r_{ij}).
 %\end{multline}
-%The contribution of this function to the overall cost of the radial expansion can be seen in Fig.~\ref{fig:hyp1f1_contribution} ranging from 55\% to 75\%  of the total time.F
+%The contribution of this function to the overall cost of the radial expansion can be seen in Figure~\ref{fig:hyp1f1_contribution} ranging from 55\% to 75\%  of the total time.F
 For each coefficient $nl$, the one-dimensional function $f^{nl}:[0,r_c]\rightarrow\mathbb{R}$ is splined.
-The function $f^{nl}$ maps the distance $r\in[0,r_c]$ to the neighbor contribution of the radial expansion coefficient as in Eq.~\eqref{eq:radial_expansion}.
+The function $f^{nl}$ maps the distance $r\in[0,r_c]$ to the neighbor contribution of the radial expansion coefficient as in Equation~\eqref{eq:radial_expansion}.
 For the construction of the cubic spline the targeted interval $[0,r_c]$ is further partitioned into a set of subintervals $[r_1, r_2], \ldots, [r_{K}, r_{K+1}]$ where $0 = r_1 < r_2 < \ldots < r_{K} < r_{K+1} = r_c$.
-Then cubic splines are order 3 polynomials $p_k(r) = A_k + B_kr + C_kr^2 + D_kr^3$ on the interval $[0,1]$ with the boundary conditions
+Then cubic splines are polynomials of degree 3 $p_k(r) = A_k + B_kr + C_kr^2 + D_kr^3$ on the interval $[0,1]$ with the boundary conditions
 %The radial expansion coefficients are evaluated for each of the distances $r_1 < r_2 < \ldots < r_{K+1}$ to set up a set of conditions
 %The end points of each subinterval are evaluated with the origin approximated by a cubic polynomial boundary conditions.
 %Let $\{r_k\}_{k=1}^{M+1}$ be the set of $M+1$ boundary points in the interval $[0,r_c]$, then cubic spline defines polynomials $p_k(r) = A_k + B_kr + C_kr^2 + D_kr^3$ on the interval $[0,1]$ with the boundary conditions
@@ -148,25 +148,24 @@ B_{K}
 \end{align}
 \end{subequations}
 This system can be solved in linear time with time complexity $O(2K)$ by iterating two times through the matrix following a Gaussian elimination scheme.
-%\begin{equation}
-%    
-%\end{equation}
+Note that the exact form of the polynomial $p_k$ can be chosen arbitrary and the same procedure can be used to solve for the $4K$ coefficients.
+For the implementation in \texttt{librascal}, we followed closely the implementation of Ref.~\cite{press2007numerical} that uses Lagrange polynomials of degree 3 in their derivation.
 %In the forward pass the lower off diagonal is eliminated to zero, in the backward path the upper path is eliminated to zero.
 %Commonly, for interpolators the grid size is adaptively changed until it is below an error bound given by the user as input.
 The grid points $\{r_k\}_{k=0}^{K+1}$ are incrementally adjusted until the function approximation error falls beneath a user-specified error threshold.
 The approximation error can be estimated by sampling points in the intervals $(r_k, r_{k+1})$ and computing the difference between the function $f^{nl}$ and the spline $p^{nl}$.
-During implementation, it has been found that conditioning on both, the relative and absolute error, yields the most robust results in terms of interpolation accuracy and convergence of the grid size.
-While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, for atomistic applications a uniform grid does not reach a memory intensive regime while having minimal impact on the prediction accuracy.
-We analyzed the effect of the splining accuracy on the prediction error for chemical shieldings of hydrogen environments (dataset can be found in Ref.~\cite{paruzzo2018chemical}).
-The results presented in Fig.~\ref{fig:chemical_shift-spline} show that the change in the prediction error is several magnitudes below the DFT accuracy, which is estimated to be in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.
-%as it can be seen in Fig.~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
+During the evaluation of the implementation, we found that conditioning on both the relative and absolute error yields the most robust results in terms of interpolation accuracy and convergence of the grid size.
+While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, for atomistic applications a uniform grid does not reach a memory-intensive regime while having a minimal impact on the prediction accuracy.
+We analyzed the effect of the splining accuracy on the prediction accuracy more rigorously on NMR chemical shieldings of hydrogen environments (the dataset can be found in Ref.~\cite{paruzzo2018chemical}).
+The results presented in Figure~\ref{fig:chemical_shift-spline} show that the change in the prediction error is several magnitudes below the DFT accuracy, which is estimated to be in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.
+%as it can be seen in Figure~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
 %A point $r$ can be evaluated by first determining the corresponding boundary point $r_k$ for which $r\in[r_k,r_{k+1}]$, and then mapping $[r_k,r_{k+1}]$ to the polynomial interval $[0,1]$ with $p_k((r-r_k)/(r_{k+1}-r_k))$.
 %For an arbitrary grid with $K+1$ points, the optimal complexity for searching the boundary point $r_k$ is $O(\log(M+1))$ with a binary searchc.
 %\begin{equation}
 %    k = \min(K,\lfloor (r-r_1)\Delta \rfloor+1), \quad \Delta = (K+1)/(r_{K+1}-r_1).
 %\end{equation}
-Compared to an adaptive grid the uniform grid reduces the asymptotic complexity of determining the subinterval for evaluation from a logarithmic $O(\log K)$ binary tree search to a constant $O(1)$ lookup.
-Moreover, as the grid is constructed for each $nl$ channel, the setup and the evaluation of the spline opens the possibility to parallelize the spline evaluation over all channels.
+Compared to an adaptive grid, the uniform grid reduces the asymptotic complexity of determining the subinterval for evaluation from a logarithmic $O(\log K)$ binary tree search to a constant $O(1)$ lookup.
+Moreover, as the grid is constructed for each $nl$ channel, the setup and the evaluation of the spline opens the possibility of parallelizing the spline evaluation over all channels.
 Viable forms of parallelization encompass multithreading, the use of single instruction multiple data (SIMD) instructions, or leveraging graphics processing unit (GPU) acceleration.
 %On the other hand for uniform grids the search time can be reduced to $O(1)$ by
 %A non-uniform grid can keep the size of the grid to a minimum by only adding boundary points corresponding to the intervals with the highest error.
@@ -184,7 +183,7 @@ Viable forms of parallelization encompass multithreading, the use of single inst
     \centering
     \includegraphics[width=0.7\textwidth]{fig/spline-accuracy-v2.pdf}
     \caption{The relationship of the spline accuracy to the difference of the prediction error compared to using no spline for a linear model using SOAP descriptors with $l_\textrm{max}=9$.
-      The chemical shieldings of hydrogen environments were used as target property~\cite{paruzzo2018chemical}.
+      NMR chemical shieldings of hydrogen environments were used as target property using the datasets and same train-test setup as in Ref.~\cite{paruzzo2018chemical}.
     The effect of the spline on the difference is several magnitudes below the DFT accuracy in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.}
     \label{fig:chemical_shift-spline}
 \end{figure}
@@ -218,12 +217,12 @@ Although their implementation may appear straightforward, developing a robust co
 Furthermore, well-established MD software packages, such as \texttt{GROMACS}~\cite{abraham2015gromacs} and \texttt{LAMMPS}~\cite{LAMMPS}, offer a variety of parallelization strategies that significantly improve the speed of interatomic potentials.
 These include a message-passing interface (MPI) for the domain decomposition, CUDA- and OpenMP-based multithreading as well as SIMD abstraction modules for hardware-adaptive compute kernels.
 The embedding of hardware dependent parallelization strategies, such as customized CUDA and compute kernels, necessitates adapting the interatomic pontential code to these specific kernel routines.
-In contrast, MPI-based domain decomposition only requires dividing the potential into contributions of atomic-environments within a cutoff, as outlined in Eq.~\eqref{eq:structural_separation}.
+In contrast, MPI-based domain decomposition only requires dividing the potential into contributions of atomic-environments within a cutoff, as outlined in Equation~\eqref{eq:structural_separation}.
 %The cutoff determines here the number of domains the
 %The short-ranged atomic contributions
 %For
 To provide the MPI parallelization to external developped short-range potentials MD codes further calculates the neighbor list on which the short-range potential must be computed.
-The neighbor list in MD engines is a list of atom centers and neighbors within a cutoff, similar as the atomic environment has been defined in Eq.~\eqref{eq:local_environment_contribution}.
+The neighbor list in MD engines is a list of atom centers and neighbors within a cutoff, similar as the atomic environment has been defined in Equation~\eqref{eq:local_environment_contribution}.
 For short-range potentials the force acting on atom $k$ can thus be evaluated by 
 \begin{equation}
   \label{eq:forces_interatomic_potential}
@@ -233,9 +232,9 @@ For short-range potentials the force acting on atom $k$ can thus be evaluated by
    ,\quad\textrm{where }\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else,} \end{cases}
 \end{equation}
 where $A$ represents a structure and $A_i$ the atomic environment around atom $i$.
-It is evident from Eq. that the forces acting on atom $k$ solely depend on the derivatives of its and its neighboring atomic environments.
+It is evident from Equation that the forces acting on atom $k$ solely depend on the derivatives of its and its neighboring atomic environments.
 %local energies within its neighborhood (TODO elaborate in one more sentence wh).
-%It is evident from Eq.~\ref{eq:forces_interatomic_potential} that the forces acting on atom $k$ solely depend on the derivative of the local energies within its neighborhood (TODO elaborate in one more sentence wh).
+%It is evident from Equation~\ref{eq:forces_interatomic_potential} that the forces acting on atom $k$ solely depend on the derivative of the local energies within its neighborhood (TODO elaborate in one more sentence wh).
 Consequently, these forces can be parallelized by dividing the cells into separate domains that only include a subset of all atoms and its local environments.
 Each domain can then be assigned to an independent hardware component allowing an embarrassingly parallel evaluation of the forces.
 Communication between the domains becomes only necessary if one wants to avoid a recomputations of the partial forces $\partial E_i/\partial\mathbf{r}_{ij}=-\partial E_i/\partial\mathbf{r}_{ji}$ where atom $i$ and atom $j$ belong to two different domains.
@@ -276,7 +275,7 @@ In the case of the study on barium titanate~\cite{gigli2023modeling}, the MPI pa
 \section{Implementation of kernel models with forces}
 %As invariant 3-body descriptors are easy to evaluate from the spherical expansion coefficients without requiring additional dependencies to compute the Clebsch-Gordan coefficients as higher-body orders need and as their the memory consumption hits a sweet spot for the current generation of hardware, they have been a popular descriptor in applications.
 %As their accuracy in combination with linear models is often not sufficient enough to produce accurate enough molecular dynamics simulations, one common approach has been to incorperate kernel models instead.
-In this section we discuss the implementation of positions gradients for kernel based MLIPs, the ones used in our recent stude on barium titanate~\cite{gigli2023modeling}.
+In this section we discuss the implementation of positions gradients for kernel based MLIPs, the ones used in our recent study on barium titanate~\cite{gigli2023modeling}.
 %specificalities that arise when extending kernel methods for position gradients as they appear in interatomic potentials.
 For a comprehensive introduction to kernel models please refer to Ref.~\cite{bishop2006pattern}. For a kernel $k$ fitted on the samples $\{\mathbf{c}_t\in\mathbb{R}^M\}_{t=1}^N$ and targets $\{y_t\in\mathbb{R}\}_{t=1}^N$ the optimal weights $\boldsymbol{\alpha}\in\mathbb{R}^N$ are retrieved as solution of the minimization problem
 \begin{subequations}
@@ -326,7 +325,7 @@ where we use the notation $A^{(t)}$ to index structure $t$.
 We include the gradients wrt. the atomic position $\mathbf{r}_k$ of atom $k$ into the picture.
 Note that the training points used to construct the kernel are independent from the points for which the gradients are evaluated.
 This is important so the gradient operator only acts on the target structure and not on the training structures.
-We get an expression for the negative forces by taking the derivative of the energy in Eq.~\eqref{eq:kernel_evaluatio_ID1} wrt. the position of atom $k$ in structure $A$
+We get an expression for the negative forces by taking the derivative of the energy in Equation~\eqref{eq:kernel_evaluatio_ID1} wrt. the position of atom $k$ in structure $A$
 \begin{equation}
   \label{eq:kernel_evaluation_gradients}
   \frac{\partial E}{\partial\mathbf{r}_k} = \sum_{t=1}^N \alpha_t \sum_{t_{i^\prime}\in A^{(t)}}\sum_{i\in A} \frac{\partial k(\mathbf{c}_{t_{i^\prime}}, \mathbf{c}_{i})}{\partial\mathbf{r}_k},\quad\mathbf{r}_k\in A
@@ -343,7 +342,7 @@ We get an expression for the negative forces by taking the derivative of the ene
 %    %&= \sum_{j\in A_i}\sum_n \alpha_n \frac{k_n(\mathbf{c}_i)}{\partial\mathbf{c}_i} \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_k} \frac{\partial c_i}{\partial\mathbf{r}_k}
 %\end{align}
 %\end{subequations}
-Similar as to the expression of the forces in Eq.~\eqref{eq:forces_interatomic_potential} we can evaluate the derivative of the kernel
+Similar as to the expression of the forces in Equation~\eqref{eq:forces_interatomic_potential} we can evaluate the derivative of the kernel
 \begin{equation}
 \label{eq:kernel_position_gradient}
   \frac{\partial k(\mathbf{c}_{t_{i^\prime}}, \mathbf{c}_{i})}{\partial\mathbf{r}_{k}} = 
@@ -482,7 +481,7 @@ where $\mathbf{F}$ are the stacked gradients and $\mathbf{K}_{N_{\partial}N}$ is
 %                        \|^2.
 %\end{multline}
 %We use $A^{(n)}$ to index structures as we use $A_n$ to index the atom within a structure.
-%Unlike in Eq.~\ref{eq:efficient_gradient_eval} the $\alpha_t$ has been extracted out to see more clearly that the loss function can be translated into the vectorial form
+%Unlike in Equation~\ref{eq:efficient_gradient_eval} the $\alpha_t$ has been extracted out to see more clearly that the loss function can be translated into the vectorial form
 %\begin{subequations}
 %  \begin{gather}
 %    \ell(\boldsymbol{\alpha}) = \|\mathbf{K}\boldsymbol{\alpha} - \mathbf{y}\|^2, \\
@@ -507,8 +506,8 @@ where $\mathbf{F}$ are the stacked gradients and $\mathbf{K}_{N_{\partial}N}$ is
 %  \end{gather}
 %\end{subequations}
 
-%Note that $\mathbf{K}$ is in this case not symmetric and therefore cannot be solved the usual way as shown in Eq.~\ref{eq:kernel_symmetry}.
-%One can still derive a solution from Eq.~\ref{eq:solving_kernel} as it is done for linear regression,
+%Note that $\mathbf{K}$ is in this case not symmetric and therefore cannot be solved the usual way as shown in Equation~\ref{eq:kernel_symmetry}.
+%One can still derive a solution from Equation~\ref{eq:solving_kernel} as it is done for linear regression,
 %\begin{equation}
 %  \boldsymbol{\alpha} = (\mathbf{K}^T\mathbf{K})^{-1}\mathbf{K}^T\mathbf{Y},
 %\end{equation}
@@ -516,10 +515,10 @@ By including the gradients in the loss function, the memory requirements for the
 %\cite{silverman1985some,williams2000using} nyström
 %
 A fruitful approach is therefore to perform a low-rank approximation of the kernel matrix by projecting the $N_{\partial}$ points onto a fixed number $T$ of representative points, defined as \emph{pseudo points}.
-For the well-established sparse \emph{Gaussian approximation potential} (GAP)~\cite{bartok2010gaussian} the \emph{subset of regressor} (SoR)~\cite{wahba1998bias,smola2000sparse,quinonero2005unifying} method is used.
+For the well-established sparse \emph{Gaussian approximation potential} (GAP)~\cite{bart+10prl} the \emph{subset of regressor} (SoR)~\cite{wahba1998bias,smola2000sparse,quinonero2005unifying} method is used.
 The SoR method derives the kernel weights from the low-rank approximation of a positive-definite kernel matrix.
 We can extend $\mathbf{K}_{N_{\partial}+N,N}$ to a positive-definite matrix by taking the kernel gradients as additional training basis functions into account, thereby deriving the following expression for the energy
-%embedding the gradient information as derived in Eq.~\eqref{eq:kernel_forces} to the training points used for the energy prediction in Eq.~\ref{eq:kernel_evaluatio_ID1} resulting in the expression
+%embedding the gradient information as derived in Equation~\eqref{eq:kernel_forces} to the training points used for the energy prediction in Equation~\ref{eq:kernel_evaluatio_ID1} resulting in the expression
 \begin{equation}
   \sum_{t=1}^N \alpha_t \sum_{i\in A} \sum_{t_{i^\prime}\in A^{\prime(t)}} k(\mathbf{c}_{t_{i^\prime}}, \mathbf{c}_{i}) + \sum_{t=1}^{N}\sum_{k\in A^{\prime(t)}}\beta_{tk} \sum_{t_{i^\prime}\in A^{\prime(t)}}\sum_{i\in A} \frac{\partial k(\mathbf{c}_{t_{i^\prime}}, \mathbf{c}_{i})}{\partial\mathbf{r}_k} = E.
 \end{equation}
@@ -589,7 +588,7 @@ Furthermore, the complexity of the evaluation for a new structure $A$ decreases 
 In sparse GAP only individual environmental features are chosen as pseudo points neglecting any gradients. % without their gradient contribution are chosen as pseudo points. 
 It has not been studied yet how much the absence of gradients in the pseudo points affects the learning performance~\cite{ceriotti2020machine}.
 %However, as these additional gradient training points are typically removed by the low-rank approximation for simplification of the kernel expression, we omitted them in the derivation.
-%Other approaches further embedd the gradient training points as the expression in Eq.~\ref{TODO} indicates into the kernel matrix and retrieve a squarte matrix~\cite{...}.
+%Other approaches further embedd the gradient training points as the expression in Equation~\ref{TODO} indicates into the kernel matrix and retrieve a squarte matrix~\cite{...}.
 %An established way has been to only use environments as pseudo points and to dismiss gradient contributions in them.
 The evaluation costs are however dramatically reduced, since the kernel gradients are more expensive to evaluate. %entries corresponding to gradients as pseudo points
 %One advantage is that this skips an expensive evaluation of kernel entries using gradients as training points.
@@ -656,11 +655,11 @@ From the fact that we only use environments as pseudo points we obtain a simplif
 %The low-rank approximation contributes greatly in the reduction of the computation of these kernel entries as it projects the structural features on single $M$ environmental features resulting in a linear scaling of on kernel entry.
 %Since the number of atoms in structures is a substantial quantity and the fact that structures typically contain redundant environments, the rank can be reduced quite significantly making this approach indispensable.
 \subsection{Efficient inference of forces}
-Starting from the expression in Eq.~\eqref{eq:force_eval_pseudo_points} we can rearrange the order of the sums to make the calculation more efficient
-%It was advantegeous in Eq.~\ref{eq:kernel_forces} to extract the $\alpha$ out of the sum to obtain a vectorial form
+Starting from the expression in Equation~\eqref{eq:force_eval_pseudo_points} we can rearrange the order of the sums to make the calculation more efficient
+%It was advantegeous in Equation~\ref{eq:kernel_forces} to extract the $\alpha$ out of the sum to obtain a vectorial form
 %If we consider the sum over the dimensions of the features $\mathbf{c}_i$, it becomes more efficient if we move the sum over the pseudo points further forward.
 %For deployment another expression is much more efficient
-%Starting from the expression in Eq.~\eqref{eq:force_eval_pseudo_points}
+%Starting from the expression in Equation~\eqref{eq:force_eval_pseudo_points}
 %From the fact that we use only environments as pseudo points we obtain
 \begin{subequations}
   \label{eq:efficient_kernel_evaluation}
@@ -677,7 +676,7 @@ Starting from the expression in Eq.~\eqref{eq:force_eval_pseudo_points} we can r
      %&= \frac{\partial\mathbf{c}_i}{\partial\mathbf{r}_{ji}} \sum_{t=1}^N \alpha_t \frac{\partial k_t(\mathbf{c}_i)}{\partial\mathbf{c}_i}. \label{eq:efficient_gradient_eval}\\
 \end{align}
 \end{subequations}
-In fact moving the sum over $t$ forward and extracting the feature gradient out of the sum reduces the complexity from $O(MT)$ to $O(M+T)$ of the term underlined in Eq.~\eqref{eq:efficient_kernel_evaluation}.
+In fact moving the sum over $t$ forward and extracting the feature gradient out of the sum reduces the complexity from $O(MT)$ to $O(M+T)$ of the term underlined in Equation~\eqref{eq:efficient_kernel_evaluation}.
 
 % maybe mention that it is less efficient
 
@@ -721,9 +720,9 @@ The free energy surface of a given phase transition can then be retrieved from t
 \end{gather}
 \end{subequations}
 In practice the exact derivation of the free energy surface requires an iterative reweighting from the trajectories as the bias term is increased during the dynamics to further drive the phase transition.
-To take advantage of the MPI parallelization implemented in \texttt{LAMMPS} we conceptualized a framework that distributes the computations needed for a metadynamic simulation as schematically shown in Fig.~\ref{fig:ipi-librascal-plumed}.
+To take advantage of the MPI parallelization implemented in \texttt{LAMMPS} we conceptualized a framework that distributes the computations needed for a metadynamic simulation as schematically shown in Figure~\ref{fig:ipi-librascal-plumed}.
 The potential energy $V(\mathbf{q})$ is computed with \texttt{librascal} utilizing \texttt{LAMMPS} for the domain decomposition of the neighborlist, the bias potential is computed with the software package \texttt{PLUMED} and the dynamics associated with the extended potential $\tilde{V}(\mathbf{q})$ is run with the package \texttt{i-PI}.
-For the study on barium titanate the collective variable is based on the spherical expansion coefficients, as motivated in Ref.~\cite{gigli2022thermodynamics}.
+For the study on barium titanate the collective variable is based on the spherical expansion coefficients, as motivated in Ref.~\cite{gigli_thermodynamics_2022}.
 Thus further required an interface between \texttt{librascal} and \texttt{PLUMED}.
 
 \begin{figure}
@@ -748,13 +747,13 @@ Thus further required an interface between \texttt{librascal} and \texttt{PLUMED
     \label{fig:size-scaling-delta-mu}
 \end{figure}
 
-In previous work~\cite{gigli_thermodynamics_2022} a transition between the cubic and tetragonal phases was observed in unbiased MD simulations of $4\times4\times4$ supercells.  These transitions occur in unbiased MD because the cell is relatively small.  When a larger supercell is employed spontaneous transitions become exceedingly rare and the system remains stuck in the energetic minimum that corresponds to the cubic or tetragonal phase for the duration of the simulation.  For these larger systems a simulation bias is thus required to drive transitions between the two phases.  Fig.~\ref{fig:1D-free-energy} shows that metadynamics simulations using the order parameter based on the Ti-centered spherical expansion coeffients in the notation as in Eq.~\eqref{eq:chemical_decomposition}
+In previous work~\cite{gigli_thermodynamics_2022} a transition between the cubic and tetragonal phases was observed in unbiased MD simulations of $4\times4\times4$ supercells.  These transitions occur in unbiased MD because the cell is relatively small.  When a larger supercell is employed spontaneous transitions become exceedingly rare and the system remains stuck in the energetic minimum that corresponds to the cubic or tetragonal phase for the duration of the simulation.  For these larger systems a simulation bias is thus required to drive transitions between the two phases. Figure~\ref{fig:1D-free-energy} shows that metadynamics simulations using the order parameter based on the Ti-centered spherical expansion coeffients in the notation as in Equation~\eqref{eq:chemical_decomposition}
 \begin{equation}
   P = \sqrt{(\sum_{i\in A} c_{O11-1}^i)^2 + (\sum_{i\in A} c_{O110}^i)^2 + (\sum_{i\in A} c_{O11+1}^i)^2}, 
 \end{equation}
-can be used to drive  transitions for $10\times10\times10$ supercells. This figure shows the free energy surfaces (FES) that emerge from these metadynamics simulations. These free energy surfaces were obtained by reweighting using the iterative trajectory reweighting (ITRE) method \cite{giberti_iterative_2020}.  Block averaging was used to estimate the errors on the estimates of the free energy shown in figure \ref{fig:1D-free-energy}. 
+can be used to drive  transitions for $10\times10\times10$ supercells. This figure shows the free energy surfaces (FES) that emerge from these metadynamics simulations. These free energy surfaces were obtained by reweighting using the iterative trajectory reweighting (ITRE) method \cite{giberti_iterative_2020}.  Block averaging was used to estimate the errors on the estimates of the free energy shown in Figure~\ref{fig:1D-free-energy}. 
 
-Fig.~\ref{fig:1D-free-energy} clearly shows that there is a minimum for high CV values when the temperature is low and the system is in the tetragonal phase and ferroelectric. This minimum is replaced by a minimum at a low value of the CV when the temperature is high and the system is in the cubic phase and paraelectric.  At intermediate temperatures two minima are observed as one phase is metastable.
+Figure~\ref{fig:1D-free-energy} clearly shows that there is a minimum for high CV values when the temperature is low and the system is in the tetragonal phase and ferroelectric. This minimum is replaced by a minimum at a low value of the CV when the temperature is high and the system is in the cubic phase and paraelectric.  At intermediate temperatures two minima are observed as one phase is metastable.
 
 To extract the difference in chemical potential between the tetragonal and cubic phases we performed clustering using the probabilistic analysis of molecular motifs algorithm (PAMM) \cite{gasp+18jctc}. This clustering technique assigns two probabilities $\theta_1(s_i)$ and $\theta_2(s_i)$ to each CV value $s_i$.  $\theta_1(s_i)$ is the likelihood that the corresponding frame is from the cubic basin, while  $\theta_2(s_i)$ measures the likelihood that it is from is tetragonal basin. The chemical potential difference per formula unit between the two phases can thus be estimated as:
 $$
@@ -769,7 +768,7 @@ where the sum runs over all the trajectory frames, $L^3$ is the number of unit c
     \label{fig:size-scaling-temp}
 \end{figure}
 
-Fig.~\ref{fig:size-scaling-delta-mu} shows how $\Delta\mu_{\textrm{C-T}}$ changes with temperature for a range of differently-sized supercells.  This quantity is initially positive for all cell sizes indicating that the tetragonal phase is more stable than the cubic one at low temperatures.  It becomes negative at high temperatures when the relative stabilities of the two phases reverses.  The Curie point can be determined from figure  \ref{fig:size-scaling-delta-mu} by finding the temperature at which $\Delta\mu_{\textrm{C-T}}$ is zero.  In figure \ref{fig:size-scaling-delta-mu} these temperatures are indicated by the vertical dashed lines.  Errors on these estimates of the Curie temperature are also indicated. To determine these errors we divided each trajectory into four blocks and obtain four separate estimates for each $\Delta\mu_{\textrm{C-T}}$ value.  Variances were computed from these four estimates so the shaded areas in figure \ref{fig:size-scaling-delta-mu} indicate the (1-$\sigma$) confidence limits.  The Curie temperature for each system size was extracted by drawing a line of best fit through the estimates of    $\Delta\mu_{\textrm{C-T}}$.  Propagated errors from this fitting then yield an estimate of the error on the transition temperature.
+Figure~\ref{fig:size-scaling-delta-mu} shows how $\Delta\mu_{\textrm{C-T}}$ changes with temperature for a range of differently-sized supercells.  This quantity is initially positive for all cell sizes indicating that the tetragonal phase is more stable than the cubic one at low temperatures.  It becomes negative at high temperatures when the relative stabilities of the two phases reverses.  The Curie point can be determined from Figure~\ref{fig:size-scaling-delta-mu} by finding the temperature at which $\Delta\mu_{\textrm{C-T}}$ is zero.  In Figure~\ref{fig:size-scaling-delta-mu} these temperatures are indicated by the vertical dashed lines.  Errors on these estimates of the Curie temperature are also indicated. To determine these errors we divided each trajectory into four blocks and obtain four separate estimates for each $\Delta\mu_{\textrm{C-T}}$ value.  Variances were computed from these four estimates so the shaded areas in Figure~\ref{fig:size-scaling-delta-mu} indicate the (1-$\sigma$) confidence limits.  The Curie temperature for each system size was extracted by drawing a line of best fit through the estimates of    $\Delta\mu_{\textrm{C-T}}$.  Propagated errors from this fitting then yield an estimate of the error on the transition temperature.
 
 Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature increases with system size.  Furthermore, these differences in transition temperature are for the most part statistically significant.  Figure \ref{fig:size-scaling-temp} indicates the size dependence for the transition temperature more clearly.  In this figure the transition temperature is shown as a function of the inverse box size.  It is only the $14\times14\times14$ system that has a transition temperature that is compatible with the smaller  $12\times12\times12$ system.  For all other system sizes the transition temperature is  underestimated. The observation of significant finite-size effects here contradicts the analysis provided in Ref. \cite{gigli_thermodynamics_2022} that relied on extrapolating the dielectric constant in the high-temperature regime with a Curie-Weiss law. Interestingly, this indirect approach underestimates the finite size effects. If the aim is to extract accurate thermodynamics simulating large system sizes is thus essential.
 
@@ -814,7 +813,7 @@ Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature 
 %that is later normalized out in the calculation of the free energy.
 %While the forces of the MLIP were computed with \texttt{LAMMPS} and the forces of the bias potential were computed with \texttt{PLUMED}\cite{PLUMED}.
 %To consolidate both forces for the metadynamics the software-package \texttt{i-PI} was used, that implemented a custom protocol to each of these MD packages to allow communicatiof the forces to a python interface.
-%A schematic of the interwork between the software packages can be seen in Fig.~\ref{fig:ipi-librascal-plumed}.
+%A schematic of the interwork between the software packages can be seen in Figure~\ref{fig:ipi-librascal-plumed}.
 %\begin{figure}
 %    \includegraphics[width=\textwidth]{fig/ipi-librascal-plumed.pdf}
 %    \caption{A schematic showing the interwork of the software pieces to run metadynamic simulations to study interfacial effects of barium titanate.}
@@ -824,11 +823,11 @@ Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature 
 %As CV for the metadynamics $l=1$ components of the spherical expansion coefficients computed with \texttt{librascal} were used.
 %My implementation of the cubic spline helped to speed up the computation of the bias term.
 %Since only the expansion coefficients centered for the oxygen neighbors centered on the titanate was sufficient for the CV, I further implemented an option to selectively computate the partial gradients for certain species.
-%Note that a selectional computation of partial gradients also needs to consider dependencies of the gradient on the central energies of its neighbors as pointed out in Eq.~\eqref{eq:forces_interatomic_potential}.
+%Note that a selectional computation of partial gradients also needs to consider dependencies of the gradient on the central energies of its neighbors as pointed out in Equation~\eqref{eq:forces_interatomic_potential}.
 %implementation of was implemented by me to speed up the metadynamics simulation
 %work are adjustments to the
 %In the subsequent sections we will discuss the technica
-%My contributions to this work was firstly, to participate in the development of the MLIP package \texttt{librascal} that was used to conduct DFT simulations at higher levels-of-theory to analyse its effect on the temperature.
+%My contributions to this work was firstly, to participate in the development of the MLIP package \texttt{librascal} that was used to conduct DFT simulations at higher levels-of-theory to analyze its effect on the temperature.
 %Specifically, the implementation of selective computations of the partial gradients for certain species was implemented by me to speed up the metadynamics simulation.
 %Secondly, the implementation of an interface to the MD software \texttt{LAMMPS} that allowed to study the finite size effects on the Curie temperature.
 
@@ -865,7 +864,7 @@ Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature 
 %\emph{and} from $\partial E_j/\mathbf{r}_{kj}$ where $j$ is in the neighborhood of atom $k$ ($j\in A_k$). 
 %additional pr to be done to allow contiguous iteration during the computation of the gradients.
 
-%Note that one can simplify the gradients for further usage by summing neighbour and central contributions
+%Note that one can simplify the gradients for further usage by summing neighbor and central contributions
 %\begin{subequations}
 %\begin{align}
 %  \mathbf{F}_{kj} = -\frac{\partial E_k}{\mathbf{r}_{jk}} + \frac{\partial E_j}{\mathbf{r}_{kj}} \\
@@ -928,22 +927,22 @@ Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature 
 %\subsection{MLIP interface}
 
 \section{Future work}
-The development on \texttt{librascal} has revealed several disadvantages in the design that required to rethink the general approach of creating an ecosystem for the construction of MLIP.
-This redesign can be attributed to the lack of modularity and serialization of models that are discussed in the following in more detail. 
+The development of \texttt{librascal} has revealed several disadvantages in the design that require to rethink the general approach of creating an ecosystem for the construction of MLIP.
+This redesign can be attributed to the lack of modularity and serialization of models that are discussed in the following. 
 
 \subsection{Modularity of featurization and model construction}
 A crucial disadvantage in the design of \texttt{librascal} was the entanglement of the featurization and the model construction inside one library.
-This entanglement is required to efficiently compute the forces as indicated in Eq.~\eqref{eq:efficient_kernel_evaluation}, since it does not allow a separate computation of the weights and kernel derivatives.
+This entanglement is required to efficiently compute the forces as indicated in Equation~\eqref{eq:efficient_kernel_evaluation}, since it does not allow a separate computation of the weights and kernel derivatives.
 % that is required for utilizing packages as \texttt{scikit-learn} for the model computation.
-To implement Eq.~\eqref{eq:efficient_kernel_evaluation} it requires a common data format for the features and model to operate.
+To implement Equation~\eqref{eq:efficient_kernel_evaluation} it requires a common data format for the features and model to operate.
 %Tth the specific mean of ecah
-This requires to include the indices of each dimension of the features and its gradients into a well-defined data format, such as the atomic species, local environment and structures.
-%the model ne, requires an understanding of the decomposition of the target property into local contributions Eq.~\eqref{eq:structural_separation} as well as an understanding of the relationship between features and gradients.
+This requires bundling the indices of each dimension for the features and its gradients, such as the atomic species, local environment, and structures, into an abstract data type.
+%the model ne, requires an understanding of the decomposition of the target property into local contributions Equation~\eqref{eq:structural_separation} as well as an understanding of the relationship between features and gradients.
 That problem is tackled by the development of a new software package \texttt{metatensor}.
 The package offers a data structure that acts as a container of the feature and its gradients by storing the labels the individual dimensions.
 This allows \texttt{numpy}-like data manipulation that takes structural characteristics of the data into account.
-With that kind of data structure the model and featurization can be separated into two different packages, since the relevant structural information of the features and gradients is kept in the data output.
-That effort is currently in progress with the development of \texttt{rascaline} and \texttt{torch\_spex}, packages for the featurization of atomic structures returning them as \texttt{metatensor} data containers, and \texttt{metatensor-learn} a subpackage for the model construction from \texttt{metatensor} data containers.
+With that kind of data structure, the model and featurization can be separated into two different packages since the relevant structural information of the features and gradients is kept in the data output.
+That effort is currently in progress with the development of \texttt{rascaline} and \texttt{torch\_spex}, packages for the featurization of atomic structures, returning them as \texttt{metatensor} data containers, and \texttt{metatensor-learn} a subpackage for the model construction from \texttt{metatensor} data containers.
 %he feature and their attribution to these structural characteristics as well to its gradients
 
 
@@ -966,9 +965,9 @@ Consequently, the choice of a suitable model depends on the system of interest, 
 %The current software infrastructure of ML models for MD software causes a lot of friction when the model type is changed, as 
 In the last decade, the rapid development of machine learning models has produced numerous interfaces for MD engines such as \texttt{LAMMPS}~\cite{lammpsmliap,lammpsmlpace,lammpsmlpod,lammpsmlquip,lammpsmlhdnnp}.
 The current software infrastructure, however, causes considerable friction between the ML package and the MD code when switching the model.
-In fact not only the MD software requires a recompilation for a different interface and an installation of  a new package but also a whole new workflow for training and deployment needs to be often created.
-In addition, the model development frequently takes place in higher-level languages like \texttt{Python} or \texttt{Julia}, owing to their flexibility.
-The choice of the programming language for model development narrows down its deployment to MD packages that provide compatible interfaces for that exact language, otherwise the they require an implementation of the model in one of the supported languages that the MD engine provides.
+In fact, not only does the MD software require a recompilation for a different interface and the installation of new package but also a whole new workflow for training and deployment needs to be often created.
+In addition, model development frequently takes place in higher-level languages like \texttt{Python} or \texttt{Julia}, owing to their flexibility.
+The choice of the programming language for model development narrows down its deployment to MD packages that provide compatible interfaces for that exact language; otherwise, they require an implementation of the model in one of the supported languages that the MD engine provides.
 This requires an additional implementation of a process that saves the model to a file that can be loaded back from the low-level language interface.
 The process of exporting a data structure to file is named \emph{serialization}.
 This additional development work hinders the application of numerous developed ML models in MD packages written low-level programming languages, which are essential for researching large systems or conducting long-term simulations.
@@ -979,15 +978,15 @@ This diversity complicates the consistent deployment of the same package version
 To address this, an open intermediate representation for ML models, known as \emph{open neural network exchange} (ONNX), has been developed ~\cite{bai2019}.
 However, ONNX is currently not a suitable candidate to serialize MLIPs, since it does not support the inference of gradients.
 
-The \emph{open knowledgebase of interatomic models} (OpenKIM) ~\cite{karls2020openkim} attempts to solve this issue by developing abstract representations of data and processing directives necessary for molecular simulations.
-It unifies several MD packages to one common molecular dynamics to interatomic potential interface, named the KIM API~\cite{elliott2011kim}.
+The \emph{open knowledgebase of interatomic models} (OpenKIM)~\cite{karls2020openkim} attempts to solve this issue by developing abstract representations of data and processing directives necessary for molecular simulations.
+It unifies several MD packages pair potential interfaces into one common interatomic potential interface, named the KIM API~\cite{elliott2011kim}.
 Although this approach reduces the number of required interfaces, it doesn't comprehensively cover all relevant MD packages.
 Notably, packages like \texttt{GROMACS} and \texttt{CP2K}~\cite{kuhne2020cp2k} are absent.
 Most MD packages supported by the KIM API are implemented in higher-level languages, which in the first place do not present a hurdle for MLIP developers to interface with.
 However, this solution does not allow a full development of MLIPs in a high-level language, as it still necessitates the creation of an interface with the KIM API using a low-level language such as C, C++, or Fortran.
 
-It is due to the shortcoming of the existing solutions that we pursue a software ecosystem that leverages TorchScript as serialization format.
-TorchScript not only supports the inference of gradients but allows a model utilization in C++, overcoming the high-level to low-level language barrier.
+It is due to the shortcomings of the existing solutions that we pursue a software ecosystem that leverages TorchScript as a serialization format.
+The utilization of TorchScript not only supports the inference of gradients but also allows model utilization in C++, overcoming the high-level to low-level language barrier.
 Additionally, it offers advanced model optimization utilities, such as kernel fusioning, to enhance complex models' efficiency.
 Considering these capabilities, TorchScript appears to be a promising candidate to standardize the landscape of MLIPs.
 
@@ -1011,7 +1010,7 @@ Considering these capabilities, TorchScript appears to be a promising candidate 
 %The current software infrastructure of ML models for MD software causes a lot of friction when changing the model type as the MD software needs to be recompiled for a different interface. % and a new workflow pipeline has to be constructed.
 %Even more crucial is the fact that the model development is often conducted in higher-level languages like \texttt{Python} or \texttt{Julia} due to their flexibility.
 %This however restricts the deployment of the model to MD packages that offer a potential interface in the same language as the model supports.
-%%implementation of a serialization for the model plus interface for an MD package.
+%%implementation of a serialization for the model plus interface for a MD package.
 %This restricts the deployment of numerous developed ML models in low-level MD packages which are often required to conduct research on large systems or for long time-scales.
 %%For nearly five years following its initial publication, the widely-used SchNet model\cite{schu+18jcp} lacked an interface with a low-level MD package.
 %%This however restricts the usage of the model also to higher-level when no serialization exists. 
@@ -1078,11 +1077,11 @@ Considering these capabilities, TorchScript appears to be a promising candidate 
 %
 %%work are adjustments to the
 %%In the subsequent sections we will discuss the technica
-%%My contributions to this work was firstly, to participate in the development of the MLIP package \texttt{librascal} that was used to conduct DFT simulations at higher levels-of-theory to analyse its effect on the temperature.
+%%My contributions to this work was firstly, to participate in the development of the MLIP package \texttt{librascal} that was used to conduct DFT simulations at higher levels-of-theory to analyze its effect on the temperature.
 %%Specifically, the implementation of selective computations of the partial gradients for certain species was implemented by me to speed up the metadynamics simulation.
 %%Secondly, the implementation of an interface to the MD software \texttt{LAMMPS} that allowed to study the finite size effects on the Curie temperature.
 %
 %To conduct metadynamics a bias term based on the spherical expansion coefficients was computed \texttt{PLUMED} using \texttt{librascal}
 %%The interface was implemented by Gareth Tribello.
 %To consolidate the forces computed with \texttt{LAMMPS} and the bias term computed with \texttt{PLUMED} to run metadynamics the software-package \texttt{i-PI} was used, that implemented a custom protocol to each of these packages to allow communication betwe.
-%A schematic of the interwork between the software packages can be seen in Fig.~\ref{fig:ipi-librascal-plumed}.
+%A schematic of the interwork between the software packages can be seen in Figure~\ref{fig:ipi-librascal-plumed}.

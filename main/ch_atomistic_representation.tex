@@ -28,7 +28,7 @@ We will refer to the whole process of transforming a structure $A$ to a represen
 %\end{equation}
 A widely-used family of representation spaces is based on higher orders of atom-density-based functions.
 This family of representation spaces is introduced and it is shown how invariances can be efficiently embedded into the computation of the expansion coefficients.
-%Prior knowledge about physical properties and distributions of atomic structures is therefore used to bias the functional form and basis functions to produce more effective coefficients~\cite{behler2011atom,drautz2019atomic}.
+%Prior knowledge about physical properties and distributions of atomic structures is therefore used to bias the functional form and basis functions to produce more effective coefficients~\cite{behl11jcp,drautz2019atomic}.
 %Some of the bias are presented here.
 %\emph{atom-centered density correlation} (ACDC) function representing the atomic structure as correlation between local atomic densities is introduced and its connection to widely established descriptors is shown.
 Additionally, general characteristics of basis functions deployed in atomic-scale models are presented as well as different practices to transform the expansion coefficients into inputs for data-driven models.
@@ -37,7 +37,7 @@ Additionally, general characteristics of basis functions deployed in atomic-scal
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{fig/atomistic_repr_schematic.pdf}
-  \caption{A schematic showing the featurization of an atomic structure $A$ based on the atom-centered density correlation functions. The figure of the atoms in the box are retrieved from Ref.~\cite{noh2019inverse}. The figure of the atomic environments is retrieved from Ref.~\cite{will+19jcp}. The methanol molecule is retrieved from Ref.~\cite{wiki:Alcohol_(chemistry)}.}
+  \caption{A schematic showing the featurization of an atomic structure $A$ based on the atom-centered density correlations functions. The figure of the atoms in the box are retrieved from Ref.~\cite{noh2019inverse}. The figure of the atomic environments is retrieved from Ref.~\cite{will+19jcp}. The methanol molecule is retrieved from Ref.~\cite{wiki:Alcohol_(chemistry)}.}
   \label{fig:acdc-scheme}
 \end{figure}
 
@@ -123,7 +123,7 @@ which can be further extended to higher-order correlations of the density
 \label{eq:integration_over_subgroup_higher_order}
 \overline{\rho_i^{\otimes\nu}}(\mathbf{r}^{(1)},\ldots, \mathbf{r}^{(\nu)}) = \int_{SO(3)}\mathrm{d}\hat{R}\, \rho_i(\hat{R}\mathbf{r}^{(1)})\ldots\rho_i(\hat{R}\mathbf{r}^{(\nu)})\quad\textrm{(ACDC of order $\nu$)}.
 \end{equation}
-This class of representations has been named \emph{atom-centered density correlation} (ACDC) functions~\cite{nigam2022unified}.
+This class of representations has been named \emph{atom-centered density correlations} (ACDC) functions~\cite{nigam2022unified}.
 Although it is theoretically possible to evaluate this integral numerically, it does not offer an efficient means to determine the expansion coefficients.
 Hence, it is essential to choose suitable candidates for the density $\rho$ and the basis set $\{b_k\}_{k=1}^M$ that yield an efficient solution for the integral.
 %Note that post-symmetrization methods have recently been developed that also allow an efficient evaluation of the integral by averaging over all possible reference frames within a order $\nu$ tuple~\cite{pozdnyakov2023smooth}, these are however not in the scope of the thesis.
@@ -149,7 +149,7 @@ Here we present the solutions for order 1 and 2
 where we use $\mathbf{r}$ and $\mathbf{r}^\prime$ as shorter notation to refer to $\mathbf{r}^{(1)}$ and $\mathbf{r}^{(2)}$.
 %that should make clear how it generalizes to higher orders.
 We use $\propto_r$ to omit constant factors and radial terms $r$ that appear due to the integration over the rotation group.
-These factors are not essential, since typically a radial scaling term is added to the density to control the general scaling~\cite{behler2011atom,huan-vonl16jcp,will+18pccp,drautz2019atomic}.
+These factors are not essential, since typically a radial scaling term is added to the density to control the general scaling~\cite{behl11jcp,huan-vonl16jcp,will+18pccp,drautz2019atomic}.
 The correlation function of order 1 naturally results in a description of the distance to atom $i$ and the order 2 function in the two distances and an angle with respect to atom $i$.
 This can be generalized to higher orders retrieving a decomposition into different body-order contributions as it is done for interatomic potentials.
 This expansion makes the close relationship clear between ACDC-based descriptors to interatomic potentials that decompose the energy into different body-order contributions.
@@ -189,8 +189,8 @@ It is not clear how the Wasserstein metric applied to higher orders of the ACDC 
 %In addition to this problem, there is also no unique mapping from a distance metric to a similarity measure.
 %For example, from the $W_2$ metric we the normalized sorted distance vectors can be formulated $\mathbf{s}\cdot \mathbf{s}^\prime$ and $\exp(\|\mathbf{s}-\mathbf{s}^\prime\|^2)$ valid similarity measure, as defined in Ref.~\cite{app11041910}. 
 An approach that extends this idea to higher orders utilizes sorted angles or sorted torsions as description~\cite{huang2016communication}.
-These can be seen one-dimensional projections of the higher-order ACDC functions and do not consider the whole correlation space.
-It has been shown that descriptors in this category can reach comparable accuracies to other methods~\cite{barker2016localized,huang2016communication} with energy accuracies close to 1 kcal/mol on the QM9 and QM7b dataset. % as well as an efficient removal of the discontinuouties introduced by the sorting as well as 
+These can be seen as one-dimensional projections of the higher-order ACDC functions and do not consider the whole coherent space of correlations.
+It has been shown that descriptors in this category can reach comparable accuracies to the common methods that can be induced from the Euclidean metric~\cite{barker2016localized,huang2016communication} with energy accuracies close to 1 kcal/mol on the QM9 and QM7b dataset. % as well as an efficient removal of the discontinuouties introduced by the sorting as well as 
 These descriptions nevertheless have undesired characteristics with regard to differentiability and extensibility.
 The sorted quantities have discontinuities with respect to changes in the atomic positions that emerge when two distances are swapped due to the sorting, which is problematic for predictions of derivatives.
 These discontinuities can however be mitigated by smoothening the descriptor within a similarity or distance measure.
@@ -266,7 +266,7 @@ Considering the order 1 solution in Eq.~\eqref{eq:dirac_delta_haar_integral_2bod
 \end{equation}
 we can retrieve the 2-body distances used for sorted distance by using a basis set of the form $\{\delta(r-r_{ji}):\mathbb{R}\rightarrow\mathbb{R}\}_{j\in A_i}$ with a subsequent sorting.
 From this point of view the cause of the discontinuities exihibited by the descriptors in the last section can be attributed to the variation of the basis function across atomic environments.
-A natural solution is therefore the usage of the same basis set across all environments in all structures~\cite{behler2011atom,bartok2013representing,drautz2019atomic}.
+A natural solution is therefore the usage of the same basis set across all environments in all structures~\cite{behl11jcp,bartok2013representing,drautz2019atomic}.
 By expanding on the ACDC function using the Dirac $\delta$ function for the densities with the basis functions $\{b^\nu_k\}_k$ of different orders one obtains coefficients of the form
 \begin{subequations}
 \label{eq:dirac_delta_expansion_coeffs}
@@ -284,7 +284,7 @@ In the next section we discuss how this approach is extended for Gaussian densit
 
 \subsection{Radial and angular decomposition}
 %to obtain a continuous description~\cite{behlerparinello}.
-%As example two types of basis functions the atom-centered symmetry functions (ACSFs)~\cite{behler2011atom}
+%As example two types of basis functions the atom-centered symmetry functions (ACSFs)~\cite{behl11jcp}
 %The main characteristics of the these functions can be seen in the following examples
 %
 %\begin{subequations}
@@ -669,7 +669,7 @@ Both approaches can be extended to include species information from the central 
 %\end{comment}
 %\begin{comment}
 %For the radial contribution different solutions have been proposed.
-%In the first work 4D hyperspherical harmonics were used $D_{mm'}^l$~\cite{bartok2010gaussian},
+%In the first work 4D hyperspherical harmonics were used $D_{mm'}^l$~\cite{bart+10prl},
 %\begin{equation}
 %    \langle lmm' | \mathcal{X}\rangle = \int_{\mathbb{R}^3} D^l_{mm'}(\hat{\mathbf{r}},\frac{\pi r}{r_c}) \langle\mathbf{r}|\mathcal{X}\rangle\,\mathrm{d}\mathbf{r} 
 %\end{equation}

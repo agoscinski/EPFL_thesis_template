@@ -6,63 +6,39 @@
 \chapter*{Abstract}
 \markboth{Abstract}{Abstract}
 \addcontentsline{toc}{chapter}{Abstract (English)} % adds an entry to the table of contents
-In high-throughput material design, large databases of materials are searched
-for candidates with desirable characteristics. So far, searches based on
-experimental data have been limited in scope, due to the vast combinatorial
-space of materials, the heterogeneous quality of available data, and the
-difficulty in separating the intrinsic properties of a material from those that
-are contingent on the processing or the synthesis conditions. A viable
-alternative is to calculate material properties using computer simulations,
-that make it possible to exploit advances in parallel computing to construct
-databases with millions of entries, and to obtain results that are internally
-consistent. The quantitative accuracy of these predictions, however, is
-dependent on the quality of the reference electronic structure calculations,
-increasing the computational effort and reducing the breadth of the searches.
-Data-driven approaches have been applied to reduce the cost of accurate
-computational studies, by using only a small number of reference calculations
-for a representative subset of materials space, and using them to train
-surrogate models that predict inexpensively the outcome of such calculation on
-new materials. The way materials structures are processed into a numerical
-description as input of machine learning algorithms is crucial to obtain
-efficient and computationally inexpensive models.  Recent advancements in the
-design of information-efficient representations based on atomic densities have embedded novel types of
-information, such as neighborhood environments or pair descriptions.
-
+%In high-throughput material design, large databases of materials are searched
+%for candidates with desirable characteristics. So far, searches based on
+%experimental data have been limited in scope, due to the vast combinatorial
+%space of materials, the heterogeneous quality of available data, and the
+%difficulty in separating the intrinsic properties of a material from those that
+%are contingent on the processing or the synthesis conditions. A viable
+%alternative is to calculate material properties using computer simulations,
+%that make it possible to exploit advances in parallel computing to construct
+%databases with millions of entries, and to obtain results that are internally
+%consistent. The quantitative accuracy of these predictions, however, is
+%dependent on the quality of the reference electronic structure calculations,
+%increasing the computational effort and reducing the breadth of the searches.
+Data-driven approaches have been applied to reduce the cost of accurate computational studies on materials, by using only a small number of expensive reference electronic structure calculations for a representative subset of the materials space, and using them to train surrogate models that predict inexpensively the outcome of such calculations on an extensive space spanned by the subset.
+The way materials structures are processed into a numerical description as input of machine learning algorithms is crucial to obtain efficient and computationally inexpensive models.
+%Recent advancements in the design of information-efficient representations based on atomic densities have embedded novel types of information, such as neighborhood environments or pair descriptions.
 %
-Despite the rapid development in offloading calculations to more dedicated hardware,
-these enhancements nevertheless substantially increase the cost of the
-representation that remains a crucial factor in simulations.  It is therefore
-vital to delve deeper into the design space of representations to understand
-the type of information they encapsulate.  Insights from such analyses aid in
-making more informed decisions regarding the trade-off between accuracy and
-performance.
-While a substantial amount of work has been undertaken to compare
-representations concerning their structure-property relationship, a thorough
-exploration into understanding the inherent nature of the information capacity
-of these representations remains mostly uncharted.
-This thesis introduces a
-set of measures that facilitate quantitative analysis concerning the
-relationship between features and datasets, thereby assisting in such
-decision-making processes and providing valuable insights to the academic community.
-We demonstrate how these set of measures can be applied to analyse 
-representations that are built in terms of body-order correlations of the atomic densities.
-For this form of featurization we investigate the impact of different choices for the functional form, the basis functions and the induced feature space determined by the similarity measure and metric space.
-
-Additionally, a considerable amount of effort has been dedicated to
-optimize the basis set involved featurization of the  representation, typically driven by
-heuristic considerations on the behavior of the regression target.  This thesis
-showcases a scheme that utilizes splines to approximate the basis expansion
-coefficients, paving the way for expansive optimization methods to create more
-effective basis functions at no additional cost during simulation time.  This
-is pivotal in simulations targeting materials encompassing a high variety of
-chemical species or relying on qualitative collective variables.
-
-Lastly, complementing these efforts is the integration of the developed methods into well-maintained and thoroughly documented packages.
-This integration facilitates an enhancement of the existing methods and the incorporation of the methods into new workflows.
-Specifically, this thesis introduces an implemented framework for metadynamics simulation with machine learing interatomic potentials in composition with message-passing interface of \texttt{LAMMPS}
-It also explores the results obtained using this framework, particularly focusing on the finite-size effecs of the Curie point in barium titanate.
-Additionally, the thesis outlines potential future developments in creating a modular machine learning ecosystem for atomistic simulations.
-
+Despite the rapid development of offloading calculations to more dedicated hardware, these enhancements nevertheless substantially increase the cost of the numerical description, which remains a crucial factor in simulations.
+It is therefore vital to delve deeper into the design space of representations to understand the type of information the numerical descriptions encapsulate.
+Insights from such analyzes aid in making more informed decisions regarding the trade-off between accuracy and performance.
+While a substantial amount of work has been undertaken to compare representations concerning their structure-property relationship, a thorough exploration into understanding the inherent nature of the information capacity of these representations remains mostly unexplored.
+This thesis introduces a set of measures that facilitate quantitative analysis concerning the relationship between features, thereby assisting in such decision-making processes and providing valuable insights to the academic community.
+We demonstrate how these measures can be applied to analyze representations that are built in terms of body-order correlations of atomic densities.
+For this form of featurization, we investigate the impact of different choices for the functional form, the basis functions, and the induced feature space determined by the similarity measure and metric space.
+%involved in the featurization of the representation 
+We employ these measures subsequently on featurizations with basis functions optimized to the dataset to show its higher information capacity in comparison to the an unoptimized one. 
+We show how these well-established optimization methods based on the covariance or correlation matrix, such as principal component analysis, can be applied in a manner that preserves symmetries.
+The scheme utilizes splines to bypass the optimization at no additional cost during prediction time, permitting the adoption of more expansive optimization methods in the future.
+%This is pivotal in simulations targeting materials encompassing a high variety of chemical species or relying on qualitative collective variables.
+Complementing these efforts is the integration of the developed methods into well-maintained and thoroughly documented packages, facilitating advancements and incorporation into new workflows. %by algorithmic advancements or incorporation into new workflows.
+As a showcase of this development, we present a framework for running metadynamics simulations that incorporates a machine learning interatomic potential into the molecular dynamics engine \texttt{LAMMPS} to exploit its message-passing interface implementation of the domain decomposition.
+This enabled us to study finite-size effects in the paraelectric-ferroelectric phase transition in barium titanate.
+%for the energy and forces prediction to analyze finite-size effects on barium titanate.
+%Additionally, the thesis outlines potential future developments in creating a modular machine learning ecosystem for atomistic simulations.
 
 %Such schemes can not only be of benificial for machine learning potential but also in metadynamic simulation as.
 
@@ -94,27 +70,36 @@ Additionally, the thesis outlines potential future developments in creating a mo
 %- assessing the impact on the accuracy of the model, and investigating the physical meaning of the different metrics.
 
 
-%% German abstract
+% German abstract
 %\begin{otherlanguage}{german}
-%\cleardoublepage
-%\chapter*{Zusammenfassung}
-%\markboth{Zusammenfassung}{Zusammenfassung}
-%% put your text here
-%TODO 
+\cleardoublepage
+\chapter*{Zusammenfassung}
+\markboth{Zusammenfassung}{Zusammenfassung}
+% put your text here
+TODO wait for Michele feedback 
 %\end{otherlanguage}
 %
 %
 %
 %
-%% French abstract
+% French abstract
 %\begin{otherlanguage}{french}
-%\cleardoublepage
-%\chapter*{Résumé}
-%\markboth{Résumé}{Résumé}
-%% put your text here
-%TODO 
+\cleardoublepage
+\chapter*{Résumé}
+\markboth{Résumé}{Résumé}
+% put your text here
+TODO wait for Michele feedback, and only if I have time
 %\end{otherlanguage}
 
+\newpage
+\section*{List of Publications directly related to this thesis}
+\begin{itemize}
+  \item Félix Musil, Max Veit, Alexander Goscinski, Guillaume Fraux, Michael J Willatt, Markus Stricker, Till Junge, and Michele Ceriotti. Efficient implementation of atom-density representations. The Journal of Chemical Physics, 154(11), 2021.
+  \item Alexander Goscinski, Guillaume Fraux, Giulio Imbalzano, and Michele Ceriotti. The role of feature space in atomistic learning. Machine Learning: Science and Technology, 2(2):025028, 2021.
+  \item Alexander Goscinski, Félix Musil, Sergey Pozdnyakov, Jigyasa Nigam, and Michele Ceriotti. Optimal radial basis for density-based atomic representations. The Journal of Chemical Physics, 155(10), 2021.
+  \item Alexander Goscinski, Victor Paul Principe, Guillaume Fraux, Sergei Kliavinek, Benjamin Aaron Helfrecht, Philip Loche, Michele Ceriotti, and Rose Kathleen Cersonsky. scikit-matter: A suite of generalisable machine learning methods born out of chemistry and materials science. Open Research Europe, 3:81, 2023.
+  \item Lorenzo Gigli, Alexander Goscinski, Michele Ceriotti, and Gareth A. Tribello. Modeling The ferroelectric phase transition in barium titanate with DFT accuracy and converged sampling.
+\end{itemize}
 
 %\endgroup			
 %\vfill
