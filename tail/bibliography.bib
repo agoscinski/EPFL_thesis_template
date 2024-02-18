@@ -301,16 +301,6 @@
   journal={arXiv preprint arXiv:1801.10130},
   year={2018}
 }
-@article{bartok2013representing,
-  title={On representing chemical environments},
-  author={Bart{\'o}k, Albert P and Kondor, Risi and Cs{\'a}nyi, G{\'a}bor},
-  journal={Physical Review B},
-  volume={87},
-  number={18},
-  pages={184115},
-  year={2013},
-  publisher={APS}
-}
 @article{bart+10prl,
   title={Gaussian approximation potentials: The accuracy of quantum mechanics, without the electrons},
   author={Bart{\'o}k, Albert P and Payne, Mike C and Kondor, Risi and Cs{\'a}nyi, G{\'a}bor},
@@ -20101,15 +20091,6 @@ DOI = {10.2312/SPBG/SPBG07/081-090}
   year={2023},
   publisher={Nature Publishing Group UK London}
 }
-@article{nigam2020recursive,
-  title={Recursive evaluation and iterative contraction of N-body equivariant features},
-  author={Nigam, Jigyasa and Pozdnyakov, Sergey and Ceriotti, Michele},
-  journal={The Journal of Chemical Physics},
-  volume={153},
-  number={12},
-  year={2020},
-  publisher={AIP Publishing}
-}
 @article{yan2019fourier,
   title={Fourier-space diffractive deep neural network},
   author={Yan, Tao and Wu, Jiamin and Zhou, Tiankuang and Xie, Hao and Xu, Feng and Fan, Jingtao and Fang, Lu and Lin, Xing and Dai, Qionghai},
@@ -20352,7 +20333,6 @@ author = {Lucjan Piela}
 @article{gigli2023modeling,
   title={Modeling the ferroelectric phase transition in barium titanate with {DFT} accuracy and converged sampling}, 
   author={Lorenzo Gigli and Alexander Goscinski and Michele Ceriotti and Gareth A. Tribello},
-  %author={Gigli, Lorenzo and Goscinski, Alexander and Ceriotti, Michele and Tribello, Gareth A},
   journal={arXiv preprint arXiv:2310.12579},
   year={2023},
   eprint={2310.12579},
@@ -20664,6 +20644,14 @@ author = {Lucjan Piela}
       year={2020},
       url = {http://arxiv.org/abs/2008.08461},
       journal = {ArXiv Prepr. ArXiv200808461}
+}
+
+@inproceedings{ande+19nips,
+  title = {Cormorant: {{Covariant Molecular Neural Networks}}},
+  booktitle = {{{NeurIPS}}},
+  author = {Anderson, Brandon and Hy, Truong Son and Kondor, Risi},
+  year = {2019},
+  pages = {10}
 }
 
 @article{cers+21mlst,
@@ -21051,6 +21039,90 @@ url="https://doi.org/10.1007/978-3-319-69308-8_3"
   year={2007},
   publisher={Cambridge university press}
 }
+
+@article{chang_simulations_2023,
+  title = {Simulations in the era of exascale computing},
+  volume = {8},
+  issn = {2058-8437},
+  url = {https://www.nature.com/articles/s41578-023-00540-6},
+  doi = {10.1038/s41578-023-00540-6},
+  language = {en},
+  number = {5},
+  urldate = {2024-01-15},
+  journal = {Nature Reviews Materials},
+  author = {Chang, Choongseok and Deringer, Volker L. and Katti, Kalpana S. and Van Speybroeck, Veronique and Wolverton, Christopher M.},
+  month = mar,
+  year = {2023},
+  pages = {309--313},
+  file = {Full Text:/home/alexgo/snap/zotero-snap/common/Zotero/storage/LK42NG8X/Chang et al. - 2023 - Simulations in the era of exascale computing.pdf:application/pdf},
+}
+
+@Article{         harris2020array,
+ title         = {Array programming with {NumPy}},
+ author        = {Charles R. Harris and K. Jarrod Millman and St{\'{e}}fan J.
+                 van der Walt and Ralf Gommers and Pauli Virtanen and David
+                 Cournapeau and Eric Wieser and Julian Taylor and Sebastian
+                 Berg and Nathaniel J. Smith and Robert Kern and Matti Picus
+                 and Stephan Hoyer and Marten H. van Kerkwijk and Matthew
+                 Brett and Allan Haldane and Jaime Fern{\'{a}}ndez del
+                 R{\'{i}}o and Mark Wiebe and Pearu Peterson and Pierre
+                 G{\'{e}}rard-Marchant and Kevin Sheppard and Tyler Reddy and
+                 Warren Weckesser and Hameer Abbasi and Christoph Gohlke and
+                 Travis E. Oliphant},
+ year          = {2020},
+ month         = sep,
+ journal       = {Nature},
+ volume        = {585},
+ number        = {7825},
+ pages         = {357--362},
+ doi           = {10.1038/s41586-020-2649-2},
+ publisher     = {Springer Science and Business Media {LLC}},
+ url           = {https://doi.org/10.1038/s41586-020-2649-2}
+}
+
+@misc{array-api,
+  title = {{{Python array API standard}}},
+  author = {Array API standard developers},
+  year = {2024},
+  url = {\url{https://data-apis.org/array-api/}}
+}
+
+@article{hoyer2017xarray,
+  title     = {xarray: {N-D} labeled arrays and datasets in {Python}},
+  author    = {Hoyer, S. and J. Hamman},
+  journal   = {Journal of Open Research Software},
+  volume    = {5},
+  number    = {1},
+  year      = {2017},
+  publisher = {Ubiquity Press},
+  doi       = {10.5334/jors.148},
+  url       = {https://doi.org/10.5334/jors.148}
+}
+
+@inproceedings{sklearn_api,
+  author    = {Lars Buitinck and Gilles Louppe and Mathieu Blondel and
+               Fabian Pedregosa and Andreas Mueller and Olivier Grisel and
+               Vlad Niculae and Peter Prettenhofer and Alexandre Gramfort
+               and Jaques Grobler and Robert Layton and Jake VanderPlas and
+               Arnaud Joly and Brian Holt and Ga{\"{e}}l Varoquaux},
+  title     = {{API} design for machine learning software: experiences from the scikit-learn
+               project},
+  booktitle = {ECML PKDD Workshop: Languages for Data Mining and Machine Learning},
+  year      = {2013},
+  pages = {108--122},
+}
+@article{scikit-learn,
+ title={Scikit-learn: Machine Learning in {P}ython},
+ author={Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V.
+         and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P.
+         and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
+         Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
+ journal={Journal of Machine Learning Research},
+ volume={12},
+ pages={2825--2830},
+ year={2011}
+}
+
 
 
 % from mc-bib

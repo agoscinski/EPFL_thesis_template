@@ -18,25 +18,27 @@
 %consistent. The quantitative accuracy of these predictions, however, is
 %dependent on the quality of the reference electronic structure calculations,
 %increasing the computational effort and reducing the breadth of the searches.
-Data-driven approaches have been applied to reduce the cost of accurate computational studies on materials, by using only a small number of expensive reference electronic structure calculations for a representative subset of the materials space, and using them to train surrogate models that predict inexpensively the outcome of such calculations on an extensive space spanned by the subset.
-The way materials structures are processed into a numerical description as input of machine learning algorithms is crucial to obtain efficient and computationally inexpensive models.
+Data-driven approaches have been applied to reduce the cost of accurate computational studies on materials, by using only a small number of expensive reference electronic structure calculations for a representative subset of the materials space, and using them to train surrogate models that predict inexpensively the outcome of such calculations on an extensive space of configurations spanned by the subset.
+The way materials structures are processed into a numerical description as input of machine learning algorithms is crucial to obtain efficient models, and has advanced significantly in the last decade, putting forth enhancements in the embedding of geometrical and chemical information. %optimization of the basis functions and the embedding of higher order information. 
+% in form of tensor products or contracted sums over the neighborhood.
 %Recent advancements in the design of information-efficient representations based on atomic densities have embedded novel types of information, such as neighborhood environments or pair descriptions.
 %
 Despite the rapid development of offloading calculations to more dedicated hardware, these enhancements nevertheless substantially increase the cost of the numerical description, which remains a crucial factor in simulations.
 It is therefore vital to delve deeper into the design space of representations to understand the type of information the numerical descriptions encapsulate.
 Insights from such analyzes aid in making more informed decisions regarding the trade-off between accuracy and performance.
-While a substantial amount of work has been undertaken to compare representations concerning their structure-property relationship, a thorough exploration into understanding the inherent nature of the information capacity of these representations remains mostly unexplored.
+While a substantial amount of work has been undertaken to compare representations concerning their structure-property relationship, a thorough exploration of the inherent nature and the information capacity of these representations remains mostly unexplored.
 This thesis introduces a set of measures that facilitate quantitative analysis concerning the relationship between features, thereby assisting in such decision-making processes and providing valuable insights to the academic community.
-We demonstrate how these measures can be applied to analyze representations that are built in terms of body-order correlations of atomic densities.
+We demonstrate how these measures can be applied to analyze representations that are built in terms of many-body correlations of atomic densities.
 For this form of featurization, we investigate the impact of different choices for the functional form, the basis functions, and the induced feature space determined by the similarity measure and metric space.
 %involved in the featurization of the representation 
-We employ these measures subsequently on featurizations with basis functions optimized to the dataset to show its higher information capacity in comparison to the an unoptimized one. 
+We employ these measures subsequently on featurizations with basis functions optimized to the dataset to show the higher information capacity in comparison to an unoptimized. 
 We show how these well-established optimization methods based on the covariance or correlation matrix, such as principal component analysis, can be applied in a manner that preserves symmetries.
-The scheme utilizes splines to bypass the optimization at no additional cost during prediction time, permitting the adoption of more expansive optimization methods in the future.
+The scheme utilizes splines to bypass the optimization during prediction time, permitting the adoption of more expansive optimization methods in the future.
 %This is pivotal in simulations targeting materials encompassing a high variety of chemical species or relying on qualitative collective variables.
 Complementing these efforts is the integration of the developed methods into well-maintained and thoroughly documented packages, facilitating advancements and incorporation into new workflows. %by algorithmic advancements or incorporation into new workflows.
 As a showcase of this development, we present a framework for running metadynamics simulations that incorporates a machine learning interatomic potential into the molecular dynamics engine \texttt{LAMMPS} to exploit its message-passing interface implementation of the domain decomposition.
 This enabled us to study finite-size effects in the paraelectric-ferroelectric phase transition in barium titanate.
+Born out of this software development, a way forward is presented for a more modular software ecosystem for the flexible construction of data-driven interatomic potentials with immediate deployment into simulations.
 %for the energy and forces prediction to analyze finite-size effects on barium titanate.
 %Additionally, the thesis outlines potential future developments in creating a modular machine learning ecosystem for atomistic simulations.
 
@@ -75,8 +77,12 @@ This enabled us to study finite-size effects in the paraelectric-ferroelectric p
 \cleardoublepage
 \chapter*{Zusammenfassung}
 \markboth{Zusammenfassung}{Zusammenfassung}
+\addcontentsline{toc}{chapter}{Abstract (German)} % adds an entry to the table of contents
 % put your text here
-TODO wait for Michele feedback 
+Datengesteuerte Ansätze wurden eingesetzt, um die Kosten für genaue rechnerische Untersuchungen von Werkstoffen zu senken, indem nur eine kleine Anzahl von teuren Referenzberechnungen der elektronischen Struktur für eine repräsentative Teilmenge des Materialraums verwendet wird und mit ihnen Surrogatmodelle trainiert werden, die kostengünstig das Ergebnis solcher Berechnungen für einen umfangreichen Raum von Konfigurationen vorhersagen, der durch die Teilmenge abgedeckt wird.  Die Art und Weise, wie Materialstrukturen in eine numerische Deskription als Input für Algorithmen des maschinellen Lernens verarbeitet werden, ist entscheidend um effiziente Modelle zu kreieren und hat sich in den letzten zehn Jahren erheblich weiterentwickelt, die durch Verbesserungen bei der Einbettung geometrischer und chemischer Informationen erzielt wurden.  Trotz der rasanten Entwicklung bei der Auslagerung von Berechnungen auf speziellere Hardware erhöhen diese Verbesserungen jedoch die Kosten der numerischen Deskription erheblich, was nach wie vor ein entscheidender Faktor bei Simulationen ist.  Daher ist es von entscheidender Bedeutung, den Design Space von Darstellungen tiefer zu durchdringen, um zu verstehen, welche Art von Informationen die numerischen Deskriptionen einschließen.  Die Erkenntnisse aus solchen Analysen helfen dabei, fundiertere Entscheidungen über den Kompromiss zwischen Genauigkeit und Leistung zu treffen.  Während eine beträchtliche Menge an Arbeit geleistet wurde, um Repräsentationen hinsichtlich ihrer Struktur-Eigenschafts-Beziehung zu vergleichen, bleibt eine gründliche Erforschung der inhärenten Natur und der Informationskapazität dieser Repräsentationen weitgehend unerforscht. 
+In dieser Arbeit wird eine Reihe von Maßen vorgestellt, die eine quantitative Analyse der Beziehungen zwischen den Merkmalen erleichtern und so bei solchen Entscheidungsprozessen helfen und der akademischen Gemeinschaft wertvolle Erkenntnisse liefern.  Wir demonstrieren, wie diese Maße zur Analyse von Repräsentationen eingesetzt werden können, die auf Vielkörper-Korrelationen der atomaren Dichte beruhen.  Für diese Form der Featurisierung untersuchen wir die Auswirkungen verschiedener Entscheidungen für die funktionale Form, die Basisfunktionen und den induzierten Feature Space, der durch das Ähnlichkeitsmaß und den metrischen Raum bestimmt wird.  Wir wenden diese Maße anschließend auf Featurisierungen mit auf den Datensatz optimierten Basisfunktionen an, um die höhere Informationskapazität im Vergleich zu einer nicht optimierten zu zeigen.  Wir zeigen, wie diese gut etablierten Optimierungsmethoden, die auf der Kovarianz- oder Korrelationsmatrix basieren, wie z. B. die Hauptkomponentenanalyse, auf eine Weise angewendet werden können, die Symmetrien bewahrt.
+Das Schema nutzt Splines, um die Optimierung während der Vorhersagezeit zu umgehen, sodass in Zukunft auch umfangreichere Optimierungsmethoden eingesetzt werden können.  Ergänzt werden diese Bemühungen durch die Integration der entwickelten Methoden in gut gewartete und sorgfältig dokumentierte Pakete, die die Weiterentwicklungen und die Einbindung in neue Arbeitsabläufe erleichtern.  Als Beispiel für diese Entwicklung stellen wir ein Framework für die Durchführung von Metadynamiksimulationen vor, der ein interatomares Potential für maschinelles Lernen in die Molekulardynamik-Engine \texttt{LAMMPS} integriert, um deren Message Passing Interface Implementierung der Domänenzerlegung zu nutzen.  Dies ermöglichte uns die Untersuchung von Finite-Size-Effekten beim paraelektrischen-ferroelektrischen Phasenübergang in Bariumtitanat.
+Aus dieser Softwareentwicklung hervorgehend wird ein Weg zu einem modulareren Software-Ökosystem für die flexible Konstruktion datengesteuerter interatomarer Potentiale mit sofortigem Einsatz in Simulationen vorgestellt.
 %\end{otherlanguage}
 %
 %
@@ -84,21 +90,22 @@ TODO wait for Michele feedback
 %
 % French abstract
 %\begin{otherlanguage}{french}
-\cleardoublepage
-\chapter*{Résumé}
-\markboth{Résumé}{Résumé}
-% put your text here
-TODO wait for Michele feedback, and only if I have time
+%\cleardoublepage
+%\chapter*{Résumé}
+%\markboth{Résumé}{Résumé}
+%% put your text here
+%TODO wait for Michele feedback, and only if I have time
 %\end{otherlanguage}
 
 \newpage
 \section*{List of Publications directly related to this thesis}
 \begin{itemize}
-  \item Félix Musil, Max Veit, Alexander Goscinski, Guillaume Fraux, Michael J Willatt, Markus Stricker, Till Junge, and Michele Ceriotti. Efficient implementation of atom-density representations. The Journal of Chemical Physics, 154(11), 2021.
-  \item Alexander Goscinski, Guillaume Fraux, Giulio Imbalzano, and Michele Ceriotti. The role of feature space in atomistic learning. Machine Learning: Science and Technology, 2(2):025028, 2021.
-  \item Alexander Goscinski, Félix Musil, Sergey Pozdnyakov, Jigyasa Nigam, and Michele Ceriotti. Optimal radial basis for density-based atomic representations. The Journal of Chemical Physics, 155(10), 2021.
-  \item Alexander Goscinski, Victor Paul Principe, Guillaume Fraux, Sergei Kliavinek, Benjamin Aaron Helfrecht, Philip Loche, Michele Ceriotti, and Rose Kathleen Cersonsky. scikit-matter: A suite of generalisable machine learning methods born out of chemistry and materials science. Open Research Europe, 3:81, 2023.
-  \item Lorenzo Gigli, Alexander Goscinski, Michele Ceriotti, and Gareth A. Tribello. Modeling The ferroelectric phase transition in barium titanate with DFT accuracy and converged sampling.
+\item Félix Musil, Max Veit, Alexander Goscinski, Guillaume Fraux, Michael J Willatt, Markus Stricker, Till Junge, and Michele Ceriotti. Efficient implementation of atom-density representations. \textit{The Journal of Chemical Physics}, 154(11), 2021.
+\item Alexander Goscinski, Guillaume Fraux, Giulio Imbalzano, and Michele Ceriotti. The role of feature space in atomistic learning. \textit{Machine Learning: Science and Technology, 2(2):025028}, 2021.
+  \item Alexander Goscinski, Félix Musil, Sergey Pozdnyakov, Jigyasa Nigam, and Michele Ceriotti. Optimal radial basis for density-based atomic representations. \textit{The Journal of Chemical Physics}, 155(10), 2021.
+  \item Alexander Goscinski, Victor Paul Principe, Guillaume Fraux, Sergei Kliavinek, Benjamin Aaron Helfrecht, Philip Loche, Michele Ceriotti, and Rose Kathleen Cersonsky. scikit-matter: A suite of generalisable machine learning methods born out of chemistry and materials science. \textit{Open Research Europe}, 3:81, 2023.
+  \item Lorenzo Gigli, Alexander Goscinski, Michele Ceriotti, and Gareth A. Tribello. Modeling The ferroelectric phase transition in barium titanate with DFT accuracy and converged sampling. \textit{arXiv preprint arXiv:2310.12579}, 2023.
+
 \end{itemize}
 
 %\endgroup			

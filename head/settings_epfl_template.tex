@@ -54,8 +54,8 @@
 \setlength{\headheight}{14mm}
 % CHANGED PARAMETERS
 %\setlength{\topmargin}{-32.2mm} % = 0mm -1in + 23.2mm
-\setlength{\topmargin}{-22.2mm} % = 0mm -1in + 23.2mm
-\setlength{\textheight}{251.9mm} % = 297mm -29.5mm -31.6mm - 14mm (12 to accomodate footline with pagenumber)
+\setlength{\topmargin}{-17.2mm} % = 0mm -1in + 23.2mm
+\setlength{\textheight}{246.9mm} % = 297mm -29.5mm -31.6mm - 14mm (12 to accomodate footline with pagenumber)
 %\setlength{\headheight}{34mm} % title height from text
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -146,15 +146,15 @@
  	{0pt} % separation between label and chapter-title
  	  {\begin{tikzpicture}[remember picture,overlay]
     % CHANGED PARAMETERS
-    \node[yshift=-5cm] at (current page.north west)
+    \node[yshift=-5.5cm] at (current page.north west)
     % ORIGINAL PARAMETERS
     %\node[yshift=-8cm] at (current page.north west)
       {\begin{tikzpicture}[remember picture, overlay]
         \draw[fill=black] (0,0) rectangle(35.5mm,15mm);
         % CHANGED PARAMETERS
-        \node[anchor=north east,yshift=-4.2cm,xshift=34mm,minimum height=30mm,inner sep=0mm] at (current page.north west)
+        \node[anchor=north east,yshift=-4.7cm,xshift=34mm,minimum height=30mm,inner sep=0mm] at (current page.north west)
         {\parbox[top][30mm][t]{15mm}{\raggedleft \rule{0cm}{0.6cm}\color{white}\chapterlabel}};  %the empty rule is just to get better base-line alignment
-        \node[anchor=north west,yshift=-4.2cm,xshift=37mm,text width=\textwidth,minimum height=30mm,inner sep=0mm] at (current page.north west)
+        \node[anchor=north west,yshift=-4.7cm,xshift=37mm,text width=\textwidth,minimum height=30mm,inner sep=0mm] at (current page.north west)
               {\parbox[top][30mm][t]{\textwidth}{\rule{0cm}{0.6cm}\color{black}#1}};
         % ORIGINAL PARAMETERS
         %\node[anchor=north east,yshift=-7.2cm,xshift=34mm,minimum height=30mm,inner sep=0mm] at (current page.north west)

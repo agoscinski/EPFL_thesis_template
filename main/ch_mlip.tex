@@ -1,16 +1,19 @@
 \chapter{Implementation of short-range machine learning interatomic potentials}
+\label{sec:mlip}
+%\markboth{Implementation of short-range machine learning interatomic potentials}{Implementation of short-range machine learning interatomic potentials}
+%\addcontentsline{toc}{chapter}{Implementation of short-range machine learning interatomic potentials}
 %\section{Modular design of MLIP}
 
 Interatomic potentials have been used for a long time to approximate the potential energy surface in classical molecular dynamics (MD) simulation by decomposing the systems' total energy into body-order contributions.
-This is done by solving the classical equations of motion of the system of interest
+Classical molecular dynamics can be performed by solving the classical equations of motion
 %In the picture of the Born-Oppenheimer approximation we can decouple the time propagation of the nuceil and electronic.the potential energy quantum mechanically
 \begin{subequations}
 \begin{align}
   H(\mathbf{p}, \mathbf{q}) = \frac{\mathbf{p}^2}{2m} + V(\mathbf{q}),\quad
-  \frac{\partial\mathbf{p}}{\partial t} = \frac{\partial V(\mathbf{q})}{\partial\mathbf{q}},\quad\frac{\partial\mathbf{q}}{\partial t} = \frac{\mathbf{p}}{m}\quad\textrm{(classical Hamiltonian mechanics)},
+  \frac{\partial\mathbf{p}}{\partial t} = \frac{\partial V(\mathbf{q})}{\partial\mathbf{q}},\quad\frac{\partial\mathbf{q}}{\partial t} = \frac{\mathbf{p}}{m}\quad\textrm{(classical Hamiltonian mechanics)}.
 \end{align}\\
 \end{subequations}
-with an interatomic potential of the form
+For an interatomic potential $V(\mathbf{q})$ takes the form
 \begin{subequations}
 \begin{gather}
   V(\mathbf{q}) = \sum_{i = 1} V_1(\mathbf{r}_i) + \sum_{i,j = 1} V_2(\mathbf{r}_i, \mathbf{r}_j) + \sum_{i,j,k = 1} V_3(\mathbf{r}_i, \mathbf{r}_j, \mathbf{r}_k) + \ldots \quad\textrm{(interatomic potential)}.
@@ -21,13 +24,16 @@ They were constrained by the chemical and phase spaces they could predict accura
 However, with the increased computational power available today, the shift towards data-driven models emerged, allowing a more automated construction for fitting models on data generated from empirical potentials~\cite{blank1995neural} or ab initio calculations~\cite{brown2003classical,lorenz2006descriptions,behl-parr07prl}.
 Remarkably, the current generation of machine learning interatomic potentials (MLIPs) has reached the capability to extensively cover chemical~\cite{lopanitsyna2023modeling} and phase space~\cite{bartok2018machine} accurately.
 
-The abundance of ML packages available today~\cite{Haddad2023Artificial}, such as \texttt{scikit-learn}~\cite{pedregosa2011scikit},\linebreak \texttt{PyTorch}~\cite{NEURIPS2019_9015}, prompts the question of whether we need to develop a new ML package.
-%the need for a new ML package for the development of MLIPs.
-Most of these packages, however, are focused on applications in generic data analysis and computer vision and are therefore not suited to the specific needs of MLIPs, which include domain-specific featurization of 3D structures and gradient inference, as the calculation of forces requires. % with respect to target properties.
-To ensure that the code base remains manageable, strategic integration with existing software solutions is essential, wherever appropriate.
+In this chapter, we discuss my contributions to the software ecosystem that facilitate the deployment of MLIPs into a MD software.
+These contributions include my work on the \texttt{librascal} package~\cite{LIBRASCAL}, instrumental for constructing MLIPs based on the SOAP featurization of atomic structures, and its interface to \texttt{LAMMPS}~\cite{LAMMPS}, an advanced classical MD code, enabling 
+% and the \texttt{scikit-matter}~\cite{goscinski2023scikit} package -- a toolkit for various data-driven preprocessing methods that facilitate the MLIP construction. % as feature and sample selection.
+ studies on ferroelectric phase transitions in barium titanate~\cite{gigli2023modeling}, and on the transport properties of lithium ortho-thiophosphate~\cite{gigli2023mechanism}.
+To ensure that a code base remains manageable, strategic integration with existing software solutions is essential, wherever appropriate.
 %To keep development and maintenance efforts of the code base manageable it is necessary to integrate with existing software solutions where adequate.
-This requires not only a solid understanding of relevant mathematical methods but also proficiency in current software tools.
-This combination of requirements poses a significant challenge in the development of enduring and robust MLIP packages.
+This requires not only a solid understanding of relevant mathematical methods and software packages but also proficiency in software design patterns.
+This combination of requirements poses significant challenges on the development of enduring and robust MLIP packages.
+In the final section we discuss how we can encounter these challenges by a standardized abstract data type allowing a more flexible construction of MLIPs and by that addressing the need for more efficient workflows~\cite{chang_simulations_2023}.
+
 %To reduce the development and maintainance costs it is necessary to find points in ones method where already established software packages can be embedded in.
 %For that a mathematical and algorithmic understanding of the landscape of methods and proficient skills in software development are needed which makes it such challenging problem.
  % tlerefore cannot be directly embedded for the development of MLIP.
@@ -42,11 +48,6 @@ This combination of requirements poses a significant challenge in the developmen
 %the creation of a model the shipping to a MD software.
 %While featurization is domain-specific and needs custom implementations also the existing ML software ecosystem can often not to be reused for our domain as including gradients into the pictures completely changes the constraints on the required software.
 %The gradient computation shifts the bottleneck drastically and thus changes the existing algorithmic design.
-
-In this chapter, I discuss my contributions to the software ecosystem that facilitates the deployment of MLIPs into a MD software.
-These contributions include my work on the \texttt{librascal} package~\cite{LIBRASCAL}, instrumental for constructing MLIPs based on the SOAP featurization of atomic structures and the \texttt{scikit-matter}~\cite{goscinski2023scikit} package -- a toolkit for various data-driven preprocessing methods that facilitate the MLIP construction. % as feature and sample selection.
-Additionally, I implemented an interface to \texttt{LAMMPS}~\cite{LAMMPS}, a state of the art classical MD code, enabling the studies on ferroelectric phase transitions in barium titanate, as detailed in Ref.~\cite{gigli2023modeling} and on the transport properties of lithium ortho-thiophosphate, as described in Ref.~\cite{gigli2023mechanism}.
-Finally, we briefly discuss how the package \texttt{metatensor}~\cite{metatensor} enables a more modular approach to build MLIPs.
 
 \section{Implementation of cubic splines for featurization}
 \label{sec:cubic_spline}
@@ -157,7 +158,8 @@ The approximation error can be estimated by sampling points in the intervals $(r
 During the evaluation of the implementation, we found that conditioning on both the relative and absolute error yields the most robust results in terms of interpolation accuracy and convergence of the grid size.
 While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, for atomistic applications a uniform grid does not reach a memory-intensive regime while having a minimal impact on the prediction accuracy.
 We analyzed the effect of the splining accuracy on the prediction accuracy more rigorously on NMR chemical shieldings of hydrogen environments (the dataset can be found in Ref.~\cite{paruzzo2018chemical}).
-The results presented in Figure~\ref{fig:chemical_shift-spline} show that the change in the prediction error is several magnitudes below the DFT accuracy, which is estimated to be in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.
+We trained the model for different splining accuracies and compared the difference to a model without splining.
+The results presented in Figure~\ref{fig:chemical_shift-spline} show that the change in the prediction error is several order of magnitude below the DFT accuracy, which is estimated to be in the order of $10^{-1}$, while for all accuracies the grid consists of fewer than $2048$ points.
 %as it can be seen in Figure~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
 %A point $r$ can be evaluated by first determining the corresponding boundary point $r_k$ for which $r\in[r_k,r_{k+1}]$, and then mapping $[r_k,r_{k+1}]$ to the polynomial interval $[0,1]$ with $p_k((r-r_k)/(r_{k+1}-r_k))$.
 %For an arbitrary grid with $K+1$ points, the optimal complexity for searching the boundary point $r_k$ is $O(\log(M+1))$ with a binary searchc.
@@ -184,7 +186,8 @@ Viable forms of parallelization encompass multithreading, the use of single inst
     \includegraphics[width=0.7\textwidth]{fig/spline-accuracy-v2.pdf}
     \caption{The relationship of the spline accuracy to the difference of the prediction error compared to using no spline for a linear model using SOAP descriptors with $l_\textrm{max}=9$.
       NMR chemical shieldings of hydrogen environments were used as target property using the datasets and same train-test setup as in Ref.~\cite{paruzzo2018chemical}.
-    The effect of the spline on the difference is several magnitudes below the DFT accuracy in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.}
+      We trained the model for different splining accuracies and compared the difference to a model without splining.
+    The effect of the spline on the difference is several orders of magnitude below the DFT accuracy in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.}
     \label{fig:chemical_shift-spline}
 \end{figure}
 %\begin{figure}
@@ -222,7 +225,7 @@ In contrast, MPI-based domain decomposition only requires dividing the potential
 %The short-ranged atomic contributions
 %For
 To provide the MPI parallelization to external developped short-range potentials MD codes further calculates the neighbor list on which the short-range potential must be computed.
-The neighbor list in MD engines is a list of atom centers and neighbors within a cutoff, similar as the atomic environment has been defined in Equation~\eqref{eq:local_environment_contribution}.
+The neighbor list in MD engines is a list of atom centers and neighbors within a cutoff, similar as the atomic environment has been defined in Equation~\eqref{eq:density_atomic_contributions}.
 For short-range potentials the force acting on atom $k$ can thus be evaluated by 
 \begin{equation}
   \label{eq:forces_interatomic_potential}
@@ -232,7 +235,7 @@ For short-range potentials the force acting on atom $k$ can thus be evaluated by
    ,\quad\textrm{where }\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else,} \end{cases}
 \end{equation}
 where $A$ represents a structure and $A_i$ the atomic environment around atom $i$.
-It is evident from Equation that the forces acting on atom $k$ solely depend on the derivatives of its and its neighboring atomic environments.
+It is evident from Equation~\eqref{eq:forces_interatomic_potential} that the forces acting on atom $k$ solely depend on the derivatives of its and its neighboring atomic environments.
 %local energies within its neighborhood (TODO elaborate in one more sentence wh).
 %It is evident from Equation~\ref{eq:forces_interatomic_potential} that the forces acting on atom $k$ solely depend on the derivative of the local energies within its neighborhood (TODO elaborate in one more sentence wh).
 Consequently, these forces can be parallelized by dividing the cells into separate domains that only include a subset of all atoms and its local environments.
@@ -243,7 +246,7 @@ Global communication is only required when aggregating the local energy contribu
 These communications can be performed by the MD engine without any additional information from the short-range potential, since the MD engine controls the division of the neighbor list into domains.
 %, the implementation of these communications can be abstracted out of the potential code, since 
 Thus, the implementation of these communications can be abstracted out of the short-range potential code, thereby enabling a modular design that does not need to account for any MPI-communication.
-In the case of the study on barium titanate~\cite{gigli2023modeling}, the MPI parallelization of \texttt{LAMMPS} played a crucial role in investigating the impact of long-range dielectric correlations on the Curie temperature, due to the necessity of conducting simulations on large cell sizes.
+In the case of the study on barium titanate~\cite{gigli2023modeling}, the MPI parallelization of \texttt{LAMMPS} played a crucial role in investigating the impact of long-range structural correlations on the Curie temperature, due to the necessity of conducting simulations on large cell sizes.
 %However, this domain decomposition demands careful consideration in the implementation of gradients.
 %The nature of short-range interatomic potentials,  whih decompose total energy into contributions from local environments, facilitates the division of the cell into smaller domains.
 %The potential energy calculations for each of these domains can then be distributed across multiple processors or machines, utilizing a message passing interface (MPI).
@@ -275,9 +278,14 @@ In the case of the study on barium titanate~\cite{gigli2023modeling}, the MPI pa
 \section{Implementation of kernel models with forces}
 %As invariant 3-body descriptors are easy to evaluate from the spherical expansion coefficients without requiring additional dependencies to compute the Clebsch-Gordan coefficients as higher-body orders need and as their the memory consumption hits a sweet spot for the current generation of hardware, they have been a popular descriptor in applications.
 %As their accuracy in combination with linear models is often not sufficient enough to produce accurate enough molecular dynamics simulations, one common approach has been to incorperate kernel models instead.
+The abundance of ML packages available today~\cite{Haddad2023Artificial}, such as \texttt{scikit-learn}~\cite{pedregosa2011scikit},\linebreak \texttt{PyTorch}~\cite{NEURIPS2019_9015}, prompts the question of whether these developments are needed. %we need to develop a new ML package.
+%the need for a new ML package for the development of MLIPs.
+Most of these packages, however, are focused on applications in generic data analysis and computer vision and are therefore not suited to the specific needs of MLIPs, which include domain-specific featurization of 3D structures and gradient inference, as the calculation of forces requires. % with respect to target properties.
 In this section we discuss the implementation of positions gradients for kernel based MLIPs, the ones used in our recent study on barium titanate~\cite{gigli2023modeling}.
 %specificalities that arise when extending kernel methods for position gradients as they appear in interatomic potentials.
-For a comprehensive introduction to kernel models please refer to Ref.~\cite{bishop2006pattern}. For a kernel $k$ fitted on the samples $\{\mathbf{c}_t\in\mathbb{R}^M\}_{t=1}^N$ and targets $\{y_t\in\mathbb{R}\}_{t=1}^N$ the optimal weights $\boldsymbol{\alpha}\in\mathbb{R}^N$ are retrieved as solution of the minimization problem
+For a comprehensive introduction to kernel models please refer to Ref.~\cite{bishop2006pattern}. 
+We focus in this section on the extension to kernel models with position gradients in the context of atomistic learning.
+For a kernel $k$ fitted on the samples $\{\mathbf{c}_t\in\mathbb{R}^M\}_{t=1}^N$ and targets $\{y_t\in\mathbb{R}\}_{t=1}^N$ the optimal weights $\boldsymbol{\alpha}\in\mathbb{R}^N$ are retrieved as solution of the minimization problem
 \begin{subequations}
   \label{eq:minkernel}
   \begin{gather}
@@ -532,7 +540,7 @@ The low-rank approximation of this full kernel has the form
 \end{subequations}
 % TODO 
 where the relationship $\tilde{\mathbf{K}} \approx \mathbf{K}$ is exact in the case where $\mathbf{K}$ has rank $T$ and if $T$ linearly-independent points of $\mathbf{K}$ are chosen as pseudo points~\cite{williams2000using}.
-The SoR method allows an efficient solution to the loss corresponding to this approximated kernel
+The SoR method allows an efficient solution for the loss corresponding to this approximated kernel
 \begin{equation}
 \ell(\boldsymbol{\alpha}) = \| \tilde{\mathbf{K}}\boldsymbol{\alpha} - \mathbf{y} \|.
 \end{equation}
@@ -579,7 +587,7 @@ where $\mathbf{k}_{T}$ is a vector with the kernel entries between the the pseud
 \end{subequations}
 depending if pseudo point $t$ corresponds to a structures or a gradient in one of the Cartesian directions.
 
-Omitting the computation of the kernel in the computational complexity analysis and assuming $T < N_{\partial} + N$, 
+Omitting the computation of the kernel in the complexity analysis and assuming $T < N_{\partial} + N$, 
 the complexity of the computation of the weights $\boldsymbol{\alpha}_T$ decreases from $O((N_{\partial} + N)^3)$ to $O(T^3 + T^2(N_{\partial} + N)) = O(T^2(N_{\partial} + N))$.
 Furthermore, the complexity of the evaluation for a new structure $A$ decreases from $O(N_{\partial}+N)$ to $O(T)$.
 
@@ -667,6 +675,7 @@ Starting from the expression in Equation~\eqref{eq:force_eval_pseudo_points} we 
   \frac{\partial E}{\partial \mathbf{r}_k} &= \sum_{m=1}^M\sum_{t=1}^T \alpha_t \sum_{i\in A}\sum_{j\in A_i} \frac{\partial k(\mathbf{c}_{t}, c_{im})}{\partial c_{im}} \frac{\partial c_{im}}{\partial\mathbf{r}_{ji}} \frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}\\
   &= \sum_{i\in A}\sum_{j\in A_i} \underline{\sum_{m=1}^M\sum_{t=1}^T \alpha_t \frac{\partial k(\mathbf{c}_{t}, c_{im})}{\partial c_{im}} \frac{\partial c_{im}}{\partial\mathbf{r}_{ji}} \frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k}}\\
   &= \sum_{i\in A}\sum_{j\in A_i}\underline{\sum_{m=1}^M\frac{\partial c_{im}}{\partial\mathbf{r}_{ji}} \frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k} \sum_{t=1}^T \alpha_t \frac{\partial k(\mathbf{c}_{t}, c_{im})}{\partial c_{im}}}.
+  \label{eq:efficient_kernel_evaluation-c}
   %&= \sum_{m=1}^M\sum_{t=1}^N \alpha_t \sum_{t_{i^\prime}\in A^{(t)}}\sum_{i\in A} \frac{\partial k(\mathbf{c}_{t_{i^\prime}}, c_{im})}{\partial c_{im}} \frac{\partial c_{im}}{\partial\mathbf{r}_ji} \frac{\partial\mathbf{r}_ji}{\mathbf{r}_k}\\
   %\frac{\partial E}{\partial\mathbf{r}_{ji}} % TODO change to partial 
   %  &= \sum_{m=1}^M \sum_{t=1}^T \alpha_t \frac{\partial k_t(\mathbf{c}_i)}{\partial c_{im}}
@@ -747,7 +756,7 @@ Thus further required an interface between \texttt{librascal} and \texttt{PLUMED
     \label{fig:size-scaling-delta-mu}
 \end{figure}
 
-In previous work~\cite{gigli_thermodynamics_2022} a transition between the cubic and tetragonal phases was observed in unbiased MD simulations of $4\times4\times4$ supercells.  These transitions occur in unbiased MD because the cell is relatively small.  When a larger supercell is employed spontaneous transitions become exceedingly rare and the system remains stuck in the energetic minimum that corresponds to the cubic or tetragonal phase for the duration of the simulation.  For these larger systems a simulation bias is thus required to drive transitions between the two phases. Figure~\ref{fig:1D-free-energy} shows that metadynamics simulations using the order parameter based on the Ti-centered spherical expansion coeffients in the notation as in Equation~\eqref{eq:chemical_decomposition}
+In previous work~\cite{gigli_thermodynamics_2022} a transition between the cubic and tetragonal phases was observed in unbiased MD simulations of $4\times4\times4$ supercells.  These transitions occur in unbiased MD because the cell is relatively small.  When a larger supercell is employed spontaneous transitions become exceedingly rare and the system remains stuck in the energetic minimum that corresponds to the cubic or tetragonal phase for the duration of the simulation, even outside of the range of stability of that phase.  For these larger systems a simulation bias is thus required to drive transitions between the two phases. Figure~\ref{fig:1D-free-energy} shows that metadynamics simulations using the order parameter based on the Ti-centered spherical expansion coeffients in the notation as in Equation~\eqref{eq:chemical_decomposition}
 \begin{equation}
   P = \sqrt{(\sum_{i\in A} c_{O11-1}^i)^2 + (\sum_{i\in A} c_{O110}^i)^2 + (\sum_{i\in A} c_{O11+1}^i)^2}, 
 \end{equation}
@@ -770,7 +779,7 @@ where the sum runs over all the trajectory frames, $L^3$ is the number of unit c
 
 Figure~\ref{fig:size-scaling-delta-mu} shows how $\Delta\mu_{\textrm{C-T}}$ changes with temperature for a range of differently-sized supercells.  This quantity is initially positive for all cell sizes indicating that the tetragonal phase is more stable than the cubic one at low temperatures.  It becomes negative at high temperatures when the relative stabilities of the two phases reverses.  The Curie point can be determined from Figure~\ref{fig:size-scaling-delta-mu} by finding the temperature at which $\Delta\mu_{\textrm{C-T}}$ is zero.  In Figure~\ref{fig:size-scaling-delta-mu} these temperatures are indicated by the vertical dashed lines.  Errors on these estimates of the Curie temperature are also indicated. To determine these errors we divided each trajectory into four blocks and obtain four separate estimates for each $\Delta\mu_{\textrm{C-T}}$ value.  Variances were computed from these four estimates so the shaded areas in Figure~\ref{fig:size-scaling-delta-mu} indicate the (1-$\sigma$) confidence limits.  The Curie temperature for each system size was extracted by drawing a line of best fit through the estimates of    $\Delta\mu_{\textrm{C-T}}$.  Propagated errors from this fitting then yield an estimate of the error on the transition temperature.
 
-Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature increases with system size.  Furthermore, these differences in transition temperature are for the most part statistically significant.  Figure \ref{fig:size-scaling-temp} indicates the size dependence for the transition temperature more clearly.  In this figure the transition temperature is shown as a function of the inverse box size.  It is only the $14\times14\times14$ system that has a transition temperature that is compatible with the smaller  $12\times12\times12$ system.  For all other system sizes the transition temperature is  underestimated. The observation of significant finite-size effects here contradicts the analysis provided in Ref. \cite{gigli_thermodynamics_2022} that relied on extrapolating the dielectric constant in the high-temperature regime with a Curie-Weiss law. Interestingly, this indirect approach underestimates the finite size effects. If the aim is to extract accurate thermodynamics simulating large system sizes is thus essential.
+Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature increases with system size.  Furthermore, these differences in transition temperature are for the most part statistically significant.  Figure \ref{fig:size-scaling-temp} indicates the size dependence for the transition temperature more clearly.  In this figure the transition temperature is shown as a function of the inverse box size.  It is only the $14\times14\times14$ system that has a transition temperature that is compatible with the smaller  $12\times12\times12$ system.  For all other system sizes the transition temperature is  underestimated. The observation of significant finite-size effects here contradicts the analysis provided in Ref. \cite{gigli_thermodynamics_2022} that relied on extrapolating the dielectric constant in the high-temperature regime with a Curie-Weiss law. Interestingly, this indirect approach underestimates the finite-size effects. If the aim is to extract accurate thermodynamics simulating large system sizes is thus essential.
 
 
 
@@ -926,22 +935,34 @@ Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature 
 
 %\subsection{MLIP interface}
 
-\section{Future work}
-The development of \texttt{librascal} has revealed several disadvantages in the design that require to rethink the general approach of creating an ecosystem for the construction of MLIP.
-This redesign can be attributed to the lack of modularity and serialization of models that are discussed in the following. 
+\section{Future directions}
+The development of \texttt{librascal} has revealed several shortcomings in the design that required to rethink the way MLIP are developed.
+In the following we discuss these problems and give a perspective how these will be addressed in future software development.
+%So far MLIP implementations bundle the featurization and model into one package that makes it hard to deploy different models using the same featurization.
+%This lack of modularity can be attributed to the inclusion of gradients into the learning algorithm making the model more dependent on the exact form of the featurization.
+%A new approach based on a abstract data type that inherently connects features and gradients by labeled metadata enables the creation of a more modular software ecosystem for the construction of MLIPs.
 
 \subsection{Modularity of featurization and model construction}
 A crucial disadvantage in the design of \texttt{librascal} was the entanglement of the featurization and the model construction inside one library.
-This entanglement is required to efficiently compute the forces as indicated in Equation~\eqref{eq:efficient_kernel_evaluation}, since it does not allow a separate computation of the weights and kernel derivatives.
+This entanglement is caused by the need to efficiently store and compute the forces as indicated in Equation~\eqref{eq:efficient_kernel_evaluation-c}.
+A strict separation of the computation of the kernel and the dot product between the weights and the kernel, as implemented in \texttt{scikit-learn}~\cite{scikit-learn}, results in a less efficient implementation. 
 % that is required for utilizing packages as \texttt{scikit-learn} for the model computation.
-To implement Equation~\eqref{eq:efficient_kernel_evaluation} it requires a common data format for the features and model to operate.
-%Tth the specific mean of ecah
-This requires bundling the indices of each dimension for the features and its gradients, such as the atomic species, local environment, and structures, into an abstract data type.
+An implementation that performs the summations in Equation~\eqref{eq:efficient_kernel_evaluation-c} in the same order requires the information of the sample dimension (structure, atom, neighbor).
+In \texttt{librascal} for that reason an abstract data type was implemented that makes the features and gradients accesible by these quantities.
+A domain-agnostic approach as in packages such as \texttt{scikit-learn} that cannot retrieve this information from their passed data type, in this case \texttt{numpy} arrays~\cite{harris2020array}, is therefore not possible.
+%a common data type is required that the features and model operate on.
+%In the \texttt{Python} ecosystem the \texttt{numpy} array has become a widely-used data type for ML packages due to its extensive support for mathematical libraries~\cite{harris2020array}.
+%The rise of data types with extended cabalities, such as automatic differentiation and GPU-based computation, has motivated the development of an API that allows these ML packages to operate on a much more extensive range of array data types~\cite{array-api}.
+%The existing data types, however, lack the capability to describe structurally sparse data in combination with gradients, which is fundamental in atomistic learning due to the sparsity induced by chemical species and symmetries and its application as MLIP.
+%While the package \texttt{xarray} includes metadata in their data type, it does consider inherently features with gradients~\cite{hoyer2017xarray}.
+Furthermore, handling operations that consistently act on features and gradients requires to keep track of the features that correspond to gradients, since multiple gradients can correspond to the same features but derived with respect to different quantities (e.g. Cartesian coordinates and/or neighbor).
+%Furthermore, in atomistic learning tensor products and contraction operations are extensively used that act on different parts of the feature space, such as the atomic species, neighbors, equivariances, and environments.
+By incorperating metadata into the data type, these operations can be implemented more generically and thus be reused for multiple model implementations.
 %the model ne, requires an understanding of the decomposition of the target property into local contributions Equation~\eqref{eq:structural_separation} as well as an understanding of the relationship between features and gradients.
-That problem is tackled by the development of a new software package \texttt{metatensor}.
-The package offers a data structure that acts as a container of the feature and its gradients by storing the labels the individual dimensions.
-This allows \texttt{numpy}-like data manipulation that takes structural characteristics of the data into account.
-With that kind of data structure, the model and featurization can be separated into two different packages since the relevant structural information of the features and gradients is kept in the data output.
+These problems are addressed by the development of a new abstract data type implemented in the software package \texttt{metatensor}.
+This abstract data type acts as a container of the feature and its gradients with individual labels for each entry in the dimensions.
+With this kind of abstract data type, \texttt{numpy} like data operations that take the structural characteristics of the data into account can be implemented.
+The model and featurization can be separated into two different modules since the relevant structural information of the features and gradients is kept in the data type.
 That effort is currently in progress with the development of \texttt{rascaline} and \texttt{torch\_spex}, packages for the featurization of atomic structures, returning them as \texttt{metatensor} data containers, and \texttt{metatensor-learn} a subpackage for the model construction from \texttt{metatensor} data containers.
 %he feature and their attribution to these structural characteristics as well to its gradients
 
@@ -960,18 +981,17 @@ That effort is currently in progress with the development of \texttt{rascaline} 
 %managers
 \subsection{Serialization of MLIPs}
 ML models exhibit various trade-offs between accuracy, evaluation time, training cost, and hyperparameter optimization.
-Consequently, the choice of a suitable model depends on the system of interest, the size of the dataset, and the available computational resources.
+Consequently, the choice of a suitable model depends on the system of interest, size of the dataset, and available computational resources.
 %A significant challenge arises from the current software infrastructure supporting ML models for MD software.
 %The current software infrastructure of ML models for MD software causes a lot of friction when the model type is changed, as 
 In the last decade, the rapid development of machine learning models has produced numerous interfaces for MD engines such as \texttt{LAMMPS}~\cite{lammpsmliap,lammpsmlpace,lammpsmlpod,lammpsmlquip,lammpsmlhdnnp}.
 The current software infrastructure, however, causes considerable friction between the ML package and the MD code when switching the model.
-In fact, not only does the MD software require a recompilation for a different interface and the installation of new package but also a whole new workflow for training and deployment needs to be often created.
+In fact, not only does the MD software require a recompilation for a different interface and an installation of the new package but also a whole new workflow for training and deployment needs to be typically created.
 In addition, model development frequently takes place in higher-level languages like \texttt{Python} or \texttt{Julia}, owing to their flexibility.
 The choice of the programming language for model development narrows down its deployment to MD packages that provide compatible interfaces for that exact language; otherwise, they require an implementation of the model in one of the supported languages that the MD engine provides.
 This requires an additional implementation of a process that saves the model to a file that can be loaded back from the low-level language interface.
-The process of exporting a data structure to file is named \emph{serialization}.
-This additional development work hinders the application of numerous developed ML models in MD packages written low-level programming languages, which are essential for researching large systems or conducting long-term simulations.
-
+The process of exporting an abstract data type to file is named \emph{serialization}.
+This additional development work hinders the application of numerous developed ML models in MD packages written low-level programming languages, which are essential for conducting research on large systems or running long-term simulations.
 
 Similar challenges are present in the industry, where models trained with diverse ML packages must be adapted to various hardware architectures and software stacks.
 This diversity complicates the consistent deployment of the same package version across different devices.

@@ -20,25 +20,25 @@ In the last decades, it has been shown that ab initio quantum chemistry methods 
 The quantitative accuracy of these predictions, however, is dependent on the quality of the reference electronic structure calculations. 
 Higher levels of theory are often necessary to model the electronic structure properties correctly, but they come with an additional computational effort, thereby reducing the breadth of the searches.
 Due to the vast number of possible atomic structures to be considered, the efficiency of these methods is crucial.
-Data-driven methods have become an efficient extension, reducing expensive quantum chemistry calculations to a bare minimum while reaching close-to-ab initio accuracy over a wide configuration space~\cite{bartok2018machine}, leading to the exploration of previously computationally intractable problems, such as the thermal conductivity of amorphous germanium telluride~\cite{sosso2012thermal}. 
+Data-driven methods have become an efficient extension, reducing expensive quantum chemistry calculations to a bare minimum while reaching close-to-ab initio accuracy over a wide configuration space~\cite{bartok2018machine}, leading to the exploration of previously computationally intractable problems, such as the thermal conductivity of amorphous germanium telluride~\cite{sosso2012thermal}, and moving simulations more into the role as guidance for experiments~\cite{chang_simulations_2023}.
 These methods are based on transforming geometrical, physical, and chemical information into a vector representation, referred to as descriptor, to then use it as input of a machine learning model.
-The development of expressive and computationally inexpensive descriptors~\cite{behl11jcp, bartok2013representing} has led to applications in a wide range of areas~\cite{mansouri2018machine, sosso2018understanding, basdogan2019machine}. 
+The development of expressive and computationally inexpensive descriptors~\cite{behl11jcp, bart+13prb} has led to applications in a wide range of areas~\cite{mansouri2018machine, sosso2018understanding, basdogan2019machine}. 
 Efficient descriptors are therefore essential for state-of-the-art high-throughput material design applications.
-The efficient computation of expressive descriptors is a challenging problem that has seen a wide range of proposals~\cite{behl11jcp, rupp2012fast, bartok2013representing, huo2017unified}.
+The efficient computation of expressive descriptors is a challenging problem that has seen a wide range of proposals~\cite{behl11jcp, rupp2012fast, bart+13prb, huo2017unified}.
 %It has been shown that density-based state-of-the-art descriptors can be seen as different representations of the symmetrized many-body correlation function~\cite{willatt2019atom}.
 When used to build an interatomic potential or to predict other atomic-scale properties, representations are used together with different supervised learning schemes, so it is difficult to disentangle the interplay of the descriptor, regression method, and target property that combine to determine the accuracy and computational cost of the different methods~\cite{zuo+20jpcl}.
 A deeper understanding of these descriptors is therefore essential, especially considering that the efficiency of accurate potentials is still a limiting factor for the research that can be conducted on materials.
 
 In the first chapter of this thesis, atomistic descriptors based on geometrical information and developed in the last two decades are formalized in a mathematically grounded theory utilizing concepts of representation theory to connect the set of numerical descriptions to functional spaces. %, namely the atomic-centered denstiy correlation function.
 In the second chapter, we continue to present a set of measures that can serve for quantitative analysis to guide the choice of the descriptor and model and to provide insight into the inherent nature of the descriptors.
-Particularly, insights are presented on how the switch of the metric space to the Wasserstein metric affects the information content of the feature space induced by the metric.
+Insights are presented on how changes in the smearing, cutoff, radial scaling, body-order or switch of the metric space to the Wasserstein metric affects the information content of the feature space induced by the metric.
 %with relationship to features induced the Euclidean distance.
 %, that can represent distances between distant distrubtions more faithfully, 
 In Chapter~\ref{sec:basisopt} we present how symmetries can be embedded into data-driven optimization methods based on the covariance or correlation matrix to improve the radial basis functions.
 The information capacity is evaluated with the metrics developed in Chapter~\ref{sec:infocap} and benchmarks on the regression performance for a single species and a multi-species dataset are shown.
 The last chapter focuses on the implementation of a machine learning interatomic potential (MLIP) and showcases its application to study finite-size effects in paraelectric-ferroelectric phase transitions in barium titanate.
-The specifications of the spline used for the basis optimization presented in Chapter~\ref{sec:basisopt} are written out, and the effect of the grid on performance and accuracy is briefly discussed.
-Finally, drawbacks in extensibility and deployment of the developed MLIP software are outlined, and future directions for a modular machine learning ecosystem for atomistic simulations are presented.
+The specifications of the spline used for the basis optimization presented in Chapter~\ref{sec:mlip} are written out, and the effect of the grid on performance and accuracy is briefly discussed.
+Finally, drawbacks in extensibility and deployment of the developed MLIP software are outlined, and future directions for a modular machine learning software ecosystem for atomistic simulations are presented.
 
 %exploit the, for the widely-applied GAP model
 %covering on one hand the efficient implementation of descriptors and data-driven models, and on the other hand their deployment into molecular dynamics software.
