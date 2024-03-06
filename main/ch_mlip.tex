@@ -169,6 +169,7 @@ The results presented in Figure~\ref{fig:chemical_shift-spline} show that the ch
 Compared to an adaptive grid, the uniform grid reduces the asymptotic complexity of determining the subinterval for evaluation from a logarithmic $O(\log K)$ binary tree search to a constant $O(1)$ lookup.
 Moreover, as the grid is constructed for each $nl$ channel, the setup and the evaluation of the spline opens the possibility of parallelizing the spline evaluation over all channels.
 Viable forms of parallelization encompass multithreading, the use of single instruction multiple data (SIMD) instructions, or leveraging graphics processing unit (GPU) acceleration.
+In the implementation in \texttt{librascal} SIMD instructions over the $nl$ channels could be exploited.
 %On the other hand for uniform grids the search time can be reduced to $O(1)$ by
 %A non-uniform grid can keep the size of the grid to a minimum by only adding boundary points corresponding to the intervals with the highest error.
 %This minimizes the number of evaluations of the costly function $f^{nl}$.
