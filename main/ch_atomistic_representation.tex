@@ -21,8 +21,8 @@ For a lot of cases the orthonormality constraint of the basis is relaxed, since 
 %Even though pre-orthonormalization has an effect on the regularization term, often found in shallow models, 
 %Then we project these functions on the representation, 
 %that can be used to build a model mapping the coefficients to phyisical properties like energy and forces.
-The choice of the representation space as well as the basis is essential for an effective numerical description, i.e. a description that captures information with fewer number coefficients. 
-We will refer to the whole process of transforming a structure $A$ to a representation and then to a numerical description as \emph{featurization} of structure $A$.
+The choice of the representation space as well as the basis is essential for an effective numerical description, i.e. a description that captures information with fewer number of coefficients. 
+We will refer to the whole process of transforming a structure $A$ to a representation and then to a numerical description as \emph{featurization} of structure $A$ as depicted in Figure~\ref{fig:acdc-scheme}.
 %The advantage of such a mathematical rigorous approach is a clearer understanding of the target we 
 %For an orthonormal basis we in the limit of basis functions
 %\begin{equation}
@@ -89,7 +89,8 @@ A widely adapted approach to impose translational invariance, i.e. independence 
 \begin{subequations}
 \begin{align}
   \label{eq:density_atomic_contributions}
-  \rho_i(\mathbf{r}) &= \sum_{j\in A_i} \rho(\mathbf{r}-\mathbf{r}_{ji}),\quad \rho_i:\mathbb{R}^3\rightarrow\mathbb{R}\quad\text{(environmental density of atom $i$)},
+  \rho_{ij}(\mathbf{r}) &= \rho(\mathbf{r}-\mathbf{r}_{ji}),\quad \rho_{ij}:\mathbb{R}^3\rightarrow\mathbb{R}\quad\text{(neighbor density of atom $j$ centered at $i$)},\\
+  \rho_i(\mathbf{r}) &= \sum_{j\in A_i} \rho_{ij}(\mathbf{r}),\quad \rho_i:\mathbb{R}^3\rightarrow\mathbb{R}\quad\text{(environmental density of atom $i$)},
 \end{align}
 \end{subequations}
 where $A_i$ is the set of all atoms that are in the \emph{environment} of atom
@@ -166,8 +167,8 @@ One early-developed approach to obtain a numerical input has been to directly us
 The vector is then sorted to achieve permutational invariance~\cite{hansen2015machine, barker2016localized, huang2016communication}.
 %, (e.g. 2-body distances in Refs.~\cite{rupp2012fast, montavon2012learning, montavon2013machine, sadeghi2013metrics} or 3-body angles and 4-body torsions in Ref.~\cite{huang2016communication}).
 %The discrete $(\nu-1)$-body information is then sorted~\cite{hansen2015machine, barker2016localized, huang2016communication}. % or averaged over numerous random permutations~\cite{montavon2012learning, montavon2013machine, sadeghi2013metrics} to embedd permutational invariance into the description.
-The sorting of the many-body information approach can be connected to the ACDC descriptors by a change of the metric space from the $L^1$ norm distance to the Earth mover's distance (EMD)~\cite{will+19jcp}.
-The relationship can be clearly seen by using fact that the EMD between two distributions $\textrm{p}$ and $\textrm{p}^\prime$ can be connected to the $L^1$ distance between the inverses of the cumulative density functions $P$ and $P^\prime$ of those distributions
+The sorting of the many-body information approach can be connected to the ACDC descriptors by a change of the metric space from the $L^1$ norm distance to the earth mover's distance (EMD)~\cite{will+19jcp}.
+The relationship can be clearly seen by using the fact that the EMD between two distributions $\textrm{p}$ and $\textrm{p}^\prime$ can be connected to the $L^1$ distance between the inverses of the cumulative density functions $P$ and $P^\prime$ of those distributions
 \begin{equation}
   \label{eq:emd_lp_duality}
   \operatorname{EMD}(\textrm{p}, \textrm{p}^\prime)=\int_0^1\mathrm{d}{s}\,\left|P^{-1}(s) -{P^{\prime}}^{-1}(s)\right|\text{, with }P(x)=\int_{-\infty}^s \textrm{p}(x).
@@ -195,7 +196,7 @@ These can be seen as one-dimensional projections of the higher-order ACDC functi
 It has been shown that descriptors in this category can reach comparable accuracies to the common methods that can be induced from the Euclidean metric~\cite{barker2016localized,huang2016communication} with energy accuracies close to 1 kcal/mol on the QM9 and QM7b dataset. % as well as an efficient removal of the discontinuouties introduced by the sorting as well as 
 These descriptions nevertheless have undesired characteristics with regard to differentiability and extensibility.
 The sorted quantities have discontinuities with respect to changes in the atomic positions that emerge when two distances are swapped due to the sorting, which is problematic for predictions of derivatives.
-These discontinuities can however be mitigated by smoothening the descriptor within a similarity or distance measure.
+These discontinuities can however be mitigated by smoothing the descriptor within a similarity or distance measure.
 Another problem is that their size depends on the number of atoms in the local environment being represented, thus they are often padded with zero values impeding their application to neighborhoods with diverse number of atoms.
 
 %the discontinuities introduced by the rearrangement still remains a problem that makes them unsuitable candidate for interatomic potentials.
@@ -318,7 +319,7 @@ For Gaussian densities the order 1 expression in Eq.~\eqref{eq:integration_over_
    &\approx \frac{1}{r_{ij}}\exp(-((r-r_{ji})^2)/4\sigma^2)
 \end{align}
 \end{subequations}
-which gives approximatively a Gaussian density in radial space.
+which gives approximately a Gaussian density in radial space.
 %An expansion for er density functions requires results from angular momentum theory to solve the integral.
 A solution of the integral for higher orders requires a more complex derivation utilizing mathematical properties of spherical harmonics $Y_m^l(\hat{\mathbf{r}}):\mathbb{R}^2\rightarrow\mathbb{R}$. % from angular momentum theory~\cite{yutsis1965theory}.
 %egral s usually solved by expressing the density as a product of a radial and angular function
@@ -371,7 +372,7 @@ For solving the integral we can omit the radial part and coefficients outside of
   \propto& \sum_{l} P_l(\hat{\mathbf{r}}\cdot\hat{\mathbf{r}}^\prime) \quad \textrm{(addition theorem, where $P_l$ Legendre polynomial~\cite{edmonds1996angular})}
 \end{align}
 \end{subequations}
-Incorperating the radial part and the coefficients back into the above solution we obtain
+Incorporating the radial part and the coefficients back into the above solution we obtain
 \begin{equation}
   \label{eq:soap}
   %\sum_{nn^\primel}\int \mathrm{d}\hat{R}\, R_n(r)Y^l_m(\hat{R}\hat{\mathbf{r}})R_{n^\prime}(r^\prime)Y^l_m(\hat{R}\hat{\mathbf{r}}^\prime) \propto 
@@ -473,6 +474,7 @@ Despite the remaining $O(N^2)$ cost, it is drastically faster than comparable me
 \subsection{Radial basis}
 \label{sec:radial_basis_set}
 The radial basis consists of one-dimensional functions defined on a compact domain $R_n:[0, r_c]\rightarrow\mathbb{R}$, where the cutoff $r_c$ forms one of the hyperparameters of the radial basis.
+In practice, any basis defined on a compact domain can be remapped to the domain $[0, r_c]$ (e.g. Legendre poloynomials) and therefore the domain does not constraint the choice of basis.
 A variety of radial basis functions, such as shifted-Gaussians~\cite{bart+13prb}, Chebyshev polynomials~\cite{shapeev2016moment,drautz2019atomic} or Gaussian type orbitals~\cite{musil2021efficient}, have been proposed in the literature.
 These functions all share certain characteristics that have been shown to positively imptact the learning performance. 
 One key characteristic is the decay of the density   
@@ -489,7 +491,7 @@ To reduce redundancy within the basis set, and considering that the dot product 
 If the chosen basis does not inherently provide orthogonality, it is typically enforced a posteriori %after the computation of the basis expansion coefficients 
 with a Löwden orthogonalization~\cite{PIELA2014e99}.
 Another shared characteristic is the uniform distribution of the basis functions across the interval $[0, r_c]$ providing an initial guess for representing the radial space~\cite{schutt2018schnet,musil2021efficient,dusson2022atomic}.
-This can be proceeded by a subsequent optimization step of the basis according to the radial distribution of the dataset.
+The construction of the basis can be subsequently optimized following dataset-dependent statistical criteria as discussed in Chapter~\ref{sec:basisopt} or general mathematical criteria as smoothness~\cite{bigi2022smooth}.
 %The notion of completeness convering the whole function space
 %covering the compact space which is often done by centering each basis on an equispaced grid in the interaval $[0, r_c]$.
 %A detailed discussion on completeness can be found in Ref.~\ref{chemrevTODO}.
@@ -507,7 +509,7 @@ While in principle similar optimizations across the angular channels, mixing the
 % as described in Eq.~\eqref{eq:recursive_higherorder} or in Ref.~\cite{kondor2018clebsch} 
 Due to this limitation, recent advancements have been more focused on improving the computation of the spherical harmonics itself by exploiting recursive relationships in its gradients~\cite{bigi2023sphericart} or switching to a Cartesian tensor basis~\cite{shapeev2016moment,schutt2021equivariant,simeon2023tensornet}
 \begin{equation}
-  \mathbf{T}^{(\nu)} = \hat{\mathbf{r}}_{ji} \otimes \cdots \otimes\hat{\mathbf{r}}_{ji}\in\mathbb{R}^{3^\nu}\quad \text{(Cartesion moment tensor of order $\nu$).}
+  \mathbf{T}^{(\nu)} = \hat{\mathbf{r}}_{ji} \otimes \cdots \otimes\hat{\mathbf{r}}_{ji}\in\mathbb{R}^{3^\nu}\quad \text{(Cartesian moment tensor of order $\nu$).}
 \end{equation}
 %choice of the angular channels can be a as a bthe spherical harmonics has become a viable approach~\cite{}. %TODO reformulate this
 %Approaches that uniform convergence 
@@ -545,7 +547,7 @@ This coupling limits the choice of the type of radial basis function that lead t
 If no analytical solution can be derived a numerical integration is required that is typically more costly~\cite{musil2021efficient}.
 One approach has been therefore to express the atomic density into a form that disentangles the radial and angular contribution~\cite{caro2019optimizing} 
 \begin{equation}
-  \rho_i(\mathbf{r}) = \rho_{i,r}(r)\rho_{i,\perp \mathbf{r}}(\hat{\mathbf{r}}).
+  \rho_{ij}(\mathbf{r}) = \rho_{ij,r}(r)\rho_{ij,\perp \mathbf{r}}(\hat{\mathbf{r}}).
 \end{equation}
 %The decoupled Gaussian function used in the initial suggestion $g(r)=$.
 %Another approach is to chose a radial basis that allows an analytical expression as Gaussian type orbitals~\cite{musil2021efficient}.
@@ -592,7 +594,7 @@ This embedding is subsequently combined with the basis expansion coefficients %\
 %  c^{ij}_{anlm} = \operatorname{combine}(c^{ij}_{a}, c^{ij}_{nlm})
 %  %c^{i}_{n\lambda\mu} = \sum \underbrace{c_{n\lambda}}_{\textrm{radial expansion}} c_{\lambda\mu}\tilde{Y}^\lambda_\mu(\hat{r}),\\
 %\end{equation}
-by an addition or a nonlinear transformation~\cite{schutt2018schnet}.
+by an addition~\cite{schutt2018schnet} or a learnable linear combination with a subsequent nonlinear transformation.
 The former approach retains a clear formulation of the chemical information entering the model that is performing the prediction, while the latter one looses interepretability due to the combination of the embedding and basis coefficients.
 Both approaches can be extended to include species information from the central atom in their numerical description.
 
