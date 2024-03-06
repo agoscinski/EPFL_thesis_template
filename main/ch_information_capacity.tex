@@ -55,8 +55,9 @@ An open-source implementation of functions to compute these quantities is provid
 Consider a dataset $\CD=\left\{x_i\right\}$ containing $\ns$ items. For a given choice of features $\CF$, each item is described by an $\nf_\CF$-dimensional feature vector $\bx_i$. As a whole, the dataset is described by a feature matrix $\bX_\CF^\CD \in \BR^{\ns\times\nf_\CF}$.
 We consider all of the feature matrices in this work to be standardized, i.e. centred and scaled so as to have zero mean and unit variance for the selected data set.
 Consider a second featurization $\CF^{\prime}$. We want to be able to compare the behavior of different choices of feature spaces when representing the dataset $\CD$, e.g. which of two sets of features have more expressive power, and how much distorted is one representation relative to the other.
+A schematic that depicts the strategies to compare features spaces presented in this chapter is shown in Figure~\ref{fig:gfr-scheme}.
 
-\begin{figure*}[tbhp]
+\begin{figure}[tbhp]
 \centering
 \includegraphics[width=1.0\linewidth]{fig/rof/feature-measures-scheme.pdf}
 \caption{\revadd{A schematic representation of the different measures of feature-space dissimilarity we introduce in this work, discussed from left to right.
@@ -68,7 +69,7 @@ The local version of the reconstruction error (LFRE) defined in Equation~\eqref{
 Finally, the global feature space reconstruction distortion (GFRD) defined in Equation~\eqref{eq:GFRD} determines whether the two featurizations are connected by an orthogonal transformation $\bQ{\CF}{\CF^{\prime}}$ defined in Equation~\eqref{eq:proc-ff1}, by finding the best alignment between $\CF$ and the approximation of $\CF^{\prime}$ that can be obtained as a linear projection of $\CF$.
 Even though $\GFRE(\CF,\CF^{\prime})$ is small, one of the components of $\CF$ is scaled down to zero, resulting in a large value of $\GFRD(\CF,\CF^{\prime})$ (panel e).}}
 \label{fig:gfr-scheme}
-\end{figure*}
+\end{figure}
 
 \subsection{Global feature space reconstruction error}
 
@@ -266,7 +267,7 @@ and the three-body functions
     G^{(3)}_i = 2^{1-\zeta} \sum_j \sum_{k \neq j } (1 + \lambda \cdot \cos \hat{\br}_{ij}\cdot\hat{\br}_{ik})^{\zeta} \cdot
     e^{-\eta (r_{ji}^2 + r_{ik}^2 + r_{jk}^2)} \cdot f_c(r_{ji}) f_c(r_{ik}) f_c(r_{jk}), \label{eq:g3}
 \end{equation}
-where $f_c$ is a cutoff function, and $\eta,\zeta,\lambda,R_s$ are parameters that define the shape of each BPSF. We generate systematically groups of symmetry functions of different size by varying the values of these parameters following the prescriptions discussed in Ref.~\citenum{imba+18jcp}. The list of values for the BPSF parameters we used are supplied in supplementary information.
+where $f_c$ is a cutoff function, and $\eta,\zeta,\lambda,R_s$ are parameters that define the shape of each BPSF. We generate systematically groups of symmetry functions of different size by varying the values of these parameters following the prescriptions discussed in Ref.~\citenum{imba+18jcp}. The list of values for the BPSF parameters we used are supplied in supplementary information of Ref.~\cite{goscinski2021role}.
 
 \paragraph*{GTO and DVR radial basis.}\,
 \label{sec:gto-dvr-comparison}
@@ -275,6 +276,8 @@ The slower radial convergence of the GFRD indicates that even as the discretizat
 When considering the convergence of the angular component $\lmax$, GTO and DVR show nearly identical error decay, indicating that the convergence of the radial and angular basis are largely independent of each other.
  
 The faster convergence of the GTO basis suggests that, for a given $\nmax$, a representation expanded on this basis should contain a greater amount of information on the structure. This is reflected in the direct comparison of the two bases, $\GFRE(\text{GTO}\,\nmax,\text{DVR}\,\nmax)<\GFRE(\text{DVR}\,\nmax,\text{GTO}\,\nmax)$ for small $\nmax$.
+The GTO basis emphasizes radial information close to the center, while the DVR representation that is based on Legendre polynomials represents information at the center and cutoff region equally.
+Given that atomic densities are more expressed close to the center, the higher convergence rate of the GTO basis in terms of GFRE and GFRD can be reasoned by exactly the radial resolution of the basis functions.
 When both basis set have converged, they become essentially equivalent. Since the two representations are related to each other by a unitary transformation,  $\GFRD(\text{GTO}\,\nmax,\text{DVR}\,\nmax)\rightarrow 0$ as $\nmax\rightarrow\infty$.
 
 \paragraph*{Gaussian smearing.}\,
@@ -294,6 +297,7 @@ The GFRD plot also underscores the strong impact of the choice of $r_\text{c}$ o
 This effect explains the strong dependency of regression performance on $r_\text{c}$, and the success of multi-scale models that combine features built on different lengthscales~\cite{bart+17sa}. 
 A similar modulation of the contributions from different radial distances can be achieved by scaling the neighbor contribution to the atom-centred density by a decaying function, e.g. $1/(1+(r_{ji}/r_0)^s)$. This approach has proven to be very effective in fine-tuning the performance of regression models using density-based features~\cite{fabe+17jctc,will+18pccp,paru+18ncomm}.
 As shown in Figure~\ref{fig:soap-sigma-radial-body}(e,f), this is an example of a transformation of the feature space that entails essentially no information loss -- resulting in a very small GFRE between different values of the scaling exponent $s$. However, it does result in substantial $\GFRD$, providing additional evidence of how the emphasis given by a set of features to different inter-atomic correlations can affect regression performance even if it does not remove altogether pieces of structural information.
+The correct radial scaling can improve the regression performance drastically, especially in the low-data regime, as it biases the model weight computation to emphasize atomic contributions close to the central atom, and its effect on the features can be made evident in this framework by the GFRD.
 
 %The effect of the radial scaling on the features is compared by multiplying the density~\eqref{eq:density} with $r^q$ where $q$ is the radial scaling exponent.
 %With higher distance between the radial scaling exponents the distortion between features is more significant, while the information is mostly preserves as seen in Figure~\ref{fig:soap-sigma-radial-body}c),d).
@@ -389,8 +393,7 @@ With the exception of the trivial, scalar-product form, a kernel introduces a no
 A crucial aspect of kernel methods is the fact that this non-linear transformation gives rise to a linear feature space that is defined by the combination of the kernel and the training samples -- or the active samples in the case of sparse kernel methods.
 We can then use our feature-space reconstruction framework to compare quantitatively the linear feature space with the kernel-induced features. We do so using a radial basis function kernel, varying the $\gamma$ parameter. In the $\gamma\rightarrow 0$ limit the RBF kernel becomes roughly linear, and the non-linearity increases with growing $\gamma$. The use of standardized input features means that $\gamma$ is effectively unitless, and also standardize the kernel-induced features. 
 To reduce noise, given that the kernel matrices are often very ill-conditioned, we only retain the RKHS features that are associated with the largest eigenvalues, preserving those that together contribute to approximately 99\%{} of the variance.
-1
-Figure~\ref{fig:rbf-bo-promote} plots the GFRE and GFRD for the mapping of linear and RBF features computed for 2 and 3-body density correlations. The non-linear nature of the transformation is apparent in the increase in the GFRE(linear,RBF) for larger values of $\gamma$, for both $\nu=1$ and $\nu=2$. The transformation is not entirely lossless, as evidenced by the fact that the reverse GFRE is also non-zero. The GFRE(RBF,linear) becomes particularly large for very large values of the $\gamma$ parameter. This can be understood from the fact that the decay of the kernel becomes very sharp, and it only provides information about the nearest neighbors of each point -- effectively leading to an ill-conditoned regression problem as we show in more detail below. 
+Figures~\ref{fig:rbf-density} and~\ref{fig:rbf-bo-promote} plot the GFRE for the mapping of linear and RBF features computed for 2 and 3-body density correlations. The non-linear nature of the transformation is apparent in the increase in the GFRE(linear,RBF) for larger values of $\gamma$, for both $\nu=1$ and $\nu=2$. The transformation is not entirely lossless, as evidenced by the fact that the reverse GFRE is also non-zero. The GFRE(RBF, linear) becomes particularly large for very large values of the $\gamma$ parameter. This can be understood from the fact that the decay of the kernel becomes very sharp, and it only provides information about the nearest neighbors of each point -- effectively leading to an ill-conditoned regression problem as we show in more detail below. 
 
 \begin{figure}
     \centering
