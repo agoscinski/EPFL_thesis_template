@@ -90,7 +90,7 @@ and then compute the error over the remaining test set $\CDte$
 \label{eq:GFRE}
 \end{equation}
 averaging, if needed, over multiple random splits.  The $\GFRE$ is a positive quantity, which is equal to zero when there is no error in the reconstruction, and that is usually bound by one\footnote{This is due to the fact that feature matrices are standardized, and so $\norm{\bX^{\CDte}_{\CF^{\prime}}}/\ns_\test $ is of the order of one}.
-For numbers of features larger than $\ns_\train$, the covariance matrix is not full rank, and one needs to compute a pseudoinverse. Without loss of generality, one can regularize the regression to stabilize the calculation. In this paper, we computed the pseudoinverse by means of a singular value decomposition, and we determined the optimal regularization in terms of the truncation of the singular value spectrum, using 2-fold cross-validation over the training set to determine the optimal truncation threshold. Often, it is also useful to observe the behavior of the $\GFRE$ in the absence of any regularization: overfitting is in itself a signal of the instability of the mapping between feature spaces.
+For numbers of features larger than $\ns_\train$, the covariance matrix is not full rank, and one needs to compute a pseudoinverse. Without loss of generality, one can regularize the regression to stabilize the calculation. We computed the pseudoinverse by means of a singular value decomposition, and we determined the optimal regularization in terms of the truncation of the singular value spectrum, using 2-fold cross-validation over the training set to determine the optimal truncation threshold. Often, it is also useful to observe the behavior of the $\GFRE$ in the absence of any regularization: overfitting is in itself a signal of the instability of the mapping between feature spaces.
 In general, $\GFRE^\CD(\CF,\CF^{\prime})$ is not symmetric. If $\GFRE^\CD(\CF,\CF^{\prime})\approx\GFRE^\CD(\CF^{\prime},\CF)\approx 0$, $\CF$ and $\CF^{\prime}$ contain similar types of information; if $\GFRE^\CD(\CF,\CF^{\prime})\approx 0$, while $\GFRE^\CD(\CF^{\prime},\CF)>0$, one can say that $\CF$ is more descriptive than $\CF^{\prime}$: this is the case, for instance, one would observe if $\CF^{\prime}$ consists of a sparse version of $\CF$, with some important and linearly-independent features removed; finally, if  $\GFRE^\CD(\CF,\CF^{\prime})\approx\GFRE^\CD(\CF^{\prime},\CF)>0$, the two feature spaces contain different, and complementary, kinds of information and it may be beneficial to combine them to achieve a more thorough description of the problem.
 
 \subsection{Global feature space reconstruction distortion}
@@ -187,7 +187,7 @@ A positive definite kernel induces a feature space $\CH$, commonly known as repr
     k(\bx,\bx^{\prime}) = \bphi(\bx)\cdot\bphi(\bx^{\prime}),\quad \bx,\bx^{\prime}\in\mathcal{F},\,\, \bphi:\mathcal{F}\rightarrow\CH.
 \end{equation}
 While in general $\bphi(\bx)$ is not known, for a given dataset $\CD$ it is possible to approximate the RKHS features by using a kernel principal component analysis~\cite{scholkopf1997kernel}. Since linear regression in RKHS features is equivalent to kernel ridge regression, we simply use kernel features computed on the training  dataset $\CDtr$ to reduce the problem of comparing kernel (or distance) induced features to that of comparing explicit features, and use $\GFRE$ and $\GFRD$ as defined in Eqs.~\eqref{eq:GFRE} and~\eqref{eq:GFRD}. 
-It is possible to re-formulate these measures in an explicit kernelized form, as well as to compute low-rank approximations of the kernel to reduce the computational cost for very large datasets (see e.g. Ref.~\citenum{helf+20mlst} for a pedagogic discussion). In this paper we simply use the explicit RKHS features, that can be obtained by diagonalizing the kernel matrix $\bK = \bU \bLAM \bU^T$, with $K_{ij} = k(\bx_i, \bx_j)$, and defining
+It is possible to re-formulate these measures in an explicit kernelized form, as well as to compute low-rank approximations of the kernel to reduce the computational cost for very large datasets (see e.g. Ref.~\citenum{helf+20mlst} for a pedagogic discussion). We simply use the explicit RKHS features, that can be obtained by diagonalizing the kernel matrix $\bK = \bU \bLAM \bU^T$, with $K_{ij} = k(\bx_i, \bx_j)$, and defining
 \begin{equation}
 \bX_\CH = \bU \bLAM^{-1/2},
 \end{equation}
@@ -215,7 +215,7 @@ We use four different datasets, chosen to emphasize different aspects of the pro
 
 \section{Comparing ACDC representations}
 
-While different discretizations of the abstract vectors on a basis  are a matter of computational convenience and affect the computational cost of different approaches~\cite{zuo+20jpcl}, but their descriptive power becomes equivalent in the limit of a complete basis set. 
+The different forms of discretizations of a function on a basis become equivalent in the limit of a complete basis set, when truncating the basis set, however, the choice of the basis affects the descriptive power.
 We demonstrate the use of the GFRE, LFRE and GFRD to assess with quantifiable measures the effect of some of the different choices one can make when designing a representation.
 %address some open questions concerning the construction and use of this kind of representations.
 

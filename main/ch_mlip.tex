@@ -54,7 +54,7 @@ In the final section we discuss how we can encounter these challenges by a stand
 %As part my work in the first year, I participated in the development of a library designed to allow efficient computation of atomic density based descriptors, named librascal.
 %The library is designed with most emphasize on efficiency with regard to code structure and computation methods of descriptors.
 %The code structure is focused on reducing runtime cost by allowing a contiguous iteration through atomic environments and by applying template based methods as curiously recurring template pattern (CRTP) to prevent runtime lookups of virtual functions with the tradeoff of higher compile time costs.
-One of the main contributions to \texttt{librascal} has been the implementation of a cubic spline to interpolate the radial expansion coefficients as expressed in Equation~\eqref{eq:radial_expansion}.
+One of the main contributions to \texttt{librascal} has been the implementation of a cubic spline to interpolate the radial expansion coefficients as they are expressed in Equation~\eqref{eq:radial_expansion}.
 %iin the last year has been the development of efficient methods for the computation of the radial basis expansion for the SOAP descriptor.
 %In contrast to the approaches discussed in Section~\ref{sec:evaluation_of_radial_contribution}, for librascal Gaussian typed orbital (GTO) functions are used as radial basis functions 
 %\begin{subequations}
@@ -436,7 +436,7 @@ Then we can reformulate the loss again into vectorial form
     \mathbf{E}\in\mathbb{R}^N,\qquad \mathbf{F}\in\mathbb{R}^{N_{\partial}}
   \end{gather}
 \end{subequations}
-where $\mathbf{F}$ are the stacked gradients and $\mathbf{K}_{N_{\partial}N}$ is the matrix from the stacked sum-product of the feature and kernel gradients as defined in the loss~\ref{eq:kernel_evaluation}, explicitely written as follows
+where $\mathbf{F}$ are the stacked gradients and $\mathbf{K}_{N_{\partial}N}$ is the matrix from the stacked sum-product of the feature and kernel gradients as defined in the loss~\ref{eq:kernel_evaluation}.
 %where $\partial N$ denotes the number stacked gradients for each Cartesian dimension $3\sum_n |A^{(n)}|$
 %and $\mathbf{K}_{\grad NN}$ is the matrix from the stacked sum-product of the feature and kernel gradients in the loss~\ref{eq:loss_forces}, explicitely written
 %----

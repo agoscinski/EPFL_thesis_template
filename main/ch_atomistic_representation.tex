@@ -96,7 +96,7 @@ A widely adapted approach to impose translational invariance, i.e. independence 
 where $A_i$ is the set of all atoms that are in the \emph{environment} of atom
 $i$, in most applications defined as the set of atoms within a certain distance, the
 \emph{cutoff}, and $\mathbf{r}_{ji}$ is the direction vector $\mathbf{r}_j-\mathbf{r}_i$. 
-While we refer to $\rho_i$ as environmental density in this thesis, the term atomic density is however frequently more loosely used to refer also to $\rho_i$~\cite{musil2021physics}.
+While we refer to $\rho_i$ as environmental density in this thesis, the term atomic density is however frequently more loosely used to refer also to $\rho$ centered at position $i$~\cite{musil2021physics}.
 This approach further aligns with the partitioning of a structure property $y_A$ into local atomic contributions
 \begin{equation}
   \label{eq:structural_separation}
@@ -321,7 +321,7 @@ For Gaussian densities the order 1 expression in Eq.~\eqref{eq:integration_over_
 \end{subequations}
 which gives approximately a Gaussian density in radial space.
 %An expansion for er density functions requires results from angular momentum theory to solve the integral.
-A solution of the integral for higher orders requires a more complex derivation utilizing mathematical properties of spherical harmonics $Y_m^l(\hat{\mathbf{r}}):\mathbb{R}^2\rightarrow\mathbb{R}$. % from angular momentum theory~\cite{yutsis1965theory}.
+A solution of the integral for higher orders requires a more complex derivation utilizing mathematical properties of spherical harmonics $Y_m^l(\hat{\mathbf{r}}):S^2\rightarrow\mathbb{R}$. % from angular momentum theory~\cite{yutsis1965theory}.
 %egral s usually solved by expressing the density as a product of a radial and angular function
 %\begin{equation}
 %  \label{eq:radial_angular_density}
@@ -406,7 +406,8 @@ Subsequently, it has been formulated into a recursive expression to derive highe
 \end{align}
 \end{subequations}
 where we can separate between coefficients of the form $c_{k_\nu}$ that depend solely on the order $\nu$ function, and further coefficients of the form $c_{k_\nu k_1}$ that couple the order $\nu$ and 1 functions.
-The coefficients $c_{k_\nu k_1}$ are connected to the Clebsch-Gordan coefficients in Eq.~\eqref{eq:clebsch-gordan}, the relationship is more formally derived in Ref.~\cite{niga+20jcp}. 
+The coefficients $c_{k_\nu k_1}$ are different projections of the Clebsch-Gordan coefficients in Eq.~\eqref{eq:clebsch-gordan}, the relationship is more exactly described in Ref.~\cite{niga+20jcp}.
+Here we want to only indicate that the coefficients of order 1 $c_{k_1}$, the spherical expansion coefficients, and of order $\nu$ $c_{k_\nu}$ are coupled together with the Clebsch-Gordan coefficients to form higher order coefficients.
 Due to the polynomial increase of the feature size with body-order, there exist various strategies for compressing the basis coefficients in high-dimensional space~\cite{kondor_clebsch_2018,yan2019fourier,niga+20jcp}.
 %A key problem in propagation to higher orders is to find a suitable basis set that represents higher order space effectively has been solved in several ways~\cite{kondor2018clebsch,yan2019fourier,niga+20jcp}.
 % such that they reach accuraciesthat are sufficient for applications while operating on a much faster level~\cite{zuo2020performance,xie2023ultra}.
@@ -434,7 +435,7 @@ Due to the polynomial increase of the feature size with body-order, there exist 
 
 
 \section{Basis expansion}
-Solving the integral by expanding the atomic density onto a certain basis as shown in Eq.~\eqref{eq:solving_haar_integral} naturally enforces the same choice for the basis set to solve for the expansion coefficients
+Expanding the atomic density onto an orthonormal basis as completed in Eq.~\eqref{eq:solving_haar_integral} naturally motivates the choice of the same basis set to solve for the actual expansion coefficients as it simplifies the integral
 %To solve the integral as shown in Eq.~\eqref{eq:solving_haar_integral} an expansion of the neighbor density into a radial and spherical term is necessary.
 \begin{subequations}
 \label{eq:acdc_expansion}
@@ -476,7 +477,7 @@ Despite the remaining $O(N^2)$ cost, it is drastically faster than comparable me
 The radial basis consists of one-dimensional functions defined on a compact domain $R_n:[0, r_c]\rightarrow\mathbb{R}$, where the cutoff $r_c$ forms one of the hyperparameters of the radial basis.
 In practice, any basis defined on a compact domain can be remapped to the domain $[0, r_c]$ (e.g. Legendre poloynomials) and therefore the domain does not constraint the choice of basis.
 A variety of radial basis functions, such as shifted-Gaussians~\cite{bart+13prb}, Chebyshev polynomials~\cite{shapeev2016moment,drautz2019atomic} or Gaussian type orbitals~\cite{musil2021efficient}, have been proposed in the literature.
-These functions all share certain characteristics that have been shown to positively imptact the learning performance. 
+These functions all share certain characteristics that have been shown to positively impact the learning performance. 
 One key characteristic is the decay of the density   
 %incorperated in the functional form by multiplying smooth cutoff function $s(r):\mathbb{R}\rightarrow\mathbb{R}$ as well as in the form of the basis function.
  coupled with an increasing spread with respect to the radial distance as it deemphasizes the importance of information far from the center.
@@ -576,7 +577,8 @@ One approach linearly combines all $n_{\text{species}}$ species channels to a re
 \end{equation}
 with $b$ often referred as \emph{pseudo species}.
 This approach and its extension to an optimization of the radial basis is in more detail explored in Chapter~\ref{sec:basisopt}.
-The other approach learns a embedding $c^{ij}_{ak}$ for each species $a$ that is seperate from the basis expansion coefficients.
+The other approach learns a embedding $c^{ij}_{ak}$ for each species $a$ that is seperate from the basis expansion coefficients, where $k$ is a simplification to describe the feature dimension that does not correspond to any symmetry component (e.g. in the former example it is $n$).
+Since within this approach the embedding is optimized before any symmetry components are introduced, they are omitted in the notation.
 An embedding can be expressed as an \emph{one-hot encoding} of the species $a$ with a subsequent linear transformation.
 An one-hot encoding of species $a$ is a vector with one nonzero entry at the dimension corresponding to species $a$.
 \begin{equation}
@@ -597,6 +599,25 @@ This embedding is subsequently combined with the basis expansion coefficients %\
 by an addition~\cite{schutt2018schnet} or a learnable linear combination with a subsequent nonlinear transformation.
 The former approach retains a clear formulation of the chemical information entering the model that is performing the prediction, while the latter one looses interepretability due to the combination of the embedding and basis coefficients.
 Both approaches can be extended to include species information from the central atom in their numerical description.
+
+\begin{table*}[bthp]
+\centering
+\begin{tabular}{ll}
+  $b_k$ & basis function \\
+  $c_k$ & expansion coefficient \\
+  $\rho$ & atomic density \\ 
+  $\rho_{ij}$ & neighbor density \\ 
+  $\rho_i$ & environmental density \\ 
+  $\overline{\rho^{\otimes \nu}}$ & symmetrized order $\nu$ correlations of the density \\
+  $c_{nlm}$ & spherical expansion coefficient \\
+  $c_{anlm}$ & spherical expansion coefficient considering species $a$ \\
+  $c^i_{nlm}$ & spherical expansion coefficient of environmental density $i$ \\
+  $c^{ij}_{nlm}$ & spherical expansion coefficient of neighbor density $\rho_{ij}$ \\
+  $c^{ij}_{nl}$ & radial expansion coefficient of neighbor density $\rho_{ij}$ \\
+\end{tabular}
+\caption{A summary of the notation presented in this chapter for the different coefficients that are derived when expanding on ACDC functions.}
+\label{table:coefficients}
+\end{table*}
 
 %is to spline the radial expansion coefficents $c_{n\lambda}$ allowing an evaluation of the integral at constant time.
 %TODO check how I introduce splines in chapter 5

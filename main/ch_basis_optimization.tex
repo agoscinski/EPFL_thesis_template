@@ -129,16 +129,17 @@ Even though Equation~\eqref{eq:cov} is defined separately for different species 
 \end{equation}
 as done in the NICE framework\cite{niga+20jcp} following ideas proposed in Ref.~\citenum{will+19jcp}, resulting in coefficients that combine information on multiple species
 \begin{equation}
-  c^i_{qlm} = \sum_n U^{l}_{q;\e n} c^i_{\e nlm}, \label{eq:contract-multispecies}
+  c^i_{qlm} = \sum_n U^{l}_{q\e n} c^i_{\e nlm}, \label{eq:contract-multispecies}
   %\rep<q lm; \opt||\rho_i> = \sum_n U^{l}_{q;\e n} \rep<\e n lm||\rho_i>, \label{eq:contract-multispecies}
 \end{equation}
 similar in spirit to the alchemical contraction discussed in Ref.~\citenum{will+18pccp}.
+As the reduced dimension is a decomposition of the species and the radial dimensions, we notate it with a different character $q$.
 It is worth noting that although the NICE code\cite{NICE-REPO} contains the infrastructure to compute these contractions as a post-processing of the primitive basis, the implementation we propose in \texttt{librascal}\cite{LIBRASCAL} computes the contracted coefficients directly. However, it only implements the less information-efficient separate $(\e, n)$-PCA strategy.
 An implementation that evaluates directly the combined contraction would incur an overhead because every neighbor would contribute to every $q$ channel irrespective of their species:
 \begin{align}
-  c^i_{qlm}  &= \sum_{\e n} U^l_{q; \e n} c^{i}_{\e nlm} \\
-             &= \sum_{\e n} U^l_{q; \e n} \sum_{j\in A_i} \delta_{\e \e_j} c^{ij}_{nlm} \\
-             &= \sum_{j\in A_i} \sum_{n} U^l_{q; \e_j n} c^{ij}_{nlm}.
+  c^i_{qlm}  &= \sum_{\e n} U^l_{q \e n} c^{i}_{\e nlm} \\
+             &= \sum_{\e n} U^l_{q \e n} \sum_{j\in A_i} \delta_{\e \e_j} c^{ij}_{nlm} \\
+             &= \sum_{j\in A_i} \sum_{n} U^l_{q \e_j n} c^{ij}_{nlm}.
 \end{align}
 Given however that the cost of evaluating the density coefficients is usually a small part of the calculation of density-correlation features\cite{caro2019optimizing,musil2021efficient}, we expect that this approach should be in general preferable compared to the calculation of a large primitive basis, and to a two-step procedure in which element-wise optimal functions are further contracted into mixed-element coefficients.
 
