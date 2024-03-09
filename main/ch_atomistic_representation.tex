@@ -81,16 +81,17 @@ Additionally, general characteristics of basis functions deployed in atomic-scal
 A majority of developed atomistic descriptors can be seen as different approaches to construct the expansion coefficients based on a family of functions, that originates from the structural density function~\cite{musil2021physics} 
 \begin{equation}
   \label{eq:basis_expansion}
-  \sum_{i\in A} \rho(\mathbf{r}-\mathbf{r}_i),\quad \rho:\mathbb{R}^3\rightarrow\mathbb{R}\quad\text{(atomic density)},
+  \sum_{i\in A} \rho(\mathbf{r}-\mathbf{r}_i)\text{ for an atomic density }\rho:\mathbb{R}^3\rightarrow\mathbb{R},
 \end{equation}
 where $\mathbf{r}_i\in\mathbb{R}^3$ is the position of the $i$th atom in the atomic structure $A$ and $\rho$ is an arbitrary function decaying from its origin. 
 Commonly, a Gaussian $g$ or a Dirac $\delta$ function are chosen as atomic density $\rho$.
-A widely adapted approach to impose translational invariance, i.e. independence of the center of the structure, is to describe the atomic structure as a sum of atomic environment contributions
+A widely adapted approach to impose translational invariance, i.e. independence of the center of the structure, is to describe the atomic structure as a sum of atomic environment contributions, each of them defined as a sum over the densities in their corresponding neighborhood
 \begin{subequations}
 \begin{align}
-  \label{eq:density_atomic_contributions}
-  \rho_{ij}(\mathbf{r}) &= \rho(\mathbf{r}-\mathbf{r}_{ji}),\quad \rho_{ij}:\mathbb{R}^3\rightarrow\mathbb{R}\quad\text{(neighbor density of atom $j$ centered at $i$)},\\
+  \rho_{ij}(\mathbf{r}) &= \rho(\mathbf{r}-\mathbf{r}_{ji}),\quad \rho_{ij}:\mathbb{R}^3\rightarrow\mathbb{R}\quad\text{(neighbor density of atom $j$ centered at $i$)},
+  \label{eq:neighbor_density} \\
   \rho_i(\mathbf{r}) &= \sum_{j\in A_i} \rho_{ij}(\mathbf{r}),\quad \rho_i:\mathbb{R}^3\rightarrow\mathbb{R}\quad\text{(environmental density of atom $i$)},
+  \label{eq:density_atomic_contributions}
 \end{align}
 \end{subequations}
 where $A_i$ is the set of all atoms that are in the \emph{environment} of atom
@@ -171,9 +172,9 @@ The sorting of the many-body information approach can be connected to the ACDC d
 The relationship can be clearly seen by using the fact that the EMD between two distributions $\textrm{p}$ and $\textrm{p}^\prime$ can be connected to the $L^1$ distance between the inverses of the cumulative density functions $P$ and $P^\prime$ of those distributions
 \begin{equation}
   \label{eq:emd_lp_duality}
-  \operatorname{EMD}(\textrm{p}, \textrm{p}^\prime)=\int_0^1\mathrm{d}{s}\,\left|P^{-1}(s) -{P^{\prime}}^{-1}(s)\right|\text{, with }P(x)=\int_{-\infty}^s \textrm{p}(x).
+  \operatorname{EMD}(\textrm{p}, \textrm{p}^\prime)=\int_0^1\mathrm{d}{s}\,\left|P^{-1}(s) -{P^{\prime}}^{-1}(s)\right|\text{, with }P(x)=\int_{-\infty}^s \mathrm{d}x\, \textrm{p}(x).
 \end{equation}
-Then the EMD between two order 1 ACDC functions using the Dirac $\delta$ function as the atomic densities is equal up to a normalization factor dependent on the number of atoms to the $L^1$ difference between their sorted distances vectors~\cite{will+19jcp}.
+Then the EMD between two order 1 ACDC functions using the Dirac $\delta$ function as atomic density is equal up to a normalization factor dependent on the number of atoms to the $L^1$ difference between their sorted distances vectors~\cite{will+19jcp}.
 %\begin{subequations}
 %  \begin{align}
 %    \|R_A-R_B\| = $\overline{\rho^{\otimes}}$
@@ -546,7 +547,7 @@ Each neighbor coefficient further decomposes into a \emph{radial expansion coeff
 The dependency of the radial coefficients on the angular component appears due to the coupling of the radial and angular contributions in the Gaussian density.
 This coupling limits the choice of the type of radial basis function that lead to an analytical expression of the integral.
 If no analytical solution can be derived a numerical integration is required that is typically more costly~\cite{musil2021efficient}.
-One approach has been therefore to express the atomic density into a form that disentangles the radial and angular contribution~\cite{caro2019optimizing} 
+One approach has been therefore to express the neighbor density as defined in Equation~\ref{eq:neighbor_density} into a form that disentangles the radial and angular contribution~\cite{caro2019optimizing}
 \begin{equation}
   \rho_{ij}(\mathbf{r}) = \rho_{ij,r}(r)\rho_{ij,\perp \mathbf{r}}(\hat{\mathbf{r}}).
 \end{equation}
@@ -600,24 +601,27 @@ by an addition~\cite{schutt2018schnet} or a learnable linear combination with a 
 The former approach retains a clear formulation of the chemical information entering the model that is performing the prediction, while the latter one looses interepretability due to the combination of the embedding and basis coefficients.
 Both approaches can be extended to include species information from the central atom in their numerical description.
 
+\def\arraystretch{1.5}
 \begin{table*}[bthp]
 \centering
 \begin{tabular}{ll}
   $b_k$ & basis function \\
   $c_k$ & expansion coefficient \\
   $\rho$ & atomic density \\ 
-  $\rho_{ij}$ & neighbor density \\ 
-  $\rho_i$ & environmental density \\ 
-  $\overline{\rho^{\otimes \nu}}$ & symmetrized order $\nu$ correlations of the density \\
+  $\rho_{ij}$ & neighbor density of atom $j$ centered at $i$ \\ 
+  $\rho_i$ & environmental density centered at atom $i$ \\ 
+  $\overline{\rho^{\otimes \nu}}$ & symmetrized correlations function of the density for order $\nu$ \\
   $c_{nlm}$ & spherical expansion coefficient \\
   $c_{anlm}$ & spherical expansion coefficient considering species $a$ \\
-  $c^i_{nlm}$ & spherical expansion coefficient of environmental density $i$ \\
-  $c^{ij}_{nlm}$ & spherical expansion coefficient of neighbor density $\rho_{ij}$ \\
-  $c^{ij}_{nl}$ & radial expansion coefficient of neighbor density $\rho_{ij}$ \\
+  $c^i_{nlm}$ & spherical expansion coefficient of the environmental density $\rho_i$ \\
+  $c^{ij}_{nlm}$ & spherical expansion coefficient of the neighbor density $\rho_{ij}$ \\
+  $c^{ij}_{nl}$ & radial expansion coefficient of the neighbor density $\rho_{ij}$ \\
+  $c^i_{nn'l}$ & expansion coefficients of the symmetrized correlations function $\overline{\rho_i^{\otimes 2}}$ \\
 \end{tabular}
 \caption{A summary of the notation presented in this chapter for the different coefficients that are derived when expanding on ACDC functions.}
 \label{table:coefficients}
 \end{table*}
+\def\arraystretch{1}
 
 %is to spline the radial expansion coefficents $c_{n\lambda}$ allowing an evaluation of the integral at constant time.
 %TODO check how I introduce splines in chapter 5
