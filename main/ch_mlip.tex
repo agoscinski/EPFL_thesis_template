@@ -157,7 +157,7 @@ The grid points $\{r_k\}_{k=0}^{K+1}$ are incrementally adjusted until the funct
 The approximation error can be estimated by sampling points in the intervals $(r_k, r_{k+1})$ and computing the difference between the function $f^{nl}$ and the spline $p^{nl}$.
 During the evaluation of the implementation, we found that conditioning on both the relative and absolute error yields the most robust results in terms of interpolation accuracy and convergence of the grid size.
 While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, for atomistic applications a uniform grid does not reach a memory-intensive regime while having a minimal impact on the prediction accuracy.
-We analyzed the effect of the splining accuracy on the prediction accuracy more rigorously on NMR chemical shieldings of hydrogen environments (the dataset can be found in Ref.~\cite{paruzzo2018chemical}).
+We analyzed the effect of the splining accuracy on the prediction accuracy more rigorously on NMR chemical shieldings of hydrogen environments (the dataset can be found in Ref.~\cite{paru+18ncomm}).
 We trained the model for different splining accuracies and compared the difference to a model without splining.
 The results presented in Figure~\ref{fig:chemical_shift-spline} show that the change in the prediction error is several order of magnitude below the DFT accuracy, which is estimated to be in the order of $10^{-1}$, while for all accuracies the grid consists of fewer than $2048$ points.
 %as it can be seen in Figure~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
@@ -186,7 +186,7 @@ In the implementation in \texttt{librascal} SIMD instructions over the $nl$ chan
     \centering
     \includegraphics[width=0.7\textwidth]{fig/spline-accuracy-v2.pdf}
     \caption{The relationship of the spline accuracy to the difference of the prediction error compared to using no spline for a linear model using SOAP descriptors with $l_\textrm{max}=9$.
-      NMR chemical shieldings of hydrogen environments were used as target property using the datasets and same train-test setup as in Ref.~\cite{paruzzo2018chemical}.
+      NMR chemical shieldings of hydrogen environments were used as target property using the datasets and same train-test setup as in Ref.~\cite{paru+18ncomm}.
       We trained the model for different splining accuracies and compared the difference to a model without splining.
     The effect of the spline on the difference is several orders of magnitude below the DFT accuracy in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.}
     \label{fig:chemical_shift-spline}

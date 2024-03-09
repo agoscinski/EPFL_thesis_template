@@ -149,7 +149,7 @@ For a given number of radial functions, and a target data set, the data-driven c
 %The basis construction by the covariance matrix guarantees 
 The most effective variance-preserving compression however does not guarantee that the features are the most effective to predict a given target property.
 In fact, it has already been shown that SOAP features tend to emphasize correlations between atoms that are far from the atomic center, which can lead to a counter-intuitive degradation of the model accuracy with increasing cutoff radius\cite{bart+17sa,will+18pccp}. 
-This effect can be contrasted by introducing a radial scaling\cite{huan-vonl16jcp,will+18pccp} that de-emphasizes the magnitude of the atom density in the region far from the central atom. 
+This effect can be contrasted by introducing a radial scaling\cite{huang2016communication,will+18pccp} that de-emphasizes the magnitude of the atom density in the region far from the central atom. 
 By applying this scaling -- or other analogous tweaks\cite{caro2019optimizing} -- to the atom density before it is expanded in the primitive basis, one ensures that the optimal basis is also built with a similar focus on the structural features that contribute more strongly to the target property.
 In other terms, the information-optimal basis set we introduce here can be combined with a heuristic or data-driven optimization of the underlying density representation, to reflect the scale and resolution of the target property.
 
