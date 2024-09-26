@@ -13,7 +13,7 @@
 %, i.e. can exist for a limited time frame under a certain set of thermodynamic
 %boundary conditions.In the last decades it has been shown that \textit{ab initio} quantum chemistry
 
-In high-throughput material design, large databases of materials are searched for candidates with desirable characteristics.
+In high-throughput materials design, large databases of materials are searched for candidates with desirable characteristics.
 So far, searches based on experimental data have been limited in scope due to the vast combinatorial space of materials, the heterogeneous quality of available data, and the difficulty in separating the intrinsic properties of a material from those that are contingent on the processing or synthesis conditions.
 In the last decades, it has been shown that ab initio quantum chemistry methods provide approximate stability criteria that are in good agreement with experiments~\cite{jansen2015conceptual} making them a viable tool for the screening of new materials~\cite{ceder1998identification, andersson2006toward, yang2012search, gomez2016design}.
 %A viable alternative is to calculate material properties using computer simulations, that make it possible to exploit advances in parallel computing to construct databases with millions of entries, and to obtain results that are internally consistent.
@@ -21,8 +21,8 @@ The quantitative accuracy of these predictions, however, is dependent on the qua
 Higher levels of theory are often necessary to model the electronic structure properties correctly, but they come with an additional computational effort, thereby reducing the breadth of the searches.
 Due to the vast number of possible atomic structures to be considered, the efficiency of these methods is crucial.
 Data-driven methods have become an efficient extension, reducing expensive quantum chemistry calculations to a bare minimum while reaching close-to-ab initio accuracy over a wide configuration space~\cite{bartok2018machine}, leading to the exploration of previously computationally intractable problems, such as the thermal conductivity of amorphous germanium telluride~\cite{sosso2012thermal}, and moving simulations more into the role as guidance for experiments~\cite{chang_simulations_2023}.
-These methods are based on transforming geometrical, physical, and chemical information into a vector representation, referred to as descriptor, to then use it as input of a machine learning model.
-The development of expressive and computationally inexpensive descriptors~\cite{behl11jcp, bart+13prb} has led to applications in a wide range of areas~\cite{mansouri2018machine, sosso2018understanding, basdogan2019machine}. 
+These methods are based on transforming geometrical, physical, and chemical information into a vector representation, referred to as descriptor, to then use it as input of a machine learning mode as shown in the schematic in Figure~\ref{fig:high-throughput-scheme}.
+The development of expressive and computationally inexpensive descriptors~\cite{kabylda2023efficient, doi:10.1021/acs.chemrev.0c01111} has led to applications in a wide range of areas~\cite{mansouri2018machine, sosso2018understanding, basdogan2019machine}.
 Efficient descriptors are therefore essential for state-of-the-art high-throughput material design applications.
 The efficient computation of expressive descriptors is a challenging problem that has seen a wide range of proposals~\cite{behl11jcp, rupp2012fast, bart+13prb, huo2017unified}.
 %It has been shown that density-based state-of-the-art descriptors can be seen as different representations of the symmetrized many-body correlation function~\cite{willatt2019atom}.

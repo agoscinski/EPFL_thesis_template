@@ -54,7 +54,7 @@ In the final section we discuss how we can encounter these challenges by a stand
 %As part my work in the first year, I participated in the development of a library designed to allow efficient computation of atomic density based descriptors, named librascal.
 %The library is designed with most emphasize on efficiency with regard to code structure and computation methods of descriptors.
 %The code structure is focused on reducing runtime cost by allowing a contiguous iteration through atomic environments and by applying template based methods as curiously recurring template pattern (CRTP) to prevent runtime lookups of virtual functions with the tradeoff of higher compile time costs.
-One of main contributions to \texttt{librascal} has been the implementation of a cubic spline to interpolate the radial expansion coefficients as expressed in Equation~\eqref{eq:radial_expansion}.
+One of the main contributions to \texttt{librascal} has been the implementation of a cubic spline to interpolate the radial expansion coefficients as they are expressed in Equation~\eqref{eq:radial_expansion}.
 %iin the last year has been the development of efficient methods for the computation of the radial basis expansion for the SOAP descriptor.
 %In contrast to the approaches discussed in Section~\ref{sec:evaluation_of_radial_contribution}, for librascal Gaussian typed orbital (GTO) functions are used as radial basis functions 
 %\begin{subequations}
@@ -157,7 +157,7 @@ The grid points $\{r_k\}_{k=0}^{K+1}$ are incrementally adjusted until the funct
 The approximation error can be estimated by sampling points in the intervals $(r_k, r_{k+1})$ and computing the difference between the function $f^{nl}$ and the spline $p^{nl}$.
 During the evaluation of the implementation, we found that conditioning on both the relative and absolute error yields the most robust results in terms of interpolation accuracy and convergence of the grid size.
 While algorithms for adaptive grids can be advantageous to control the grid size and thus reduce memory requirements, for atomistic applications a uniform grid does not reach a memory-intensive regime while having a minimal impact on the prediction accuracy.
-We analyzed the effect of the splining accuracy on the prediction accuracy more rigorously on NMR chemical shieldings of hydrogen environments (the dataset can be found in Ref.~\cite{paruzzo2018chemical}).
+We analyzed the effect of the splining accuracy on the prediction accuracy more rigorously on NMR chemical shieldings of hydrogen environments (the dataset can be found in Ref.~\cite{paru+18ncomm}).
 We trained the model for different splining accuracies and compared the difference to a model without splining.
 The results presented in Figure~\ref{fig:chemical_shift-spline} show that the change in the prediction error is several order of magnitude below the DFT accuracy, which is estimated to be in the order of $10^{-1}$, while for all accuracies the grid consists of fewer than $2048$ points.
 %as it can be seen in Figure~\ref{TODO} with experiments on the chemical shieldings\cite{TOOD}.
@@ -169,6 +169,7 @@ The results presented in Figure~\ref{fig:chemical_shift-spline} show that the ch
 Compared to an adaptive grid, the uniform grid reduces the asymptotic complexity of determining the subinterval for evaluation from a logarithmic $O(\log K)$ binary tree search to a constant $O(1)$ lookup.
 Moreover, as the grid is constructed for each $nl$ channel, the setup and the evaluation of the spline opens the possibility of parallelizing the spline evaluation over all channels.
 Viable forms of parallelization encompass multithreading, the use of single instruction multiple data (SIMD) instructions, or leveraging graphics processing unit (GPU) acceleration.
+In the implementation in \texttt{librascal} SIMD instructions over the $nl$ channels could be exploited.
 %On the other hand for uniform grids the search time can be reduced to $O(1)$ by
 %A non-uniform grid can keep the size of the grid to a minimum by only adding boundary points corresponding to the intervals with the highest error.
 %This minimizes the number of evaluations of the costly function $f^{nl}$.
@@ -185,7 +186,7 @@ Viable forms of parallelization encompass multithreading, the use of single inst
     \centering
     \includegraphics[width=0.7\textwidth]{fig/spline-accuracy-v2.pdf}
     \caption{The relationship of the spline accuracy to the difference of the prediction error compared to using no spline for a linear model using SOAP descriptors with $l_\textrm{max}=9$.
-      NMR chemical shieldings of hydrogen environments were used as target property using the datasets and same train-test setup as in Ref.~\cite{paruzzo2018chemical}.
+      NMR chemical shieldings of hydrogen environments were used as target property using the datasets and same train-test setup as in Ref.~\cite{paru+18ncomm}.
       We trained the model for different splining accuracies and compared the difference to a model without splining.
     The effect of the spline on the difference is several orders of magnitude below the DFT accuracy in the order of $10^{-1}$, while for all accuracies the grid consists of less than $2048$ points.}
     \label{fig:chemical_shift-spline}
@@ -214,9 +215,9 @@ Viable forms of parallelization encompass multithreading, the use of single inst
 %This allowed obtain results...
 Molecular dynamics (MD) packages, such as LAMMPS, GROMACS, CP2K, and i-PI~\cite{LAMMPS,hess+08jctc,kuhne2020cp2k,kapil2019pi}, commonly separate the time evolution into separate modules: The time integrator to propagate equation of motions, the thermo- and barostats and the calculation and the potential energy and its forces.
 %Molecular dynamics (MD) packages, such as LAMMPS, GROMACS, CP2K, and i-PI~\cite{LAMMPS,hess+08jctc,kuhne2020cp2k,kapil2019pi}, commonly isolate the computation of the potential energy into a single module disentangled from the construction of the neighbor list TODO(neihgbor list defined the thesis).
-As the computation of the potential energy only depends the atomic positions and species, and the dynamics require only the energy and forces, is therefore a well-suited point for separating it from the rest of the code base.
+As the computation of the potential energy only depends on the atomic positions and species, and the dynamics require only the energy and forces, the computation of the potential energy is a well-suited point to separate it from the code base of the MD engine.
 One significant benefit of this approach is to avoid reimplementing established time integrators, thermo- and barostats.
-Although their implementation may appear straightforward, developing a robust code base that transparently handles edge cases for the non-expert user is nevertheless time-consuming task, demanding extensive documentation.
+Although their implementation may appear straightforward, developing a robust code base that transparently handles edge cases for the non-expert user is nevertheless a time-consuming task, demanding extensive documentation.
 Furthermore, well-established MD software packages, such as \texttt{GROMACS}~\cite{abraham2015gromacs} and \texttt{LAMMPS}~\cite{LAMMPS}, offer a variety of parallelization strategies that significantly improve the speed of interatomic potentials.
 These include a message-passing interface (MPI) for the domain decomposition, CUDA- and OpenMP-based multithreading as well as SIMD abstraction modules for hardware-adaptive compute kernels.
 The embedding of hardware dependent parallelization strategies, such as customized CUDA and compute kernels, necessitates adapting the interatomic pontential code to these specific kernel routines.
@@ -224,7 +225,7 @@ In contrast, MPI-based domain decomposition only requires dividing the potential
 %The cutoff determines here the number of domains the
 %The short-ranged atomic contributions
 %For
-To provide the MPI parallelization to external developped short-range potentials MD codes further calculates the neighbor list on which the short-range potential must be computed.
+To provide the MPI parallelization to external developed short-range potentials MD codes further calculates the neighbor list on which the short-range potential must be computed.
 The neighbor list in MD engines is a list of atom centers and neighbors within a cutoff, similar as the atomic environment has been defined in Equation~\eqref{eq:density_atomic_contributions}.
 For short-range potentials the force acting on atom $k$ can thus be evaluated by 
 \begin{equation}
@@ -235,13 +236,13 @@ For short-range potentials the force acting on atom $k$ can thus be evaluated by
    ,\quad\textrm{where }\frac{\partial\mathbf{r}_{ji}}{\partial\mathbf{r}_k} = \begin{cases}1,& k=i \\ -1,& k=j \\0,& \textrm{ else,} \end{cases}
 \end{equation}
 where $A$ represents a structure and $A_i$ the atomic environment around atom $i$.
-It is evident from Equation~\eqref{eq:forces_interatomic_potential} that the forces acting on atom $k$ solely depend on the derivatives of its and its neighboring atomic environments.
+It is evident from Equation~\eqref{eq:forces_interatomic_potential} that the forces acting on atom $k$ solely depend on the derivatives of its atomic environment and its neighboring ones.
 %local energies within its neighborhood (TODO elaborate in one more sentence wh).
 %It is evident from Equation~\ref{eq:forces_interatomic_potential} that the forces acting on atom $k$ solely depend on the derivative of the local energies within its neighborhood (TODO elaborate in one more sentence wh).
 Consequently, these forces can be parallelized by dividing the cells into separate domains that only include a subset of all atoms and its local environments.
 Each domain can then be assigned to an independent hardware component allowing an embarrassingly parallel evaluation of the forces.
 Communication between the domains becomes only necessary if one wants to avoid a recomputations of the partial forces $\partial E_i/\partial\mathbf{r}_{ij}=-\partial E_i/\partial\mathbf{r}_{ji}$ where atom $i$ and atom $j$ belong to two different domains.
-As this presents a tradeoff between the number of evaluations of the potential and the number of MPI-communications, MD engines such as \texttt{LAMMPS} prodived a tunable parameter that can choose between the two options, see the parameter \emph{newton} in the \texttt{LAMMPS} manual~\cite{lammpsnewton}.
+As this presents a tradeoff between the number of evaluations of the potential and the number of MPI-communications, MD engines such as \texttt{LAMMPS} prodive a tunable parameter that can choose between the two options, see the parameter \emph{newton} in the \texttt{LAMMPS} manual~\cite{lammpsnewton}.
 Global communication is only required when aggregating the local energy contributions into the total energy, as explained in the \texttt{GROMACS} manual~\cite{gromacsnstcalcenergy} by the \emph{nstcalcenergy} parameter.
 These communications can be performed by the MD engine without any additional information from the short-range potential, since the MD engine controls the division of the neighbor list into domains.
 %, the implementation of these communications can be abstracted out of the potential code, since 
@@ -435,7 +436,7 @@ Then we can reformulate the loss again into vectorial form
     \mathbf{E}\in\mathbb{R}^N,\qquad \mathbf{F}\in\mathbb{R}^{N_{\partial}}
   \end{gather}
 \end{subequations}
-where $\mathbf{F}$ are the stacked gradients and $\mathbf{K}_{N_{\partial}N}$ is the matrix from the stacked sum-product of the feature and kernel gradients as defined in the loss~\ref{eq:kernel_evaluation}, explicitely written as follows
+where $\mathbf{F}$ are the stacked gradients and $\mathbf{K}_{N_{\partial}N}$ is the matrix from the stacked sum-product of the feature and kernel gradients as defined in the loss~\ref{eq:kernel_evaluation}.
 %where $\partial N$ denotes the number stacked gradients for each Cartesian dimension $3\sum_n |A^{(n)}|$
 %and $\mathbf{K}_{\grad NN}$ is the matrix from the stacked sum-product of the feature and kernel gradients in the loss~\ref{eq:loss_forces}, explicitely written
 %----
@@ -712,7 +713,7 @@ In fact moving the sum over $t$ forward and extracting the feature gradient out 
 %\end{align}
 %\end{subequations}
 To study the paraelectric-ferroelectric phase transitions in barium titanate~\cite{gigli2023modeling} we used metadynamics~\cite{bussi2020using} to accelerate the sampling of the transitions.
-In metadynamics the sampling of a transition is accelerated by introducing a bias potential $B(\mathbf{s})$ that acts on a collective variable (CV) $\mathbf{s}\in\mathbb{R}^d$ constructed from the atomic coordinates $S(\mathbf{q}) = \mathbf{s}$ where $d$ is usually much smaller $3|A|$, the number of coordinates of the system.
+In metadynamics the sampling of a transition is accelerated by introducing a bias potential $B(\mathbf{s})$ that acts on a collective variable (CV) $\mathbf{s}\in\mathbb{R}^d$ constructed from the atomic coordinates $S(\mathbf{q}) = \mathbf{s}$ where $d$ is usually much smaller $3|A|$ (the number of atoms in structure $A$ times 3), the number of coordinates of the system.
 The purpose of building a CV is to use a low-dimensional variable that models the phase transition well such that the action of an external bias potential can enable transitions that would not take place on the time scale of standard MD.
 %a histogram of the free energy surface can be constructed.
 The extended potential of metadynamics is thus a function of
@@ -777,9 +778,9 @@ where the sum runs over all the trajectory frames, $L^3$ is the number of unit c
     \label{fig:size-scaling-temp}
 \end{figure}
 
-Figure~\ref{fig:size-scaling-delta-mu} shows how $\Delta\mu_{\textrm{C-T}}$ changes with temperature for a range of differently-sized supercells.  This quantity is initially positive for all cell sizes indicating that the tetragonal phase is more stable than the cubic one at low temperatures.  It becomes negative at high temperatures when the relative stabilities of the two phases reverses.  The Curie point can be determined from Figure~\ref{fig:size-scaling-delta-mu} by finding the temperature at which $\Delta\mu_{\textrm{C-T}}$ is zero.  In Figure~\ref{fig:size-scaling-delta-mu} these temperatures are indicated by the vertical dashed lines.  Errors on these estimates of the Curie temperature are also indicated. To determine these errors we divided each trajectory into four blocks and obtain four separate estimates for each $\Delta\mu_{\textrm{C-T}}$ value.  Variances were computed from these four estimates so the shaded areas in Figure~\ref{fig:size-scaling-delta-mu} indicate the (1-$\sigma$) confidence limits.  The Curie temperature for each system size was extracted by drawing a line of best fit through the estimates of    $\Delta\mu_{\textrm{C-T}}$.  Propagated errors from this fitting then yield an estimate of the error on the transition temperature.
+Figure~\ref{fig:size-scaling-delta-mu} shows how $\Delta\mu_{\textrm{C-T}}$ changes with temperature for a range of differently-sized supercells.  This quantity is initially positive for all cell sizes indicating that the tetragonal phase is more stable than the cubic one at low temperatures.  It becomes negative at high temperatures when the relative stabilities of the two phases reverses.  The Curie point can be determined from Figure~\ref{fig:size-scaling-delta-mu} by finding the temperature at which $\Delta\mu_{\textrm{C-T}}$ is zero.  In Figure~\ref{fig:size-scaling-delta-mu} these temperatures are indicated by the vertical dashed lines.  Errors on these estimates of the Curie temperature are also indicated. To determine these errors we divided each trajectory into four blocks and obtain four separate estimates for each $\Delta\mu_{\textrm{C-T}}$ value.  Variances were computed from these four estimates so the shaded areas in Figure~\ref{fig:size-scaling-delta-mu} indicate the (2-$\sigma$) confidence limits.  The Curie temperature for each system size was extracted by drawing a line of best fit through the estimates of    $\Delta\mu_{\textrm{C-T}}$.  Propagated errors from this fitting then yield an estimate of the error on the transition temperature.
 
-Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature increases with system size.  Furthermore, these differences in transition temperature are for the most part statistically significant.  Figure \ref{fig:size-scaling-temp} indicates the size dependence for the transition temperature more clearly.  In this figure the transition temperature is shown as a function of the inverse box size.  It is only the $14\times14\times14$ system that has a transition temperature that is compatible with the smaller  $12\times12\times12$ system.  For all other system sizes the transition temperature is  underestimated. The observation of significant finite-size effects here contradicts the analysis provided in Ref. \cite{gigli_thermodynamics_2022} that relied on extrapolating the dielectric constant in the high-temperature regime with a Curie-Weiss law. Interestingly, this indirect approach underestimates the finite-size effects. If the aim is to extract accurate thermodynamics simulating large system sizes is thus essential.
+Figure \ref{fig:size-scaling-delta-mu} clearly shows that the Curie temperature increases with system size.  Furthermore, these differences in transition temperature are for the most part statistically significant.  Figure \ref{fig:size-scaling-temp} indicates the size dependence for the transition temperature more clearly.  Figure \ref{fig:size-scaling-temp} indicates the size dependence for the transition temperature more clearly. In this figure the transition temperature is shown as a function of the inverse box size.  It is only the $14\times14\times14$ system that has a transition temperature that is compatible with the smaller  $12\times12\times12$ system.  For all other system sizes the transition temperature is  underestimated. The observation of significant finite-size effects here contradicts the analysis provided in Ref. \cite{gigli_thermodynamics_2022} that relied on extrapolating the dielectric constant in the high-temperature regime with a Curie-Weiss law. Interestingly, this indirect approach underestimates the finite-size effects. If the aim is to extract accurate thermodynamics simulating large system sizes is thus essential.
 
 
 
@@ -957,7 +958,7 @@ A domain-agnostic approach as in packages such as \texttt{scikit-learn} that can
 %While the package \texttt{xarray} includes metadata in their data type, it does consider inherently features with gradients~\cite{hoyer2017xarray}.
 Furthermore, handling operations that consistently act on features and gradients requires to keep track of the features that correspond to gradients, since multiple gradients can correspond to the same features but derived with respect to different quantities (e.g. Cartesian coordinates and/or neighbor).
 %Furthermore, in atomistic learning tensor products and contraction operations are extensively used that act on different parts of the feature space, such as the atomic species, neighbors, equivariances, and environments.
-By incorperating metadata into the data type, these operations can be implemented more generically and thus be reused for multiple model implementations.
+By incorporating metadata into the data type, these operations can be implemented more generically and thus be reused for multiple model implementations.
 %the model ne, requires an understanding of the decomposition of the target property into local contributions Equation~\eqref{eq:structural_separation} as well as an understanding of the relationship between features and gradients.
 These problems are addressed by the development of a new abstract data type implemented in the software package \texttt{metatensor}.
 This abstract data type acts as a container of the feature and its gradients with individual labels for each entry in the dimensions.
